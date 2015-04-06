@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ Copyright (c) 2015 Haulmont Technology Ltd. All Rights Reserved.
+  ~   Haulmont Technology proprietary and confidential.
+  ~   Use is subject to license terms.
+  -->
+
+<definitions id="definitions"
+             targetNamespace="http://activiti.org/bpmn20"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:cuba="http://schemas.haulmont.com/bpm/5.5/bpm.xsd">
+
+    <process id="basicTest" name="Basic test">
+
+        <extensionElements>
+            <activiti:eventListener class="com.haulmont.bpm.core.engine.listener.BpmActivitiListener"/>
+        </extensionElements>
+
+        <startEvent id="start">
+        </startEvent>
+
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="variablesScript" />
+
+        <scriptTask id="variablesScript" scriptFormat="groovy">
+            <script>
+                execution.setVariable('userName', 'jack')
+            </script>
+        </scriptTask>
+
+        <sequenceFlow id="flow2" sourceRef="variablesScript" targetRef="testScript" />
+
+        <scriptTask id="testScript" scriptFormat="groovy">
+            <script>
+                def tx = persistence.createTransaction()
+                try {
+                    def em = persistence.getEntityManager();
+                    def user = metadata.create(com.haulmont.cuba.security.entity.User.class)
+                    user.setLogin(userName)
+                    em.persist(user)
+                    tx.commit()
+                } finally {
+                    tx.end()
+                }
+                System.out.println('From script: ' + metadata.NAME)
+            </script>
+        </scriptTask>
+
+        <sequenceFlow id="flow3" sourceRef="testScript" targetRef="theEnd"/>
+
+        <endEvent id="theEnd" />
+
+    </process>
+
+</definitions>

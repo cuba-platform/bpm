@@ -26,6 +26,8 @@ class ProcessRuntimeTest extends BpmTestCase {
     static final String MULTI_INSTANCE_PARALLEL_PROCESS_PATH = "com/haulmont/bpm/process/testMultiInstanceParallel.bpmn20.xml";
     static final String MULTI_INSTANCE_SEQUENTIAL_PROCESS_PATH = "com/haulmont/bpm/process/testMultiInstanceSequential.bpmn20.xml";
     static final String CLAIM_TASK_PROCESS_PATH = "com/haulmont/bpm/process/testClaimTask.bpmn20.xml";
+    static final String SCRIPT_TASK_PROCESS_PATH = "com/haulmont/bpm/process/testScriptTask.bpmn20.xml";
+
 
     void testBasic() {
         ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(BASIC_PROCESS_PATH)
@@ -383,5 +385,21 @@ class ProcessRuntimeTest extends BpmTestCase {
         assertEquals ('Approve', processMessagesManager.getMessage(procDefinition, "managerApproval.approve"))
         assertEquals ('Утверждение менеджером', processMessagesManager.getMessage(procDefinition, "managerApproval", new Locale("ru")))
         assertEquals ('Scanning', processMessagesManager.getMessage(procDefinition, "scanning", new Locale("ru")))
+    }
+
+    void testScriptTask() {
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(SCRIPT_TASK_PROCESS_PATH)
+        ProcInstance procInstance
+        persistence.createTransaction().execute( {em ->
+            procInstance = new ProcInstance(procDefinition: procDefinition)
+            em.persist(procInstance)
+        } as Transaction.Runnable)
+        procInstance = processRuntimeManager.startProcess(procInstance, '', [:])
+
+        persistence.createTransaction().execute( {em ->
+            User user = em.createQuery("select u from sec\$User u where u.login = 'jack'").getFirstResult()
+            assertNotNull(user)
+        } as Transaction.Runnable)
+
     }
 }
