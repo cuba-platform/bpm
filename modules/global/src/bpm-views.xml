@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/5.4/view.xsd">
+    <view class="com.haulmont.bpm.entity.ProcDefinition"
+          extends="_local"
+          name="procDefinition-start">
+        <property name="procRoles"
+                  view="_local"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcInstance"
+          extends="_local"
+          name="procInstance-start">
+        <property name="procDefinition"
+                  view="procDefinition-start"/>
+        <property name="startedBy"
+                  view="_minimal"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcActor"
+          extends="_local"
+          name="procActor-procTaskCreation">
+        <property name="user"
+                  view="_minimal"/>
+        <property name="procRole"
+                  view="_local"/>
+        <property name="procInstance"
+                  view="_minimal"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcTask"
+          extends="_local"
+          name="procTask-complete"/>
+    <view class="com.haulmont.bpm.entity.ProcDefinition"
+          name="procDefinition-browse">
+        <property name="name"/>
+        <property name="actKey"/>
+        <property name="active"/>
+        <property name="actVersion"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcDefinition"
+          name="procDefinition-edit">
+        <property name="procRoles"
+                  view="_local">
+        </property>
+        <property name="name"/>
+        <property name="actId"/>
+        <property name="actKey"/>
+        <property name="active"/>
+        <property name="xml"/>
+        <property name="actVersion"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcRole"
+          extends="_local"
+          name="procRole-edit">
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcInstance"
+          extends="_local"
+          name="procInstance-browse">
+        <property name="procDefinition"
+                  view="_minimal"/>
+        <property name="startedBy"
+                  view="_minimal"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcInstance"
+          extends="_local"
+          name="procInstance-edit">
+        <property name="procDefinition"
+                  view="_local"/>
+        <property name="startedBy"
+                  view="_minimal"/>
+        <property name="procActors">
+            <property name="user"
+                      view="_minimal"/>
+            <property name="procRole"
+                      view="_minimal"/>
+        </property>
+        <!--<property name="procTasks"-->
+        <!--view="procTask-journal"/>-->
+        <property name="procAttachments">
+            <property name="file"
+                      view="_minimal"/>
+            <property name="type"
+                      view="_minimal"/>
+            <property name="comment"/>
+        </property>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcTask"
+          extends="_local"
+          name="procTask-journal">
+        <!--<property name="startDate"/>-->
+        <!--<property name="endDate"/>-->
+        <!--<property name="outcome"/>-->
+        <property name="procActor">
+            <property name="user"
+                      view="_minimal"/>
+            <property name="procRole"
+                      view="_minimal"/>
+        </property>
+        <property name="candidateUsers"
+                  view="_minimal"/>
+        <!--<property name="comment"/>-->
+        <!--<property name="name"/>-->
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcActor"
+          extends="_local"
+          name="procActor-edit">
+        <property name="user"
+                  view="_minimal"/>
+        <property name="procRole"
+                  view="_minimal"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcDefinition"
+          extends="_minimal"
+          name="procDefinition-procInstanceEdit">
+        <property name="procRoles"
+                  view="_minimal">
+        </property>
+        <property name="actId"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcTask"
+          extends="_local"
+          name="procTask-browse">
+        <property name="procInstance">
+            <property name="procDefinition">
+                <property name="name"/>
+                <property name="actId"/>
+                <property name="actKey"/>
+            </property>
+        </property>
+        <property name="procActor">
+            <property name="procRole"
+                      view="_minimal"/>
+        </property>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcInstance"
+          extends="_local"
+          name="procInstance-createProcTask">
+        <property name="procDefinition"
+                  view="_minimal"/>
+    </view>
+    <view entity="bpm$ProcActor"
+          extends="_local"
+          name="procActor-browse">
+        <property name="procRole"
+                  view="_local"/>
+        <property name="user"
+                  view="_minimal"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcAttachment"
+          extends="_local"
+          name="procAttachment-browse">
+        <property name="file"
+                  view="_local"/>
+        <property name="type"
+                  view="_minimal"/>
+        <property name="author"
+                  view="_minimal"/>
+    </view>
+    <view entity="bpm$ProcAttachment"
+          extends="_local"
+          name="procAttachment-edit">
+        <property name="type"
+                  view="_minimal"/>
+        <property name="author"
+                  view="_minimal"/>
+    </view>
+    <view entity="bpm$ProcTask"
+          name="procTask-procInstance-edit">
+        <property name="startDate"/>
+        <property name="endDate"/>
+        <property name="claimDate"/>
+        <property name="procActor">
+            <property name="user"
+                      view="_minimal"/>
+        </property>
+        <property name="actProcessDefinitionId"/>
+        <property name="name"/>
+        <property name="outcome"/>
+        <property name="comment"/>
+        <property name="actTaskId"/>
+        <property name="procInstance">
+            <property name="procDefinition">
+                <property name="actId"/>
+            </property>
+        </property>
+        <property name="candidateUsers" view="_minimal"/>
+    </view>
+</views>

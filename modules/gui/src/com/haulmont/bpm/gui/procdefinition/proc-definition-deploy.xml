@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
+        caption="msg://caption"
+        class="com.haulmont.bpm.gui.procdefinition.ProcDefinitionDeployWindow"
+        messagesPack="com.haulmont.bpm.gui.procdefinition">
+    <dsContext/>
+    <layout expand="windowActions" spacing="true">
+        <label id="messageLabel" width="100%"/>
+        <grid spacing="true">
+            <columns count="2"/>
+            <rows>
+                <row>
+                    <label value="msg://yourDecision" align="MIDDLE_LEFT"/>
+                    <optionsGroup id="decisionOptionsGroup"/>
+                </row>
+                <row>
+                    <label value="msg://procDefinition" align="MIDDLE_LEFT"/>
+                    <lookupField id="processLookup"/>
+                </row>
+            </rows>
+        </grid>
+        <iframe id="windowActions"
+                screen="editWindowActions"
+                stylename="window-actions"/>
+    </layout>
+</window>

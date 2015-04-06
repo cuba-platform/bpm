@@ -1,0 +1,5 @@
+<screen-config xmlns="http://schemas.haulmont.com/cuba/5.4/screens.xsd">
+
+    <include file="/bpm-screens.xml"/>
+
+</screen-config>

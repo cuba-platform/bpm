@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
+        caption="msg://browseCaption"
+        class="com.haulmont.bpm.gui.procattachmenttype.ProcAttachmentTypeBrowse"
+        focusComponent="procAttachmentTypeTable"
+        lookupComponent="procAttachmentTypeTable"
+        messagesPack="com.haulmont.bpm.gui.procattachmenttype">
+    <dsContext>
+        <collectionDatasource id="procAttachmentTypeDs"
+                              class="com.haulmont.bpm.entity.ProcAttachmentType"
+                              view="_local">
+            <query>
+                <![CDATA[select e from bpm$ProcAttachmentType e]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <layout expand="procAttachmentTypeTable"
+            spacing="true">
+        <filter id="filter"
+                datasource="procAttachmentTypeDs">
+            <properties include=".*"/>
+        </filter>
+        <table id="procAttachmentTypeTable"
+               width="100%">
+            <actions>
+                <action id="create" openType="DIALOG"/>
+                <action id="edit" openType="DIALOG"/>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="code"/>
+            </columns>
+            <rows datasource="procAttachmentTypeDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="procAttachmentTypeTable.create"/>
+                <button id="editBtn"
+                        action="procAttachmentTypeTable.edit"/>
+                <button id="removeBtn"
+                        action="procAttachmentTypeTable.remove"/>
+            </buttonsPanel>
+        </table>
+    </layout>
+</window>

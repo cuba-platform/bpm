@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/5.4/window.xsd"
+        caption="msg://editCaption"
+        class="com.haulmont.bpm.gui.procactor.ProcActorEdit"
+        datasource="procActorDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.haulmont.bpm.gui.procactor">
+    <dsContext>
+        <datasource id="procActorDs"
+                    class="com.haulmont.bpm.entity.ProcActor"
+                    view="procActor-edit"/>
+        <collectionDatasource id="procRolesDs"
+                              class="com.haulmont.bpm.entity.ProcRole"
+                              view="_minimal">
+            <query>
+                <![CDATA[select e from bpm$ProcRole e where e.procDefinition.id = :param$procDefinition]]>
+            </query>
+        </collectionDatasource>
+        <collectionDatasource id="usersDs"
+                              class="com.haulmont.cuba.security.entity.User">
+            <query>
+                <![CDATA[select e from sec$User e]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="procActorDs">
+            <column width="250px">
+                <field id="procRole"
+                       optionsDatasource="procRolesDs"/>
+                <field id="user"
+                       optionsDatasource="usersDs"/>
+            </column>
+        </fieldGroup>
+        <iframe id="windowActions"
+                screen="editWindowActions"
+                stylename="window-actions"/>
+    </layout>
+</window>

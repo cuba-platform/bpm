@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen-config xmlns="http://schemas.haulmont.com/cuba/5.4/screens.xsd">
+    <screen id="bpm$ProcDefinition.lookup"
+            template="com/haulmont/bpm/gui/procdefinition/proc-definition-browse.xml"/>
+    <screen id="bpm$ProcDefinition.edit"
+            template="com/haulmont/bpm/gui/procdefinition/proc-definition-edit.xml"/>
+    <screen id="bpm$ProcInstance.lookup"
+            template="com/haulmont/bpm/gui/procinstance/proc-instance-browse.xml"/>
+    <screen id="bpm$ProcInstance.edit"
+            template="com/haulmont/bpm/gui/procinstance/proc-instance-edit.xml"/>
+    <screen id="bpm$ProcActor.edit"
+            template="com/haulmont/bpm/gui/procactor/procactor-edit.xml"/>
+    <screen id="bpm$ProcTask.lookup"
+            template="com/haulmont/bpm/gui/proctask/proc-task-browse.xml"/>
+    <screen id="bpm$ProcTask.edit"
+            template="com/haulmont/bpm/gui/proctask/proc-task-edit.xml"/>
+    <screen id="standardProcessForm"
+            template="/com/haulmont/bpm/gui/form/standard/standard-process-form.xml"/>
+    <screen id="startProcessForm"
+            template="/com/haulmont/bpm/gui/form/start/start-process-form.xml"/>
+    <screen id="procActorsProcessForm"
+            template="/com/haulmont/bpm/gui/form/procactor/proc-actors-process-form.xml"/>
+    <screen id="procActorsFrame"
+            template="/com/haulmont/bpm/gui/procactor/proc-actors-frame.xml"/>
+    <screen id="procTaskActionsFrame"
+            template="/com/haulmont/bpm/gui/proctaskactions/proc-task-actions-frame.xml"/>
+    <screen id="procDefinitionDeploy"
+            template="com/haulmont/bpm/gui/procdefinition/proc-definition-deploy.xml"/>
+    <screen id="bpm$ProcAttachmentType.lookup"
+            template="com/haulmont/bpm/gui/procattachmenttype/proc-attachment-type-browse.xml"/>
+    <screen id="bpm$ProcAttachmentType.edit"
+            template="com/haulmont/bpm/gui/procattachmenttype/proc-attachment-type-edit.xml"/>
+    <screen id="procAttachmentsFrame"
+            template="com/haulmont/bpm/gui/procattachment/proc-attachments-frame.xml"/>
+    <screen id="bpm$ProcAttachment.edit"
+            template="com/haulmont/bpm/gui/procattachment/proc-attachment-edit.xml"/>
+</screen-config>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://schemas.haulmont.com/cuba/5.4/menu.xsd">
+    <!--<menu id="bpm">-->
+    <!--<item id="bpm$ProcDefinition.lookup"/>-->
+    <!--</menu>-->
+    <menu id="bpm"
+          insertBefore="administration">
+        <item id="bpm$ProcDefinition.lookup"/>
+        <item id="bpm$ProcInstance.lookup"/>
+        <item id="bpm$ProcTask.lookup"/>
+        <item id="bpm$ProcAttachmentType.lookup"/>
+    </menu>
+</menu-config>

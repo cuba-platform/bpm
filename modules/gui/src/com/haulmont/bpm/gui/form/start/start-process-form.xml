@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) ${YEAR} ${PACKAGE_NAME}
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/5.4/window.xsd"
+        caption="msg://caption"
+        class="com.haulmont.bpm.gui.form.start.StartProcessForm"
+        messagesPack="com.haulmont.bpm.gui.form.start">
+    <dsContext/>
+    <actions>
+        <action id="windowCommit"
+                caption="msg://actions.Ok"
+                icon="icons/ok.png"
+                invoke="onWindowCommit"/>
+        <action id="windowClose"
+                caption="msg://actions.Cancel"
+                icon="icons/cancel.png"
+                invoke="onWindowClose"/>
+    </actions>
+    <layout expand="comment"
+            spacing="true">
+        <textArea id="comment"
+                  width="100%"/>
+        <hbox spacing="true">
+            <button id="okBtn"
+                    action="windowCommit"/>
+            <button id="cancelBtn"
+                    action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

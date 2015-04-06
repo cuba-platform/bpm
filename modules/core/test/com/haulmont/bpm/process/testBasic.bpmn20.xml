@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ Copyright (c) ${YEAR} ${PACKAGE_NAME}
+  -->
+
+<definitions id="definitions"
+             targetNamespace="http://activiti.org/bpmn20"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:cuba="http://schemas.haulmont.com/bpm/5.5/bpm.xsd">
+
+    <process id="basicTest" name="Basic test">
+
+        <extensionElements>
+            <activiti:eventListener class="com.haulmont.bpm.core.engine.listener.BpmActivitiListener"/>
+            <cuba:procRoles>
+                <cuba:procRole name="Manager" code="manager"/>
+                <cuba:procRole name="Operator" code="operator"/>
+            </cuba:procRoles>
+            <cuba:localizations>
+                <cuba:localization lang="en">
+                    <![CDATA[
+                            bookScanning = Book scanning
+                            managerApproval = Manager approval
+                            managerApproval.approve = Approve
+                            managerApproval.reject = Reject
+                            scanning = Scanning
+                    ]]>
+                </cuba:localization>
+                <cuba:localization lang="ru">
+                    <![CDATA[
+                            bookScanning = Сканирование книги
+                            managerApproval = Утверждение менеджером
+                            managerApproval.approve = Утвердить
+                            managerApproval.reject = Отклонить
+                    ]]>
+                </cuba:localization>
+            </cuba:localizations>
+        </extensionElements>
+
+        <startEvent id="start">
+            <extensionElements>
+                <cuba:form name="startProcessForm">
+                    <cuba:param name="procActorsVisible">true</cuba:param>
+                </cuba:form>
+            </extensionElements>
+        </startEvent>
+
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="setRolesScript" />
+
+        <scriptTask id="setRolesScript" scriptFormat="groovy">
+            <script>
+                execution.setVariable("managerApproval_role", "manager")
+                execution.setVariable("scanning_role", "operator")
+            </script>
+        </scriptTask>
+
+        <sequenceFlow id="flowSetRolesToApproval" sourceRef="setRolesScript" targetRef="managerApproval"/>
+
+        <userTask id="managerApproval" name="Manager approval"
+                  activiti:assignee="#{prm.getSingleTaskAssignee(bpmProcInstanceId, managerApproval_role)}">
+            <extensionElements>
+                <cuba:outcomes>
+                    <cuba:outcome name="approve">
+                        <cuba:form name="standardProcessForm">
+                            <cuba:param name="commentRequired">true</cuba:param>
+                            <cuba:param name="attachmentsVisible">true</cuba:param>
+                        </cuba:form>
+                    </cuba:outcome>
+                    <cuba:outcome name="reject">
+                        <cuba:form name="someOtherProcessForm">
+                        </cuba:form>
+                    </cuba:outcome>
+                </cuba:outcomes>
+            </extensionElements>
+        </userTask>
+
+        <sequenceFlow id="flow2" sourceRef="managerApproval" targetRef="scanningApprovedDecision" />
+
+        <exclusiveGateway id="scanningApprovedDecision" name="Scanning approved?" />
+
+        <sequenceFlow id="flow3" sourceRef="scanningApprovedDecision" targetRef="scanning">
+            <conditionExpression xsi:type="tFormalExpression">${outcome == 'approve'}</conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow id="flow4" sourceRef="scanningApprovedDecision" targetRef="theEnd">
+            <conditionExpression xsi:type="tFormalExpression">${outcome == 'reject'}</conditionExpression>
+        </sequenceFlow>
+
+        <userTask id="scanning" name="Scanning"
+                  activiti:assignee="#{prm.getSingleTaskAssignee(bpmProcInstanceId, scanning_role)}">
+            <extensionElements>
+                <cuba:outcomes>
+                    <cuba:outcome name="complete">
+                        <cuba:form name="standardProcessForm">
+                            <cuba:param name="commentRequired">true</cuba:param>
+                            <cuba:param name="attachmentsVisible">true</cuba:param>
+                        </cuba:form>
+                    </cuba:outcome>
+                </cuba:outcomes>
+            </extensionElements>
+        </userTask>
+
+        <sequenceFlow id="flow5" sourceRef="scanning" targetRef="theEnd"/>
+
+        <endEvent id="theEnd" />
+
+    </process>
+
+</definitions>

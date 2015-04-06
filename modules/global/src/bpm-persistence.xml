@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             version="2.0">
+    <persistence-unit name="bpm"
+                      transaction-type="RESOURCE_LOCAL">
+        <class>com.haulmont.bpm.entity.ProcDefinition</class>
+        <class>com.haulmont.bpm.entity.ProcRole</class>
+        <class>com.haulmont.bpm.entity.ProcInstance</class>
+        <class>com.haulmont.bpm.entity.ProcActor</class>
+        <class>com.haulmont.bpm.entity.ProcTask</class>
+        <class>com.haulmont.bpm.entity.ProcAttachmentType</class>
+        <class>com.haulmont.bpm.entity.ProcAttachment</class>
+    </persistence-unit>
+</persistence>

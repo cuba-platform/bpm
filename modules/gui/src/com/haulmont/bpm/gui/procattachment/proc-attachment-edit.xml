@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) YEAR PACKAGE_NAME
+  -->
+<window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
+        caption="msg://ProcAttachmentEdit.caption"
+        class="com.haulmont.bpm.gui.procattachment.ProcAttachmentEdit"
+        datasource="procAttachmentDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.haulmont.bpm.gui.procattachment">
+    <dsContext>
+        <datasource id="procAttachmentDs"
+                    class="com.haulmont.bpm.entity.ProcAttachment"
+                    view="procAttachment-edit"/>
+        <collectionDatasource id="attachmentTypesDs"
+                              class="com.haulmont.bpm.entity.ProcAttachmentType"
+                              view="_minimal"/>
+    </dsContext>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="procAttachmentDs">
+            <column width="350px">
+                <field id="type"
+                       optionsDatasource="attachmentTypesDs"/>
+                <field id="comment"
+                       rows="5"/>
+                <field id="author"/>
+            </column>
+        </fieldGroup>
+        <iframe id="windowActions"
+                screen="editWindowActions"/>
+    </layout>
+</window>

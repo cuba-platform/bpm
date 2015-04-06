@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/5.4/window.xsd"
+        caption="msg://editCaption"
+        class="com.haulmont.bpm.gui.proctask.ProcTaskEdit"
+        datasource="procTaskDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.haulmont.bpm.gui.proctask">
+    <dsContext>
+        <datasource id="procTaskDs"
+                    class="com.haulmont.bpm.entity.ProcTask"
+                    view="_local"/>
+    </dsContext>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="procTaskDs">
+            <column width="250px">
+                <field id="startDate"/>
+                <field id="endDate"/>
+                <field id="outcome"/>
+                <field id="actExecutionId"/>
+                <field id="name"/>
+                <field id="actTaskId"/>
+                <field id="comment"/>
+                <field id="canceled"
+                       width=""/>
+            </column>
+        </fieldGroup>
+        <iframe id="windowActions"
+                screen="editWindowActions"/>
+    </layout>
+</window>

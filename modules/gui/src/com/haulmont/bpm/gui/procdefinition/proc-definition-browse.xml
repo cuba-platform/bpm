@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/5.4/window.xsd"
+        caption="msg://browseCaption"
+        class="com.haulmont.bpm.gui.procdefinition.ProcDefinitionBrowse"
+        focusComponent="procDefinitionTable"
+        lookupComponent="procDefinitionTable"
+        messagesPack="com.haulmont.bpm.gui.procdefinition">
+    <dsContext>
+        <collectionDatasource id="procDefinitionsDs"
+                              class="com.haulmont.bpm.entity.ProcDefinition"
+                              view="procDefinition-browse">
+            <query>
+                <![CDATA[select e from bpm$ProcDefinition e]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <layout expand="procDefinitionTable"
+            spacing="true">
+        <filter id="filter"
+                datasource="procDefinitionsDs">
+            <properties include=".*"/>
+        </filter>
+        <table id="procDefinitionTable"
+               width="100%">
+            <actions>
+                <action id="edit"/>
+                <!--<action id="removeProcDefinition"-->
+                <!--caption="msg://actions.Remove"-->
+                <!--icon="icons/remove.png"-->
+                <!--invoke="removeProcDefinition"/>-->
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="actKey"/>
+                <column id="active"/>
+                <column id="actVersion"/>
+            </columns>
+            <rows datasource="procDefinitionsDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <upload id="deployUpload"
+                        caption="msg://deployProcess"/>
+                <button id="editBtn"
+                        action="procDefinitionTable.edit"/>
+                <button id="removeBtn"
+                        action="procDefinitionTable.remove"/>
+            </buttonsPanel>
+        </table>
+    </layout>
+</window>

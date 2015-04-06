@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (c) ${YEAR} ${PACKAGE_NAME}
+  -->
+
+<xs:schema
+        targetNamespace="http://schemas.haulmont.com/bpm/5.5/bpm.xsd"
+        xmlns="http://schemas.haulmont.com/bpm/5.5/bpm.xsd"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        attributeFormDefault="unqualified"
+        elementFormDefault="qualified">
+
+    <xs:annotation>
+        <xs:documentation><![CDATA[
+         Describes BPMN documents extension
+         ]]>
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="procRoles">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="procRole" minOccurs="0" maxOccurs="unbounded" type="procRoleType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="procRoleType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:element name="localizations">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="localization" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute name="lang" type="xs:string" use="required"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="form" type="formType"/>
+
+    <xs:complexType name="formType">
+        <xs:sequence>
+            <xs:element name="param" type="formParamType"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="formParamType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:element name="outcomes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="outcome" type="outcomeType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="outcomeType">
+        <xs:sequence>
+            <xs:element name="form" type="formType"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+</xs:schema>

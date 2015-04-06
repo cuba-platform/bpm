@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ Copyright (c) ${YEAR} ${PACKAGE_NAME}
+  -->
+
+<definitions id="definitions"
+             targetNamespace="http://activiti.org/bpmn20"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:haulmont="http://schemas.haulmont.com/bpmn">
+
+    <process id="bookScanning" name="Book scanning">
+
+        <startEvent id="start"/>
+
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="managerApproval" />
+
+        <userTask id="managerApproval" name="Manager approval" activiti:assignee="manager"/>
+
+        <sequenceFlow id="flow2" sourceRef="managerApproval" targetRef="scanning" />
+
+        <userTask id="scanning" name="Scanning by operator" activiti:assignee="operator"/>
+
+        <sequenceFlow id="flow5" sourceRef="scanning" targetRef="theEnd1"/>
+
+        <endEvent id="theEnd1" />
+
+    </process>
+
+</definitions>

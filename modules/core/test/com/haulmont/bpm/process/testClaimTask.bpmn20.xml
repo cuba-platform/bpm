@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ /*
+  ~ * Copyright (c) {YEAR} Haulmont Technology Ltd. All Rights Reserved.
+  ~ * Haulmont Technology proprietary and confidential.
+  ~ * Use is subject to license terms.
+  ~ */
+  -->
+
+<definitions id="definitions"
+             targetNamespace="http://activiti.org/bpmn20"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:cuba="http://schemas.haulmont.com/bpm/5.5/bpm.xsd">
+
+    <process id="miParallelTest" name="Multi instance parallel">
+
+        <extensionElements>
+            <activiti:eventListener class="com.haulmont.bpm.core.engine.listener.BpmActivitiListener"/>
+            <cuba:procRoles>
+                <cuba:procRole name="Manager" code="manager"/>
+                <cuba:procRole name="Operator" code="operator"/>
+            </cuba:procRoles>
+        </extensionElements>
+
+        <startEvent id="start"/>
+
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="setRolesScript" />
+
+        <scriptTask id="setRolesScript" scriptFormat="groovy">
+            <script>
+                execution.setVariable("managerApproval_role", "manager")
+                execution.setVariable("scanning_role", "operator")
+            </script>
+        </scriptTask>
+
+        <sequenceFlow id="flowSetRolesToApproval" sourceRef="setRolesScript" targetRef="managerApproval"/>
+
+        <userTask id="managerApproval" name="Manager approval"
+                  activiti:candidateUsers="#{prm.getTaskAssigneeList(bpmProcInstanceId, managerApproval_role)}">
+        </userTask>
+
+        <sequenceFlow id="flow2" sourceRef="managerApproval" targetRef="scanningApprovedDecision" />
+
+        <exclusiveGateway id="scanningApprovedDecision" name="Scanning approved?" />
+
+        <sequenceFlow id="flow3" sourceRef="scanningApprovedDecision" targetRef="scanning">
+            <conditionExpression xsi:type="tFormalExpression">${outcome == 'approve'}</conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow id="flow4" sourceRef="scanningApprovedDecision" targetRef="theEnd">
+            <conditionExpression xsi:type="tFormalExpression">${outcome == 'reject'}</conditionExpression>
+        </sequenceFlow>
+
+        <userTask id="scanning" name="Scanning"
+                  activiti:assignee="#{prm.getSingleTaskAssignee(bpmProcInstanceId, scanning_role)}">
+        </userTask>
+
+        <sequenceFlow id="flow5" sourceRef="scanning" targetRef="theEnd"/>
+
+        <endEvent id="theEnd" />
+
+    </process>
+
+</definitions>
