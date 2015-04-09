@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ Copyright (c) 2015 Haulmont Technology Ltd. All Rights Reserved.
+  ~   Haulmont Technology proprietary and confidential.
+  ~   Use is subject to license terms.
+  -->
+
+<definitions id="definitions"
+             targetNamespace="http://activiti.org/bpmn20"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:cuba="http://schemas.haulmont.com/bpm/5.5/bpm.xsd">
+
+    <process id="genericFormTest" name="Generic form test">
+
+        <extensionElements>
+            <activiti:eventListener class="com.haulmont.bpm.core.engine.listener.BpmActivitiListener"/>
+            <cuba:procRoles>
+                <cuba:procRole name="Manager" code="manager"/>
+                <cuba:procRole name="Operator" code="operator"/>
+            </cuba:procRoles>
+            <cuba:localizations>
+                <cuba:localization lang="en">
+                    <![CDATA[
+                    formCaption = Form caption
+                    lastName = Last name
+                    approve = Approve
+                    ]]>
+                </cuba:localization>
+                <cuba:localization lang="ru">
+                    <![CDATA[
+                    formCaption = Заголовок формы
+                    lastName = Фамилия
+                    approve = Утвердить
+                    ]]>
+                </cuba:localization>
+            </cuba:localizations>
+        </extensionElements>
+
+        <startEvent id="start">
+            <extensionElements>
+            <cuba:form name="genericProcessForm" caption="msg://formCaption">
+                <cuba:param name="lastName"
+                            caption="msg://lastName"
+                            type="string"
+                        required="true"/>
+                <cuba:param name="active"
+                            caption="Active"
+                            type="boolean"
+                            value="true"/>
+                <cuba:param name="age"
+                            caption="Age"
+                            type="int"/>
+                <cuba:param name="user"
+                            caption="User"
+                            type="entity"
+                            entityName="sec$User"
+                            entityLookupScreen="sec$User.lookup"/>
+                <cuba:param name="user2"
+                            caption="User 2"
+                            type="entity"
+                            entityName="sec$User"
+                            editable="false"
+                            value="sec$User-60885987-1b61-4247-94c7-dff348347f93"/>
+                <cuba:param name="createDateTime"
+                            caption="Create date time"
+                            type="dateTime"/>
+                <cuba:param name="createDate"
+                            caption="Create date"
+                            type="date"
+                        value="2014-01-31"/>
+                <cuba:param name="amount"
+                            caption="Amount"
+                            type="decimal"
+                        value="100.56"/>
+                <cuba:param name="someEnum"
+                            caption="Enum"
+                            type="enum"
+                            required="true"
+                            value="approve">
+                    <cuba:enumItem value="approve" caption="msg://approve"/>
+                    <cuba:enumItem value="reject" caption="msg://reject"/>
+                </cuba:param>
+            </cuba:form>
+            </extensionElements>
+        </startEvent>
+
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="setRolesScript" />
+
+        <scriptTask id="setRolesScript" scriptFormat="groovy">
+            <script>
+                execution.setVariable("managerApproval_role", "manager")
+                execution.setVariable("scanning_role", "operator")
+            </script>
+        </scriptTask>
+
+        <sequenceFlow id="flowSetRolesToApproval" sourceRef="setRolesScript" targetRef="managerApproval"/>
+
+        <userTask id="managerApproval" name="Manager approval"
+                  activiti:candidateUsers="#{prm.getTaskAssigneeList(bpmProcInstanceId, managerApproval_role)}">
+        </userTask>
+
+        <sequenceFlow id="flow2" sourceRef="managerApproval" targetRef="scanningApprovedDecision" />
+
+        <exclusiveGateway id="scanningApprovedDecision" name="Scanning approved?" />
+
+        <sequenceFlow id="flow3" sourceRef="scanningApprovedDecision" targetRef="scanning">
+            <conditionExpression xsi:type="tFormalExpression">${outcome == 'approve'}</conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow id="flow4" sourceRef="scanningApprovedDecision" targetRef="theEnd">
+            <conditionExpression xsi:type="tFormalExpression">${outcome == 'reject'}</conditionExpression>
+        </sequenceFlow>
+
+        <userTask id="scanning" name="Scanning"
+                  activiti:assignee="#{prm.getSingleTaskAssignee(bpmProcInstanceId, scanning_role)}">
+        </userTask>
+
+        <sequenceFlow id="flow5" sourceRef="scanning" targetRef="theEnd"/>
+
+        <endEvent id="theEnd" />
+
+    </process>
+
+</definitions>

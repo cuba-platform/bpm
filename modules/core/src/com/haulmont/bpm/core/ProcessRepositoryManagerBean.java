@@ -6,6 +6,7 @@ package com.haulmont.bpm.core;
 
 import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcRole;
+import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;

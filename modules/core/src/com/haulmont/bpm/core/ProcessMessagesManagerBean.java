@@ -4,7 +4,7 @@
 
 package com.haulmont.bpm.core;
 
-import com.haulmont.bpm.entity.ProcDefinition;
+import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.global.MessageTools;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import org.activiti.bpmn.model.ExtensionElement;
@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @ManagedBean(ProcessMessagesManager.NAME)
 public class ProcessMessagesManagerBean implements ProcessMessagesManager{
+
+    public static final String MARK = "msg://";
 
     @Inject
     protected ExtensionElementsManager extensionElementsManager;
@@ -74,6 +76,20 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
         cacheMsg(key, msg);
 
         return msg;
+    }
+
+    @Override
+    public String loadString(String actProcessDefinitionId, String key) {
+        return loadString(actProcessDefinitionId, key, getUserLocale());
+    }
+
+    @Override
+    public String loadString(String actProcessDefinitionId, String key, Locale locale) {
+        if (key.startsWith(MARK)) {
+            return getMessage(actProcessDefinitionId, key.substring(MARK.length()), locale);
+        } else {
+            return key;
+        }
     }
 
     protected void cacheMsg(String key, String msg) {

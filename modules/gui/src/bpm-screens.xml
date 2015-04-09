@@ -16,10 +16,8 @@
             template="com/haulmont/bpm/gui/proctask/proc-task-edit.xml"/>
     <screen id="standardProcessForm"
             template="/com/haulmont/bpm/gui/form/standard/standard-process-form.xml"/>
-    <screen id="startProcessForm"
-            template="/com/haulmont/bpm/gui/form/start/start-process-form.xml"/>
-    <screen id="procActorsProcessForm"
-            template="/com/haulmont/bpm/gui/form/procactor/proc-actors-process-form.xml"/>
+    <screen id="genericProcessForm"
+            template="/com/haulmont/bpm/gui/form/generic/generic-process-form.xml"/>
     <screen id="procActorsFrame"
             template="/com/haulmont/bpm/gui/procactor/proc-actors-frame.xml"/>
     <screen id="procTaskActionsFrame"

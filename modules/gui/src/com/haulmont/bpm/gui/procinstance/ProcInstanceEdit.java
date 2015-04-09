@@ -5,6 +5,7 @@ package com.haulmont.bpm.gui.procinstance;
 
 import com.google.common.base.Strings;
 import com.haulmont.bpm.entity.*;
+import com.haulmont.bpm.form.ProcFormDefinition;
 import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
 import com.haulmont.bpm.gui.form.ProcForm;
 import com.haulmont.bpm.gui.form.standard.StandardProcessForm;
@@ -13,6 +14,9 @@ import com.haulmont.bpm.gui.proctaskactions.ProcTaskActionsFrame;
 import com.haulmont.bpm.service.ProcessFormService;
 import com.haulmont.bpm.service.ProcessMessagesService;
 import com.haulmont.bpm.service.ProcessRuntimeService;
+import com.haulmont.chile.core.datatypes.Datatype;
+import com.haulmont.chile.core.datatypes.Datatypes;
+import com.haulmont.chile.core.datatypes.impl.StringDatatype;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
@@ -254,13 +258,19 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 if (startForm != null) {
                     Map<String, Object> formParams = new HashMap<>();
                     formParams.put("procInstance", getItem());
-                    formParams.putAll(startForm.getParams());
-                    final ProcForm window = openWindow(startForm.getName(), WindowManager.OpenType.DIALOG, formParams);
-                    ((AbstractWindow)window).addListener(new CloseListener() {
+                    formParams.put("formDefinition", startForm);
+                    final Window window = openWindow(startForm.getName(), WindowManager.OpenType.DIALOG, formParams);
+                    window.addListener(new CloseListener() {
                         @Override
                         public void windowClosed(String actionId) {
                             if (COMMIT_ACTION_ID.equals(actionId)) {
-                                _startProcess(window.getComment(), window.getProcessVariables());
+                                String comment = null;
+                                Map<String, Object> formResult = null;
+                                if (window instanceof ProcForm) {
+                                    comment = ((ProcForm) window).getComment();
+                                    formResult = ((ProcForm) window).getFormResult();
+                                }
+                                _startProcess(comment, formResult);
                             }
                         }
                     });

@@ -4,6 +4,7 @@
 
 package com.haulmont.bpm.core;
 
+import com.haulmont.bpm.exception.BpmException;
 import org.activiti.bpmn.model.*;
 import org.activiti.bpmn.model.Process;
 import org.activiti.engine.RepositoryService;

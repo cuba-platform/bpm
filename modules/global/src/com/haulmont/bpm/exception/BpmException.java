@@ -2,7 +2,7 @@
  * Copyright (c) ${YEAR} ${PACKAGE_NAME}
  */
 
-package com.haulmont.bpm.core;
+package com.haulmont.bpm.exception;
 
 /**
  * @author gorbunkov

@@ -28,4 +28,6 @@ public interface ProcessRuntimeService {
     long getActiveProcessesCount(ProcDefinition procDefinition);
 
     void claimProcTask(ProcTask procTask, User user);
+
+    Object evaluateExpression(String expression, String actExecutionId);
 }

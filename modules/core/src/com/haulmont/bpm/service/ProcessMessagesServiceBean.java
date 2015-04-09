@@ -26,4 +26,14 @@ public class ProcessMessagesServiceBean implements ProcessMessagesService {
     public String getMessage(String actProcessDefinitionId, String key, Locale locale) {
         return processMessagesManager.getMessage(actProcessDefinitionId, key, locale);
     }
+
+    @Override
+    public String loadString(String actProcessDefinitionId, String key, Locale locale) {
+        return processMessagesManager.loadString(actProcessDefinitionId, key, locale);
+    }
+
+    @Override
+    public String loadString(String actProcessDefinitionId, String key) {
+        return processMessagesManager.loadString(actProcessDefinitionId, key);
+    }
 }

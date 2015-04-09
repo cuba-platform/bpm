@@ -4,23 +4,17 @@
 
 package com.haulmont.bpm.core;
 
-import org.activiti.bpmn.model.BpmnModel;
+import com.haulmont.bpm.exception.BpmException;
 import org.activiti.engine.ManagementService;
-import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.impl.cmd.SetProcessDefinitionVersionCmd;
-import org.activiti.engine.impl.interceptor.CommandExecutor;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.apache.log4j.spi.RepositorySelector;
 
 import javax.annotation.ManagedBean;
 import javax.inject.Inject;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author gorbunkov

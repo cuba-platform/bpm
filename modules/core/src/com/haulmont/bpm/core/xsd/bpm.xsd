@@ -51,18 +51,39 @@
 
     <xs:complexType name="formType">
         <xs:sequence>
-            <xs:element name="param" type="formParamType"/>
+            <xs:element name="param" type="formParamType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="caption" type="xs:string"/>n
     </xs:complexType>
 
     <xs:complexType name="formParamType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="name" type="xs:string" use="required"/>
-            </xs:extension>
-        </xs:simpleContent>
+        <xs:sequence>
+            <xs:element name="enumItem" type="enumItemType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string"/>
+        <xs:attribute name="type" type="formParamDatatype"/>
+        <xs:attribute name="caption" type="xs:string"/>
+        <xs:attribute name="required" type="xs:boolean"/>
+        <xs:attribute name="editable" type="xs:boolean"/>
+        <xs:attribute name="entityName" type="xs:string"/>
+        <xs:attribute name="entityLookupScreen" type="xs:string"/>
     </xs:complexType>
+
+    <xs:simpleType name="formParamDatatype">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="string"/>
+            <xs:enumeration value="int"/>
+            <xs:enumeration value="long"/>
+            <xs:enumeration value="decimal"/>
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="date"/>
+            <xs:enumeration value="dateTime"/>
+            <xs:enumeration value="enum"/>
+            <xs:enumeration value="entity"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:element name="outcomes">
         <xs:complexType>
@@ -77,5 +98,10 @@
             <xs:element name="form" type="formType"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="enumItemType">
+        <xs:attribute name="caption" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
     </xs:complexType>
 </xs:schema>

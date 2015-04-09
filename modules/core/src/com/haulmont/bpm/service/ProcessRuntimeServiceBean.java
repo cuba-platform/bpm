@@ -52,4 +52,9 @@ public class ProcessRuntimeServiceBean implements ProcessRuntimeService {
     public void claimProcTask(ProcTask procTask, User user) {
         processRuntimeManager.claimProcTask(procTask, user);
     }
+
+    @Override
+    public Object evaluateExpression(String expression, String actExecutionId) {
+        return processRuntimeManager.evaluateExpression(expression, actExecutionId);
+    }
 }

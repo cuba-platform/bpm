@@ -4,9 +4,9 @@
 
 package com.haulmont.bpm.gui.form;
 
-import com.haulmont.cuba.gui.components.AbstractWindow;
+import com.haulmont.bpm.form.ProcFormParam;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,8 +15,7 @@ import java.util.Map;
  */
 public interface ProcForm {
 
-     String getComment();
+    String getComment();
 
-    public Map<String, Object> getProcessVariables();
-
+    Map<String, Object> getFormResult();
 }

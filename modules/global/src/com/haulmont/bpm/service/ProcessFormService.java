@@ -5,7 +5,7 @@ package com.haulmont.bpm.service;
 
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.entity.ProcDefinition;
-import com.haulmont.bpm.entity.ProcFormDefinition;
+import com.haulmont.bpm.form.ProcFormDefinition;
 
 import javax.annotation.Nullable;
 import java.util.Map;

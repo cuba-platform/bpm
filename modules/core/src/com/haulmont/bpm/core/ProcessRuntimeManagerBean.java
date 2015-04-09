@@ -8,15 +8,28 @@ import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.entity.ProcActor;
 import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcInstance;
+import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.security.entity.User;
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.delegate.Expression;
+import org.activiti.engine.delegate.VariableScope;
+import org.activiti.engine.impl.ProcessEngineImpl;
+import org.activiti.engine.impl.context.Context;
+import org.activiti.engine.impl.el.ExpressionManager;
+import org.activiti.engine.impl.juel.ExpressionFactoryImpl;
+import org.activiti.engine.impl.juel.SimpleContext;
+import org.activiti.engine.impl.juel.TreeValueExpression;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.spring.SpringProcessEngineConfiguration;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.Nullable;
@@ -220,9 +233,9 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             procTask.setComment(comment);
 
             if (processVariables != null) {
-                Map<String, Object> variables = runtimeService.getVariables(procTask.getActExecutionId());
-                variables.putAll(processVariables);
-                runtimeService.setVariables(procTask.getActExecutionId(), variables);
+                for (Map.Entry<String, Object> entry : processVariables.entrySet()) {
+                    runtimeService.setVariable(procTask.getActExecutionId(), entry.getKey(), entry.getValue());
+                }
             }
 
             taskService.complete(procTask.getActTaskId());
@@ -257,5 +270,19 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         } finally {
             tx.end();
         }
+    }
+
+    @Override
+    public Object evaluateExpression(String expression, String actExecutionId) {
+        ExpressionFactoryImpl expressionFactory = new ExpressionFactoryImpl();
+        SimpleContext simpleContext = new SimpleContext();
+
+        Map<String, Object> variables = runtimeService.getVariables(actExecutionId);
+        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+            simpleContext.setVariable(entry.getKey(), expressionFactory.createValueExpression(entry.getValue(), entry.getValue().getClass()));
+        }
+
+        TreeValueExpression valueExpression = expressionFactory.createValueExpression(simpleContext, expression, Object.class);
+        return valueExpression.getValue(simpleContext);
     }
 }

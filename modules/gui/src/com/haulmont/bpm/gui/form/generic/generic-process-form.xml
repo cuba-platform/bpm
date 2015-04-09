@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2015 Haulmont Technology Ltd. All Rights Reserved.
+  ~   Haulmont Technology proprietary and confidential.
+  ~   Use is subject to license terms.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
+        caption="msg://caption"
+        class="com.haulmont.bpm.gui.form.generic.GenericProcessForm"
+        messagesPack="com.haulmont.bpm.gui.form.generic">
+    <dsContext/>
+    <actions>
+        <action id="windowCommit"
+                caption="actions.Ok"
+                icon="icons/ok.png"
+                invoke="commit"/>
+        <action id="windowClose"
+                caption="actions.Cancel"
+                icon="icons/cancel.png"
+                invoke="cancel"/>
+    </actions>
+    <layout spacing="true">
+
+        <hbox spacing="true">
+            <button id="okBtn"
+                    action="windowCommit"/>
+            <button id="cancelBtn"
+                    action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

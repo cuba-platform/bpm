@@ -5,6 +5,8 @@ package com.haulmont.bpm.gui.form.standard;
 
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
+import com.haulmont.bpm.form.ProcFormDefinition;
+import com.haulmont.bpm.form.ProcFormParam;
 import com.haulmont.bpm.gui.form.AbstractProcForm;
 import com.haulmont.bpm.gui.procactor.ProcActorsFrame;
 import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
@@ -42,14 +44,8 @@ public class StandardProcessForm extends AbstractProcForm {
     @WindowParam(name = "procInstance")
     protected ProcInstance procInstance;
 
-    @WindowParam(name = "procActorsVisible")
-    protected String procActorsVisibleParam;
-
-    @WindowParam(name = "procAttachmentsVisible")
-    protected String procAttachmentsVisibleParam;
-
-    @WindowParam(name = "commentRequired")
-    protected String commentRequired;
+    @WindowParam(name = "formDefinition", required = true)
+    protected ProcFormDefinition formDefinition;
 
     protected boolean procActorsVisible;
     protected boolean procAttachmentsVisible;
@@ -61,12 +57,16 @@ public class StandardProcessForm extends AbstractProcForm {
         getDialogParams().setResizable(true);
         getDialogParams().setWidth(700);
 
-        if ("true".equals(commentRequired)) {
+        ProcFormParam commentRequiredParam = formDefinition.getParams().get("commentRequired");
+        if (commentRequiredParam != null && "true".equals(commentRequiredParam.getValue())) {
             comment.setRequired(true);
         }
 
-        procActorsVisible = "true".equals(procActorsVisibleParam);
-        procAttachmentsVisible = "true".equals(procAttachmentsVisibleParam);
+        ProcFormParam procActorsVisibleParam = formDefinition.getParams().get("procActorsVisible");
+        procActorsVisible = procActorsVisibleParam != null && "true".equals(procActorsVisibleParam.getValue());
+
+        ProcFormParam procAttachmentsVisibleParam = formDefinition.getParams().get("attachmentsVisible");
+        procAttachmentsVisible = procAttachmentsVisibleParam != null && "true".equals(procAttachmentsVisibleParam.getValue());
 
         procActorsLabel.setVisible(procActorsVisible);
         procActorsFrame.setVisible(procActorsVisible);
@@ -92,7 +92,7 @@ public class StandardProcessForm extends AbstractProcForm {
     }
 
     @Override
-    public Map<String, Object> getProcessVariables() {
+    public Map<String, Object> getFormResult() {
         return new HashMap<>();
     }
 

@@ -43,4 +43,6 @@ public interface ProcessRuntimeManager {
     void claimProcTask(ProcTask procTask, User user);
 
     long getActiveProcessesCount(ProcDefinition procDefinition);
+
+    Object evaluateExpression(String expression, String actExecutionId);
 }

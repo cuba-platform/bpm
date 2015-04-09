@@ -17,4 +17,8 @@ public interface ProcessMessagesService {
     String getMessage(String actProcessdefinitionId, String key);
 
     String getMessage(String actProcessDefinitionId, String key, Locale locale);
+
+    String loadString(String actProcessDefinitionId, String key);
+
+    String loadString(String actProcessDefinitionId, String key, Locale locale);
 }

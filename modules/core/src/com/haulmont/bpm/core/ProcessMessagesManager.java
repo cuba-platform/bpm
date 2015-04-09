@@ -17,7 +17,11 @@ public interface ProcessMessagesManager {
 
     String NAME = "bpm_ProcessMessagesManager";
 
-    String getMessage(String actProcessDefinitionIdn, String key);
+    String getMessage(String actProcessDefinitionId, String key);
 
     String getMessage(String actProcessDefinitionId, String key, Locale locale);
+
+    String loadString(String actProcessDefinitionId, String key);
+
+    String loadString(String actProcessDefinitionId, String key, Locale locale);
 }

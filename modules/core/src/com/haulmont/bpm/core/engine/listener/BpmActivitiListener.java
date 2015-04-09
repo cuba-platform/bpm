@@ -5,7 +5,7 @@
 package com.haulmont.bpm.core.engine.listener;
 
 import com.google.common.base.Strings;
-import com.haulmont.bpm.core.BpmException;
+import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.bpm.core.ProcessRepositoryManager;
 import com.haulmont.bpm.core.ProcessRuntimeManager;
 import com.haulmont.bpm.entity.ProcRole;
@@ -118,6 +118,8 @@ public class BpmActivitiListener implements ActivitiEventListener {
             throw new BpmException("Process instance with id " + bpmProcInstanceId + " not found");
 
         String roleCode = (String) task.getExecution().getVariable(task.getTaskDefinitionKey() + "_role");
+        if (Strings.isNullOrEmpty(roleCode))
+            throw new BpmException("Role code for task " + task.getTaskDefinitionKey() + " not defined");
         ProcActor procActor = processRuntimeManager.findProcActor(bpmProcInstanceId, roleCode, UUID.fromString(assignee));
         if (procActor == null)
             throw new BpmException("ProcActor " + roleCode + " not defined");

@@ -6,7 +6,7 @@
 
 package com.haulmont.bpm.gui.proctaskactions;
 
-import com.haulmont.bpm.entity.ProcFormDefinition;
+import com.haulmont.bpm.form.ProcFormDefinition;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.gui.form.ProcForm;
 import com.haulmont.bpm.service.ProcessFormService;
@@ -135,17 +135,22 @@ public class ProcTaskActionsFrame extends AbstractFrame {
         public void actionPerform(Component component) {
             if (formDefinition != null) {
                 Map<String, Object> formParams = new HashMap<>();
-                formParams.putAll(formDefinition.getParams());
+                formParams.put("formDefinition", formDefinition);
                 formParams.put("procTask", procTask);
+                formParams.put("procInstance", procTask.getProcInstance());
 
                 final Window procForm = openWindow(formDefinition.getName(), WindowManager.OpenType.DIALOG, formParams);
                 procForm.addListener(new Window.CloseListener() {
                     @Override
                     public void windowClosed(String actionId) {
                         if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                            String comment = (procForm instanceof ProcForm) ? ((ProcForm) procForm).getComment() : null;
-                            Map<String, Object> processVariables  = (procForm instanceof ProcForm) ? ((ProcForm) procForm).getProcessVariables() : null;
-                            processRuntimeService.completeProcTask(procTask, outcome, comment, processVariables);
+                            String comment = null;
+                            Map<String, Object> formResult = null;
+                            if (procForm instanceof ProcForm) {
+                                comment = ((ProcForm) procForm).getComment();
+                                formResult = ((ProcForm) procForm).getFormResult();
+                            }
+                            processRuntimeService.completeProcTask(procTask, outcome, comment, formResult);
                             fireActionListeners();
                         }
                     }
