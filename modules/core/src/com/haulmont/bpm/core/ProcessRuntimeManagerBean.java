@@ -4,16 +4,15 @@
 
 package com.haulmont.bpm.core;
 
-import com.haulmont.bpm.entity.ProcTask;
-import com.haulmont.bpm.entity.ProcActor;
-import com.haulmont.bpm.entity.ProcDefinition;
-import com.haulmont.bpm.entity.ProcInstance;
+import com.google.common.base.Strings;
+import com.haulmont.bpm.entity.*;
 import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.security.app.Authenticated;
 import com.haulmont.cuba.security.entity.User;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
@@ -27,17 +26,16 @@ import org.activiti.engine.impl.el.ExpressionManager;
 import org.activiti.engine.impl.juel.ExpressionFactoryImpl;
 import org.activiti.engine.impl.juel.SimpleContext;
 import org.activiti.engine.impl.juel.TreeValueExpression;
+import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.IdentityLink;
 import org.activiti.spring.SpringProcessEngineConfiguration;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author gorbunkov
@@ -285,4 +283,120 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         TreeValueExpression valueExpression = expressionFactory.createValueExpression(simpleContext, expression, Object.class);
         return valueExpression.getValue(simpleContext);
     }
+
+    @Override
+    @Authenticated
+    public ProcTask createProcTask(TaskEntity actTask) {
+        String assignee = actTask.getAssignee();
+        if (Strings.isNullOrEmpty(assignee))
+            throw new BpmException("No assignee defined for task " + actTask.getTaskDefinitionKey() + " with id = " + actTask.getId());
+
+        UUID bpmProcInstanceId = (UUID) actTask.getVariable("bpmProcInstanceId");
+        if (bpmProcInstanceId == null)
+            throw new BpmException("No 'bpmProcInstanceId' process variable defined for activiti process " + actTask.getProcessInstanceId());
+        EntityManager em = persistence.getEntityManager();
+
+        ProcInstance procInstance = em.find(ProcInstance.class, bpmProcInstanceId);
+        if (procInstance == null)
+            throw new BpmException("Process instance with id " + bpmProcInstanceId + " not found");
+
+        String roleCode = (String) actTask.getExecution().getVariable(actTask.getTaskDefinitionKey() + "_role");
+        if (Strings.isNullOrEmpty(roleCode))
+            throw new BpmException("Role code for task " + actTask.getTaskDefinitionKey() + " not defined");
+        ProcActor procActor = findProcActor(bpmProcInstanceId, roleCode, UUID.fromString(assignee));
+        if (procActor == null)
+            throw new BpmException("ProcActor " + roleCode + " not defined");
+
+        Metadata metadata = AppBeans.get(Metadata.class);
+        ProcTask procTask = metadata.create(ProcTask.class);
+        procTask.setProcActor(procActor);
+        procTask.setProcInstance(procInstance);
+        procTask.setActExecutionId(actTask.getExecutionId());
+        procTask.setName(actTask.getTaskDefinitionKey());
+        procTask.setActTaskId(actTask.getId());
+        procTask.setStartDate(AppBeans.get(TimeSource.class).currentTimestamp());
+        procTask.setActProcessDefinitionId(actTask.getProcessDefinitionId());
+        em.persist(procTask);
+
+        return procTask;
+    }
+
+    @Override
+    @Authenticated
+    public void assignProcTask(TaskEntity actTask) {
+        UUID bpmProcTaskId = (UUID) actTask.getVariableLocal("bpmProcTaskId");
+
+        EntityManager em = persistence.getEntityManager();
+        ProcTask procTask = em.find(ProcTask.class, bpmProcTaskId);
+
+        UUID bpmProcInstanceId = (UUID) actTask.getVariable("bpmProcInstanceId");
+        if (bpmProcInstanceId == null)
+            throw new BpmException("No 'bpmProcInstanceId' process variable defined for activiti process " + actTask.getProcessInstanceId());
+
+        ProcInstance procInstance = em.find(ProcInstance.class, bpmProcInstanceId);
+        if (procInstance == null)
+            throw new BpmException("Process instance with id " + bpmProcInstanceId + " not found");
+
+        String roleCode = (String) actTask.getExecution().getVariable(actTask.getTaskDefinitionKey() + "_role");
+        ProcActor procActor = findProcActor(bpmProcInstanceId, roleCode, UUID.fromString(actTask.getAssignee()));
+        if (procActor == null) {
+            User assigneeUser = em.find(User.class, UUID.fromString(actTask.getAssignee()));
+            procActor = metadata.create(ProcActor.class);
+            procActor.setProcInstance(procInstance);
+            procActor.setProcRole(findProcRole(roleCode));
+            procActor.setUser(assigneeUser);
+            em.persist(procActor);
+        }
+
+        procTask.setProcActor(procActor);
+        procTask.setClaimDate(timeSource.currentTimestamp());
+    }
+
+    protected ProcRole findProcRole(String roleCode) {
+        EntityManager em = persistence.getEntityManager();
+        return (ProcRole) em.createQuery("select pr from bpm$ProcRole pr where pr.code = :code")
+                .setParameter("code", roleCode)
+                .getFirstResult();
+    }
+
+    @Override
+    @Authenticated
+    public ProcTask createNotAssignedProcTask(TaskEntity actTask) {
+        Set<User> candidateUsers = getCandidateUsers(actTask);
+
+        UUID bpmProcInstanceId = (UUID) actTask.getVariable("bpmProcInstanceId");
+        if (bpmProcInstanceId == null)
+            throw new BpmException("No 'bpmProcInstanceId' process variable defined for activiti process " + actTask.getProcessInstanceId());
+        EntityManager em = persistence.getEntityManager();
+
+        ProcInstance procInstance = em.find(ProcInstance.class, bpmProcInstanceId);
+        if (procInstance == null)
+            throw new BpmException("Process instance with id " + bpmProcInstanceId + " not found");
+
+        Metadata metadata = AppBeans.get(Metadata.class);
+        ProcTask procTask = metadata.create(ProcTask.class);
+        procTask.setProcInstance(procInstance);
+        procTask.setActExecutionId(actTask.getExecutionId());
+        procTask.setName(actTask.getTaskDefinitionKey());
+        procTask.setActTaskId(actTask.getId());
+        procTask.setActProcessDefinitionId(actTask.getProcessDefinitionId());
+        procTask.setStartDate(AppBeans.get(TimeSource.class).currentTimestamp());
+        procTask.setCandidateUsers(candidateUsers);
+        em.persist(procTask);
+
+        return procTask;
+    }
+
+    protected Set<User> getCandidateUsers(TaskEntity task) {
+        EntityManager em = persistence.getEntityManager();
+        Set<IdentityLink> candidates = task.getCandidates();
+        Set<User> candidateUsers = new HashSet<>();
+        for (IdentityLink candidate : candidates) {
+            User user = em.find(User.class, UUID.fromString(candidate.getUserId()));
+            if (user != null)
+                candidateUsers.add(user);
+        }
+        return candidateUsers;
+    }
+
 }

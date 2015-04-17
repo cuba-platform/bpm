@@ -8,7 +8,9 @@ import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.entity.ProcActor;
 import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcInstance;
+import com.haulmont.cuba.security.app.Authenticated;
 import com.haulmont.cuba.security.entity.User;
+import org.activiti.engine.impl.persistence.entity.TaskEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -45,4 +47,13 @@ public interface ProcessRuntimeManager {
     long getActiveProcessesCount(ProcDefinition procDefinition);
 
     Object evaluateExpression(String expression, String actExecutionId);
+
+    @Authenticated
+    ProcTask createProcTask(TaskEntity actTask);
+
+    @Authenticated
+    void assignProcTask(TaskEntity taskEntity);
+
+    @Authenticated
+    ProcTask createNotAssignedProcTask(TaskEntity taskEntity);
 }
