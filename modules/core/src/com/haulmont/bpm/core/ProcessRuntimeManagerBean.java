@@ -116,7 +116,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         try {
             EntityManager em = persistence.getEntityManager();
             runtimeService.deleteProcessInstance(procInstance.getActProcessInstanceId(), comment);
-            procInstance.setCanceled(true);
+            procInstance.setCancelled(true);
             procInstance.setActive(false);
             procInstance.setEndDate(timeSource.currentTimestamp());
             procInstance.setCancelComment(comment);
@@ -128,7 +128,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
 
             for (ProcTask procTask : procTasks) {
                 procTask.setEndDate(timeSource.currentTimestamp());
-                procTask.setCanceled(true);
+                procTask.setCancelled(true);
             }
 
             em.merge(procInstance);

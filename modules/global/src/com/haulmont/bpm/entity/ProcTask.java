@@ -66,8 +66,8 @@ public class ProcTask extends StandardEntity {
     @Column(name = "COMMENT_")
     protected String comment;
 
-    @Column(name = "CANCELED")
-    protected Boolean canceled;
+    @Column(name = "CANCELLED")
+    protected Boolean cancelled;
 
     @JoinTable(name = "BPM_PROC_TASK_USER_LINK",
         joinColumns = @JoinColumn(name = "PROC_TASK_ID"),
@@ -129,12 +129,12 @@ public class ProcTask extends StandardEntity {
     }
 
 
-    public void setCanceled(Boolean canceled) {
-        this.canceled = canceled;
+    public void setCancelled(Boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
-    public Boolean getCanceled() {
-        return canceled;
+    public Boolean getCancelled() {
+        return cancelled;
     }
 
 

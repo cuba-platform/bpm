@@ -60,7 +60,7 @@
                            editable="false"/>
                     <field id="active"
                            editable="false"/>
-                    <field id="canceled"
+                    <field id="cancelled"
                            editable="false"/>
                     <field id="startComment"
                            editable="false"/>

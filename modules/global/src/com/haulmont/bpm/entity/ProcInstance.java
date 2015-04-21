@@ -44,8 +44,8 @@ public class ProcInstance extends StandardEntity {
     @Column(name = "ACTIVE")
     protected Boolean active;
 
-    @Column(name = "CANCELED")
-    protected Boolean canceled;
+    @Column(name = "CANCELLED")
+    protected Boolean cancelled;
 
     @Column(name = "ACT_PROCESS_INSTANCE_ID")
     protected String actProcessInstanceId;
@@ -116,12 +116,12 @@ public class ProcInstance extends StandardEntity {
     }
 
 
-    public void setCanceled(Boolean canceled) {
-        this.canceled = canceled;
+    public void setCancelled(Boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
-    public Boolean getCanceled() {
-        return canceled;
+    public Boolean getCancelled() {
+        return cancelled;
     }
 
 

@@ -22,7 +22,7 @@
                 <field id="name"/>
                 <field id="actTaskId"/>
                 <field id="comment"/>
-                <field id="canceled"
+                <field id="cancelled"
                        width=""/>
             </column>
         </fieldGroup>
