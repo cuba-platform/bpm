@@ -16,13 +16,13 @@ import com.haulmont.chile.core.annotations.NamePattern;
 @Table(name = "BPM_PROC_ATTACHMENT_TYPE")
 @Entity(name = "bpm$ProcAttachmentType")
 public class ProcAttachmentType extends StandardEntity {
+    private static final long serialVersionUID = 5599792799275318734L;
+
     @Column(name = "NAME", nullable = false)
     protected String name;
 
     @Column(name = "CODE")
     protected String code;
-
-    private static final long serialVersionUID = 5599792799275318734L;
 
     public void setName(String name) {
         this.name = name;
