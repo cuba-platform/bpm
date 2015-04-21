@@ -6,17 +6,13 @@ package com.haulmont.bpm.gui.procinstance;
 import com.google.common.base.Strings;
 import com.haulmont.bpm.entity.*;
 import com.haulmont.bpm.form.ProcFormDefinition;
-import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
 import com.haulmont.bpm.gui.form.ProcForm;
-import com.haulmont.bpm.gui.form.standard.StandardProcessForm;
 import com.haulmont.bpm.gui.procactor.ProcActorsFrame;
+import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
 import com.haulmont.bpm.gui.proctaskactions.ProcTaskActionsFrame;
 import com.haulmont.bpm.service.ProcessFormService;
 import com.haulmont.bpm.service.ProcessMessagesService;
 import com.haulmont.bpm.service.ProcessRuntimeService;
-import com.haulmont.chile.core.datatypes.Datatype;
-import com.haulmont.chile.core.datatypes.Datatypes;
-import com.haulmont.chile.core.datatypes.impl.StringDatatype;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
@@ -32,6 +28,7 @@ import com.haulmont.cuba.gui.data.impl.DsListenerAdapter;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.cuba.security.entity.User;
 import com.haulmont.cuba.security.global.UserSession;
+import org.apache.commons.lang.BooleanUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -105,7 +102,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
             procTaskActionsFrame.addProcessAction(new StartProcessAction());
         }
 
-        if (getItem().getActive() != null) {
+        if (BooleanUtils.isTrue(getItem().getActive())) {
             procTaskActionsFrame.addProcessAction(new CancelProcessAction());
         }
 
@@ -151,6 +148,8 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     }
 
     protected void initProcTaskActionsFrame() {
+        procTaskActionsFrame.removeAllActions();
+
         for (ProcTask procTask : procTasksDs.getItems()) {
             if (userHasActionsOnTask(procTask)) {
                 procTaskActionsFrame.addProcTaskActions(procTask);
@@ -303,13 +302,18 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         public void actionPerform(Component component) {
             if (commit()) {
                 Map<String, Object> formParams = new HashMap<>();
-                formParams.put("commentRequired", "true");
-                final StandardProcessForm standardProcessForm = openWindow("standardProcessForm", WindowManager.OpenType.DIALOG, formParams);
-                standardProcessForm.addListener(new CloseListener() {
+                ProcFormDefinition cancelForm = processFormService.getCancelForm(getItem().getProcDefinition());
+                formParams.put("formDefinition", cancelForm);
+                final Window cancelProcessForm = openWindow(cancelForm.getName(), WindowManager.OpenType.DIALOG, formParams);
+                cancelProcessForm.addListener(new CloseListener() {
                     @Override
                     public void windowClosed(String actionId) {
                         if (COMMIT_ACTION_ID.equals(actionId)) {
-                            ProcInstance reloadedProcInstance = processRuntimeService.cancelProcess(getItem(), standardProcessForm.getComment());
+                            String comment = null;
+                            if (cancelProcessForm instanceof ProcForm) {
+                                comment = ((ProcForm) cancelProcessForm).getComment();
+                            }
+                            ProcInstance reloadedProcInstance = processRuntimeService.cancelProcess(getItem(), comment);
                             setItem(reloadedProcInstance);
                         }
                     }

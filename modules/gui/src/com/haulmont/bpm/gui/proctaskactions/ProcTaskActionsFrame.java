@@ -118,6 +118,11 @@ public class ProcTaskActionsFrame extends AbstractFrame {
         this.orientation = orientation;
     }
 
+    public void removeAllActions() {
+        if (actionsBox != null)
+            actionsBox.removeAll();
+    }
+
     protected class ProcTaskAction extends BaseAction {
 
         private ProcTask procTask;
