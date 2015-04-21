@@ -8,6 +8,7 @@ import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.form.ProcFormDefinition;
 import com.haulmont.bpm.form.ProcFormParam;
+import com.haulmont.cuba.core.global.Messages;
 import org.activiti.bpmn.model.ExtensionElement;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.task.Task;
@@ -30,13 +31,16 @@ public class ProcessFromManagerBean implements ProcessFormManager {
     @Inject
     protected TaskService taskService;
 
+    @Inject
+    protected Messages messages;
+
     @Override
     public Map<String, ProcFormDefinition> getOutcomesWithForms(ProcTask procTask) {
         Map<String, ProcFormDefinition> result = new HashMap<>();
 
         Task task = taskService.createTaskQuery().taskId(procTask.getActTaskId()).singleResult();
 
-        Map<String, List<ExtensionElement>> extensionElements = extensionElementsManager.getTaskExtensionElements(task.getProcessDefinitionId(), task.getTaskDefinitionKey());
+        Map<String, List<ExtensionElement>> extensionElements = extensionElementsManager.getFlowElementExtensionElements(task.getProcessDefinitionId(), task.getTaskDefinitionKey());
         List<ExtensionElement> outcomesElements = extensionElements.get("outcomes");
         if (outcomesElements != null) {
             ExtensionElement outcomesElement = outcomesElements.get(0);
@@ -62,6 +66,20 @@ public class ProcessFromManagerBean implements ProcessFormManager {
             return extractProcFormDefinition(formElements.get(0), procDefinition.getActId());
         }
         return null;
+    }
+
+    @Override
+    public ProcFormDefinition getCancelForm(ProcDefinition procDefinition) {
+        ProcFormDefinition procFormDefinition = new ProcFormDefinition();
+        procFormDefinition.setName("standardProcessForm");
+        procFormDefinition.setCaption(messages.getMessage(ProcessFromManagerBean.class, "cancelProcess"));
+        procFormDefinition.setActProcessDefinitionId(procDefinition.getActId());
+        ProcFormParam commentRequiredParam = new ProcFormParam();
+        commentRequiredParam.setName("commentRequired");
+        commentRequiredParam.setValue("true");
+        commentRequiredParam.setTypeName("boolean");
+        procFormDefinition.getParams().put("commentRequired", commentRequiredParam);
+        return procFormDefinition;
     }
 
     protected ProcFormDefinition extractProcFormDefinition(ExtensionElement formElement, String actProcessDefinitionId) {
