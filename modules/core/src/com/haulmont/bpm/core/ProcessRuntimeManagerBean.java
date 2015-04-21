@@ -21,6 +21,7 @@ import org.activiti.engine.impl.juel.TreeValueExpression;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.IdentityLink;
+import org.apache.commons.lang.BooleanUtils;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.Nullable;
@@ -53,6 +54,11 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     protected Metadata metadata;
 
     @Override
+    public ProcInstance startProcess(ProcInstance procInstance, String comment) {
+        return startProcess(procInstance, comment, new HashMap<String, Object>());
+    }
+
+    @Override
     public ProcInstance startProcess(ProcInstance procInstance, String comment, Map<String, Object> variables) {
         if (PersistenceHelper.isNew(procInstance)) {
             throw new IllegalArgumentException("procInstance entity should be persisted");
@@ -68,46 +74,30 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             if (procInstance.getProcDefinition() == null) {
                 throw new BpmException("Cannot start process. ProcDefinition property is null.");
             }
+            if (BooleanUtils.isTrue(procInstance.getActive())) {
+                throw new BpmException("Cannot start process. Process already started.");
+            }
             if (!procInstance.getProcDefinition().getActive()) {
                 throw new BpmException("Cannot start process. Process definition is not active");
             }
 
-            _startProcess(procInstance, comment, variables);
+            if (variables == null)
+                variables = new HashMap<>();
 
+            variables.put("bpmProcInstanceId", procInstance.getId());
+            ProcessInstance activitiProcessInstance = runtimeService.startProcessInstanceById(procInstance.getProcDefinition().getActId(), variables);
+            procInstance.setActProcessInstanceId(activitiProcessInstance.getProcessInstanceId());
+            procInstance.setStartComment(comment);
+            procInstance.setActive(true);
+            procInstance.setStartDate(timeSource.currentTimestamp());
+            procInstance.setStartedBy(userSessionSource.getUserSession().getCurrentOrSubstitutedUser());
             procInstance = em.merge(procInstance);
+
             tx.commit();
             return procInstance;
         } finally {
             tx.end();
         }
-    }
-
-//    @Override
-//    public ProcInstance startProcess(ProcDefinition procDefinition, String comment, Map<String, Object> variables) {
-//        Transaction tx = persistence.createTransaction();
-//        try {
-//            EntityManager em = persistence.getEntityManager();
-//            ProcInstance procInstance = metadata.create(ProcInstance.class);
-//            procInstance.setProcDefinition(procDefinition);
-//
-//            _startProcess(procInstance, null, variables);
-//
-//            em.persist(procInstance);
-//            tx.commit();
-//            return procInstance;
-//        } finally {
-//            tx.end();
-//        }
-//    }
-
-    protected void _startProcess(ProcInstance procInstance, String comment, Map<String, Object> variables) {
-        variables.put("bpmProcInstanceId", procInstance.getId());
-        ProcessInstance activitiProcessInstance = runtimeService.startProcessInstanceById(procInstance.getProcDefinition().getActId(), variables);
-        procInstance.setActProcessInstanceId(activitiProcessInstance.getProcessInstanceId());
-        procInstance.setStartComment(comment);
-        procInstance.setActive(true);
-        procInstance.setStartDate(timeSource.currentTimestamp());
-        procInstance.setStartedBy(userSessionSource.getUserSession().getCurrentOrSubstitutedUser());
     }
 
     @Override

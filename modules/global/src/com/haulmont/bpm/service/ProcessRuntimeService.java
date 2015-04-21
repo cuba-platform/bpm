@@ -17,6 +17,8 @@ import java.util.Map;
 public interface ProcessRuntimeService {
     String NAME = "bpm_ProcessRuntimeService";
 
+    ProcInstance startProcess(ProcInstance procInstance, String comment);
+
     ProcInstance startProcess(ProcInstance procInstance, String comment, Map<String, Object> params);
 
     ProcInstance cancelProcess(ProcInstance procInstance, String comment);

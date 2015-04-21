@@ -23,6 +23,11 @@ public class ProcessRuntimeServiceBean implements ProcessRuntimeService {
     protected ProcessRuntimeManager processRuntimeManager;
 
     @Override
+    public ProcInstance startProcess(ProcInstance procInstance, String comment) {
+        return processRuntimeManager.startProcess(procInstance, comment);
+    }
+
+    @Override
     public ProcInstance startProcess(ProcInstance procInstance, String comment, Map<String, Object> params) {
         return processRuntimeManager.startProcess(procInstance, comment, params);
     }

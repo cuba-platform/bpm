@@ -42,10 +42,10 @@ public class ProcInstance extends StandardEntity {
     protected UUID entityId;
 
     @Column(name = "ACTIVE")
-    protected Boolean active;
+    protected Boolean active = false;
 
     @Column(name = "CANCELLED")
-    protected Boolean cancelled;
+    protected Boolean cancelled = false;
 
     @Column(name = "ACT_PROCESS_INSTANCE_ID")
     protected String actProcessInstanceId;

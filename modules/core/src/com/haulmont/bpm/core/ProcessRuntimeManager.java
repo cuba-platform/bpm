@@ -25,6 +25,8 @@ public interface ProcessRuntimeManager {
 
     String NAME = "bpm_ProcessRuntimeManager";
 
+    ProcInstance startProcess(ProcInstance procInstance, String comment);
+
     ProcInstance startProcess(ProcInstance procInstance, String comment, Map<String, Object> variables);
 
 //    ProcInstance startProcess(ProcDefinition procDefinition, String comment, Map<String, Object> variables);

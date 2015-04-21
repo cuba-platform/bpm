@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<views xmlns="http://schemas.haulmont.com/cuba/5.4/view.xsd">
+<views xmlns="http://schemas.haulmont.com/cuba/5.5/view.xsd">
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           extends="_local"
           name="procDefinition-start">
-        <property name="procRoles"
-                  view="_local"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcInstance"
           extends="_local"
