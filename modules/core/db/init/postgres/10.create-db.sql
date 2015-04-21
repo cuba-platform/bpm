@@ -1,5 +1,4 @@
--- begin BPM_PROC_DEFINITION
-create table BPM_PROC_DEFINITION (
+-- begin BPM_PROC_DEFINITIONcreate table BPM_PROC_DEFINITION (
     ID uuid,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -12,13 +11,12 @@ create table BPM_PROC_DEFINITION (
     NAME varchar(255),
     ACT_ID varchar(255),
     ACT_KEY varchar(255),
-    XML text not null,
     ACTIVE boolean,
     ACT_VERSION integer,
+    ACT_DEPLOYMENT_ID varchar(255),
     --
     primary key (ID)
-)^
--- end BPM_PROC_DEFINITION
+)^-- end BPM_PROC_DEFINITION
 -- begin BPM_PROC_ROLE
 create table BPM_PROC_ROLE (
     ID uuid,
@@ -38,8 +36,7 @@ create table BPM_PROC_ROLE (
     primary key (ID)
 )^-- end BPM_PROC_ROLE
 
--- begin BPM_PROC_INSTANCE
-create table BPM_PROC_INSTANCE (
+-- begin BPM_PROC_INSTANCEcreate table BPM_PROC_INSTANCE (
     ID uuid,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -52,7 +49,7 @@ create table BPM_PROC_INSTANCE (
     ENTITY_NAME varchar(255),
     ENTITY_ID uuid,
     ACTIVE boolean,
-    CANCELED boolean,
+    CANCELLED boolean,
     ACT_PROCESS_INSTANCE_ID varchar(255),
     START_DATE timestamp,
     END_DATE timestamp,
@@ -62,8 +59,7 @@ create table BPM_PROC_INSTANCE (
     CANCEL_COMMENT text,
     --
     primary key (ID)
-)^
--- end BPM_PROC_INSTANCE
+)^-- end BPM_PROC_INSTANCE
 -- begin BPM_PROC_ACTOR
 create table BPM_PROC_ACTOR (
     ID uuid,
@@ -122,8 +118,7 @@ create table BPM_PROC_ATTACHMENT (
     primary key (ID)
 )^
 -- end BPM_PROC_ATTACHMENT
--- begin BPM_PROC_TASK
-create table BPM_PROC_TASK (
+-- begin BPM_PROC_TASKcreate table BPM_PROC_TASK (
     ID uuid,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -142,13 +137,12 @@ create table BPM_PROC_TASK (
     NAME varchar(255),
     ACT_TASK_ID varchar(255),
     COMMENT_ text,
-    CANCELED boolean,
+    CANCELLED boolean,
     CLAIM_DATE timestamp,
     ACT_PROCESS_DEFINITION_ID varchar(255),
     --
     primary key (ID)
-)^
--- end BPM_PROC_TASK
+)^-- end BPM_PROC_TASK
 -- begin BPM_PROC_TASK_USER_LINK
 create table BPM_PROC_TASK_USER_LINK (
     PROC_TASK_ID uuid,

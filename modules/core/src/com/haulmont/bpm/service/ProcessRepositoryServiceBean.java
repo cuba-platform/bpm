@@ -28,4 +28,9 @@ public class ProcessRepositoryServiceBean implements ProcessRepositoryService {
     public ProcDefinition deployProcessFromXML(String xml) {
         return processRepositoryManager.deployProcessFromXML(xml);
     }
+
+    @Override
+    public String getProcessDefinitionXML(String actDeploymentId) {
+        return processRepositoryManager.getProcessDefinitionXML(actDeploymentId);
+    }
 }

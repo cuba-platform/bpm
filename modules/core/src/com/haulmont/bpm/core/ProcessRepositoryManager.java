@@ -6,10 +6,6 @@ package com.haulmont.bpm.core;
 
 import com.haulmont.bpm.entity.ProcDefinition;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Map;
-
 /**
  * @author gorbunkov
  * @version $Id$
@@ -25,4 +21,6 @@ public interface ProcessRepositoryManager {
     ProcDefinition deployProcessFromXML(String xml);
 
     ProcDefinition deployProcessFromXML(String xml, ProcDefinition procDefinition);
+
+    String getProcessDefinitionXML(String actDeploymentId);
 }

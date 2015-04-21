@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<window xmlns="http://schemas.haulmont.com/cuba/5.4/window.xsd"
+<window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
         caption="msg://editCaption"
         class="com.haulmont.bpm.gui.procdefinition.ProcDefinitionEdit"
         datasource="procDefinitionDs"
@@ -32,6 +32,8 @@
                                editable="false"/>
                         <field id="actVersion"
                                editable="false"/>
+                        <field id="actDeploymentId"
+                                editable="false"/>
                     </column>
                 </fieldGroup>
                 <groupBox id="procRolesBox"
@@ -72,14 +74,12 @@
             </tab>
             <tab id="xmlTab"
                  caption="msg://xmlTab"
-                 margin="true"
+                 margin="true;false;false;false;"
                  spacing="true">
                 <sourceCodeEditor id="xmlField"
-                                  datasource="procDefinitionDs"
                                   editable="false"
                                   height="100%"
                                   mode="XML"
-                                  property="xml"
                                   width="100%"/>
             </tab>
         </tabSheet>

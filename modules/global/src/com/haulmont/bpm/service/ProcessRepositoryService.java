@@ -17,4 +17,6 @@ public interface ProcessRepositoryService {
     ProcDefinition deployProcessFromXML(String xml, @Nullable ProcDefinition procDefinition);
 
     ProcDefinition deployProcessFromXML(String xml);
+
+    String getProcessDefinitionXML(String actDeploymentId);
 }

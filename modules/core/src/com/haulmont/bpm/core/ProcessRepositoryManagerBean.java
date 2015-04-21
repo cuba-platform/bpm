@@ -16,10 +16,13 @@ import org.activiti.bpmn.model.*;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.apache.commons.io.IOUtils;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -91,8 +94,8 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             procDefinition.setName(activitiProcessDefinition.getName());
             procDefinition.setActKey(activitiProcessDefinition.getKey());
             procDefinition.setActId(activitiProcessDefinition.getId());
+            procDefinition.setActDeploymentId(activitiProcessDefinition.getDeploymentId());
             procDefinition.setActVersion(activitiProcessDefinition.getVersion());
-            procDefinition.setXml(xml);
             procDefinition.setActive(true);
             em.persist(procDefinition);
 
@@ -139,5 +142,16 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             }
         }
         return result;
+    }
+
+    @Override
+    public String getProcessDefinitionXML(String actDeploymentId) {
+        List<String> deploymentResourceNames = repositoryService.getDeploymentResourceNames(actDeploymentId);
+        InputStream is = repositoryService.getResourceAsStream(actDeploymentId, deploymentResourceNames.get(0));
+        try {
+            return IOUtils.toString(is);
+        } catch (IOException e) {
+            throw new BpmException("Error reading process xml", e);
+        }
     }
 }

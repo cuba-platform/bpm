@@ -28,10 +28,10 @@
           extends="_local"
           name="procTask-complete">
         <property name="procActor">
-            <property name="user" view="_minimal"/>
+            <property name="user"
+                      view="_minimal"/>
         </property>
     </view>
-
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           name="procDefinition-browse">
         <property name="name"/>
@@ -48,8 +48,8 @@
         <property name="actId"/>
         <property name="actKey"/>
         <property name="active"/>
-        <property name="xml"/>
         <property name="actVersion"/>
+        <property name="actDeploymentId"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcRole"
           extends="_local"
@@ -185,6 +185,7 @@
                 <property name="actId"/>
             </property>
         </property>
-        <property name="candidateUsers" view="_minimal"/>
+        <property name="candidateUsers"
+                  view="_minimal"/>
     </view>
 </views>

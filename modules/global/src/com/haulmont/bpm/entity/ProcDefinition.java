@@ -40,15 +40,23 @@ public class ProcDefinition extends StandardEntity {
     @OrderBy("order")
     protected List<ProcRole> procRoles;
 
-    @Lob
-    @Column(name = "XML", nullable = false)
-    protected String xml;
-
     @Column(name = "ACTIVE")
     protected Boolean active;
 
     @Column(name = "ACT_VERSION")
     protected Integer actVersion;
+
+    @Column(name = "ACT_DEPLOYMENT_ID")
+    protected String actDeploymentId;
+
+    public void setActDeploymentId(String actDeploymentId) {
+        this.actDeploymentId = actDeploymentId;
+    }
+
+    public String getActDeploymentId() {
+        return actDeploymentId;
+    }
+
 
     public void setActVersion(Integer actVersion) {
         this.actVersion = actVersion;
@@ -65,16 +73,6 @@ public class ProcDefinition extends StandardEntity {
     public Boolean getActive() {
         return active;
     }
-
-
-    public void setXml(String xml) {
-        this.xml = xml;
-    }
-
-    public String getXml() {
-        return xml;
-    }
-
 
     public void setProcRoles(List<ProcRole> procRoles) {
         this.procRoles = procRoles;
