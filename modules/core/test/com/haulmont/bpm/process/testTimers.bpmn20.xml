@@ -76,12 +76,15 @@
         <sequenceFlow id="flow2" sourceRef="managerApproval" targetRef="operatorApproval" />
 
         <boundaryEvent id="managerApprovalTimer" cancelActivity="true" attachedToRef="managerApproval">
+            <extensionElements>
+                <cuba:outcome>approve</cuba:outcome>
+            </extensionElements>
             <timerEventDefinition>
-                <timeDuration>PT10S</timeDuration>
+                <timeDuration>PT5S</timeDuration>
             </timerEventDefinition>
         </boundaryEvent>
 
-        <sequenceFlow id="managerApprovalTimerFlow" sourceRef="managerApprovalTimer" targetRef="operatorApproval" />
+        <sequenceFlow id="managerApprovalTimerFlow1" sourceRef="managerApprovalTimer" targetRef="operatorApproval" />
 
         <userTask id="operatorApproval" name="Operator approval"
                   activiti:assignee="#{prm.getSingleTaskAssignee(bpmProcInstanceId, 'operator')}">

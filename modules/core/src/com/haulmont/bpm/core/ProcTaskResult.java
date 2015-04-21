@@ -4,12 +4,8 @@
 
 package com.haulmont.bpm.core;
 
-import javax.xml.crypto.dsig.spec.HMACParameterSpec;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author gorbunkov
@@ -17,23 +13,23 @@ import java.util.Map;
  */
 public class ProcTaskResult implements Serializable {
 
-    protected Map<String, List<String>> outcomes = new HashMap<>();
+    protected Map<String, List<UUID>> outcomes = new HashMap<>();
 
-    public void addOutcome(String outcome, String userLogin) {
-        List<String> users = outcomes.get(outcome);
+    public void addOutcome(String outcome, UUID userId) {
+        List<UUID> users = outcomes.get(outcome);
         if (users == null) {
             users = new ArrayList<>();
             outcomes.put(outcome, users);
         }
-        users.add(userLogin);
+        users.add(userId);
     }
 
     public int getOutcomesCount(String outcome) {
-        List<String> users = outcomes.get(outcome);
+        List<UUID> users = outcomes.get(outcome);
         return users == null ? 0 : users.size();
     }
 
-    public Map<String, List<String>> getOutcomes() {
+    public Map<String, List<UUID>> getOutcomes() {
         return outcomes;
     }
 }

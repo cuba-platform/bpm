@@ -19,9 +19,11 @@ public interface ExtensionElementsManager {
 
     String NAME = "bpm_ExtensionElementsManager";
 
-    Map<String, List<ExtensionElement>> getTaskExtensionElements(String actProcessDefinitionId, String actTaskDefinitionKey);
+    Map<String, List<ExtensionElement>> getFlowElementExtensionElements(String actProcessDefinitionId, String actFlowElementDefinitionKey);
 
     Map<String, List<ExtensionElement>> getStartExtensionElements(String actProcessDefinitionId);
 
     Map<String, List<ExtensionElement>> getProcessExtensionElements(String actProcessDefinitionId);
+
+    String getTimerOutcome(String actProcessDefinitionId, String actBoundaryEventDefinitionKey);
 }

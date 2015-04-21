@@ -42,18 +42,22 @@ public interface ProcessRuntimeManager {
 
     void completeProcTask(ProcTask procTask, String outcome, String comment, Map<String, Object> processVariables);
 
+    /**
+     * Sets outcome and endDate properties to the given {@link ProcTask}.
+     * In contrast to {@link #completeProcTask(ProcTask, String, String)}
+     * this method doesn't set any process variables that store an outcome
+     */
+    void completeProcTaskOnTimer(UUID procTaskId, String outcome);
+
     void claimProcTask(ProcTask procTask, User user);
 
     long getActiveProcessesCount(ProcDefinition procDefinition);
 
     Object evaluateExpression(String expression, String actExecutionId);
 
-    @Authenticated
     ProcTask createProcTask(TaskEntity actTask);
 
-    @Authenticated
     void assignProcTask(TaskEntity taskEntity);
 
-    @Authenticated
     ProcTask createNotAssignedProcTask(TaskEntity taskEntity);
 }

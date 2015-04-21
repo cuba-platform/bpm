@@ -10,7 +10,6 @@ import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.cuba.security.entity.User;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.Map;
 

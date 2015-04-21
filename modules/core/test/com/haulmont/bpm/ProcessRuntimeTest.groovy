@@ -107,8 +107,8 @@ class ProcessRuntimeTest extends BpmTestCase {
         def approveForm = procTaskForms['approve']
         assertEquals('standardProcessForm', approveForm.name)
         assertEquals(2, approveForm.params.size())
-        assertEquals("true", approveForm.params['commentRequired'])
-        assertEquals("true", approveForm.params['attachmentsVisible'])
+        assertEquals("true", approveForm.params['commentRequired'].value)
+        assertEquals("true", approveForm.params['attachmentsVisible'].value)
 
         def rejectForm = procTaskForms['reject']
         assertEquals('someOtherProcessForm', rejectForm.name)
@@ -117,7 +117,7 @@ class ProcessRuntimeTest extends BpmTestCase {
         def startForm = processFormManager.getStartForm(procDefinition)
         assertEquals("startProcessForm", startForm.name)
         assertEquals(1, startForm.params.size())
-        assertEquals("true", startForm.params['procActorsVisible'])
+        assertEquals("true", startForm.params['procActorsVisible'].value)
 
         processRuntimeManager.completeProcTask(procTask, 'approve', 'Scanning approved by manager', [:])
 

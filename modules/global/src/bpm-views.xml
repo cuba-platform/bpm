@@ -26,7 +26,12 @@
     </view>
     <view class="com.haulmont.bpm.entity.ProcTask"
           extends="_local"
-          name="procTask-complete"/>
+          name="procTask-complete">
+        <property name="procActor">
+            <property name="user" view="_minimal"/>
+        </property>
+    </view>
+
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           name="procDefinition-browse">
         <property name="name"/>

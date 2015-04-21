@@ -32,4 +32,9 @@ public class ProcessFormServiceBean implements ProcessFormService {
     public ProcFormDefinition getStartForm(ProcDefinition procDefinition) {
         return processFormManager.getStartForm(procDefinition);
     }
+
+    @Override
+    public ProcFormDefinition getCancelForm(ProcDefinition procDefinition) {
+        return processFormManager.getCancelForm(procDefinition);
+    }
 }

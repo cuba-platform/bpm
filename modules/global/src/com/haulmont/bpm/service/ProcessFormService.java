@@ -20,4 +20,6 @@ public interface ProcessFormService {
 
     @Nullable
     ProcFormDefinition getStartForm(ProcDefinition procDefinition);
+
+    ProcFormDefinition getCancelForm(ProcDefinition procDefinition);
 }

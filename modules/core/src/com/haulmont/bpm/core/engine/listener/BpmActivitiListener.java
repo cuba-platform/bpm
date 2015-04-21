@@ -5,12 +5,11 @@
 package com.haulmont.bpm.core.engine.listener;
 
 import com.google.common.base.Strings;
+import com.haulmont.bpm.core.ExtensionElementsManager;
 import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.bpm.core.ProcessRepositoryManager;
 import com.haulmont.bpm.core.ProcessRuntimeManager;
-import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.bpm.entity.ProcTask;
-import com.haulmont.bpm.entity.ProcActor;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
@@ -19,18 +18,15 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.TimeSource;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.security.app.Authentication;
-import com.haulmont.cuba.security.app.UserSessionService;
-import com.haulmont.cuba.security.entity.User;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
-import org.activiti.engine.task.IdentityLink;
+import org.activiti.engine.impl.persistence.entity.TimerEntity;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author gorbunkov
@@ -45,6 +41,7 @@ public class BpmActivitiListener implements ActivitiEventListener {
     protected final Metadata metadata;
     protected final Authentication authentication;
     protected final UserSessionSource userSessionSource;
+    protected final ExtensionElementsManager extensionElementsManager;
 
     public BpmActivitiListener() {
         processRepositoryManager = AppBeans.get(ProcessRepositoryManager.class);
@@ -54,15 +51,16 @@ public class BpmActivitiListener implements ActivitiEventListener {
         metadata = AppBeans.get(Metadata.class);
         authentication = AppBeans.get(Authentication.class);
         userSessionSource = AppBeans.get(UserSessionSource.class);
+        extensionElementsManager = AppBeans.get(ExtensionElementsManager.class);
     }
 
     @Override
     public void onEvent(ActivitiEvent event) {
         switch (event.getType()) {
             case TASK_CREATED:
-                TaskEntity task = (TaskEntity) ((ActivitiEntityEvent)event).getEntity();
+                TaskEntity task = (TaskEntity) ((ActivitiEntityEvent) event).getEntity();
                 UUID bpmProcTaskId = (UUID) task.getVariableLocal("bpmProcTaskId");
-                // bpmProcTaskId is not set in case of group task that doesn't have a concrete assignee
+                // bpmProcTaskId is not set in case of group task that doesn't have a particular assignee
                 // but only potential ones. In other cases TASK_ASSIGNED event will be fired first and the variable
                 // will be already set
                 if (bpmProcTaskId == null) {
@@ -71,7 +69,7 @@ public class BpmActivitiListener implements ActivitiEventListener {
                 }
                 break;
             case TASK_ASSIGNED:
-                task = (TaskEntity) ((ActivitiEntityEvent)event).getEntity();
+                task = (TaskEntity) ((ActivitiEntityEvent) event).getEntity();
                 bpmProcTaskId = (UUID) task.getVariableLocal("bpmProcTaskId");
                 // bpmProcTaskId will be not null if the task is claimed
                 if (bpmProcTaskId == null) {
@@ -84,7 +82,27 @@ public class BpmActivitiListener implements ActivitiEventListener {
             case PROCESS_COMPLETED:
                 onProcessCompleted(event);
                 break;
-            case JOB_EXECUTION_SUCCESS:
+            case TIMER_FIRED:
+                TaskService taskService = event.getEngineServices().getTaskService();
+                TaskEntity actTask = (TaskEntity) taskService.createTaskQuery().executionId(event.getExecutionId()).singleResult();
+                if (actTask == null) break;
+                bpmProcTaskId = (UUID) actTask.getVariableLocal("bpmProcTaskId");
+                if (bpmProcTaskId != null) {
+                    TimerEntity timerEntity = (TimerEntity) ((ActivitiEntityEvent) event).getEntity();
+                    String timerOutcome = extensionElementsManager.getTimerOutcome(event.getProcessDefinitionId(), timerEntity.getJobHandlerConfiguration());
+                    actTask.setVariableLocal("timerOutcome", timerOutcome);
+                }
+                break;
+            case ACTIVITY_CANCELLED:
+                taskService = event.getEngineServices().getTaskService();
+                actTask = (TaskEntity) taskService.createTaskQuery().executionId(event.getExecutionId()).singleResult();
+                if (actTask == null) break;
+                bpmProcTaskId = (UUID) actTask.getVariableLocal("bpmProcTaskId");
+                String timerOutcome = (String) actTask.getVariableLocal("timerOutcome");
+                if (bpmProcTaskId != null && !Strings.isNullOrEmpty(timerOutcome)) {
+                    processRuntimeManager.completeProcTaskOnTimer(bpmProcTaskId, timerOutcome);
+                }
+                break;
         }
     }
 

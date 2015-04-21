@@ -12,25 +12,15 @@ import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.global.*;
-import com.haulmont.cuba.security.app.Authenticated;
 import com.haulmont.cuba.security.entity.User;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.delegate.Expression;
-import org.activiti.engine.delegate.VariableScope;
-import org.activiti.engine.impl.ProcessEngineImpl;
-import org.activiti.engine.impl.context.Context;
-import org.activiti.engine.impl.el.ExpressionManager;
 import org.activiti.engine.impl.juel.ExpressionFactoryImpl;
 import org.activiti.engine.impl.juel.SimpleContext;
 import org.activiti.engine.impl.juel.TreeValueExpression;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
-import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.IdentityLink;
-import org.activiti.spring.SpringProcessEngineConfiguration;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.Nullable;
@@ -212,19 +202,13 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
 
     @Override
     public void completeProcTask(ProcTask procTask, String outcome, String comment, @Nullable Map<String, Object> processVariables) {
-        Transaction tx = persistence.createTransaction();
+        Transaction tx = persistence.getTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
             procTask = em.reload(procTask, "procTask-complete");
             if (procTask.getEndDate() != null) {
                 throw new BpmException("procTask " + procTask.getId() + " already completed");
             }
-            runtimeService.setVariableLocal(procTask.getActExecutionId(), "outcome", outcome);
-
-            ProcTaskResult taskResult = (ProcTaskResult) runtimeService.getVariable(procTask.getActExecutionId(), procTask.getName() + "_result");
-            if (taskResult == null) taskResult = new ProcTaskResult();
-            taskResult.addOutcome(outcome, procTask.getProcActor().getUser().getLogin());
-            runtimeService.setVariable(procTask.getActExecutionId(), procTask.getName() + "_result", taskResult);
 
             procTask.setEndDate(timeSource.currentTimestamp());
             procTask.setOutcome(outcome);
@@ -236,6 +220,15 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
                 }
             }
 
+            //execution local variable 'outcome' can be used in non-multi-instance user tasks
+            runtimeService.setVariableLocal(procTask.getActExecutionId(), "outcome", outcome);
+
+            //execution variable '<taskName>_result' can be used after multi-instance tasks. It holds outcomes
+            //for all task actors
+            ProcTaskResult taskResult = (ProcTaskResult) runtimeService.getVariable(procTask.getActExecutionId(), procTask.getName() + "_result");
+            if (taskResult == null) taskResult = new ProcTaskResult();
+            taskResult.addOutcome(outcome, procTask.getProcActor().getUser().getId());
+            runtimeService.setVariable(procTask.getActExecutionId(), procTask.getName() + "_result", taskResult);
             taskService.complete(procTask.getActTaskId());
 
             tx.commit();
@@ -245,8 +238,32 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     }
 
     @Override
+    public void completeProcTaskOnTimer(UUID procTaskId, String outcome) {
+        Transaction tx = persistence.getTransaction();
+        try {
+            EntityManager em = persistence.getEntityManager();
+            ProcTask procTask = em.find(ProcTask.class, procTaskId, "procTask-complete");
+
+            if (procTask == null) {
+                throw new BpmException("Cannot complete procTask. ProcTask with id " + procTaskId + " not found");
+            }
+
+            if (procTask.getEndDate() != null) {
+                throw new BpmException("procTask " + procTask.getId() + " already completed");
+            }
+
+            procTask.setEndDate(timeSource.currentTimestamp());
+            procTask.setOutcome(outcome);
+
+            tx.commit();
+        } finally {
+            tx.end();
+        }
+    }
+
+    @Override
     public void claimProcTask(ProcTask procTask, User user) {
-        Transaction tx = persistence.createTransaction();
+        Transaction tx = persistence.getTransaction();
         try {
             taskService.claim(procTask.getActTaskId(), user.getId().toString());
             tx.commit();
@@ -285,7 +302,6 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     }
 
     @Override
-    @Authenticated
     public ProcTask createProcTask(TaskEntity actTask) {
         String assignee = actTask.getAssignee();
         if (Strings.isNullOrEmpty(assignee))
@@ -322,7 +338,6 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     }
 
     @Override
-    @Authenticated
     public void assignProcTask(TaskEntity actTask) {
         UUID bpmProcTaskId = (UUID) actTask.getVariableLocal("bpmProcTaskId");
 
@@ -360,7 +375,6 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     }
 
     @Override
-    @Authenticated
     public ProcTask createNotAssignedProcTask(TaskEntity actTask) {
         Set<User> candidateUsers = getCandidateUsers(actTask);
 

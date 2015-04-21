@@ -24,12 +24,11 @@ public class ExtensionElementsManagerBean implements ExtensionElementsManager {
     @Inject
     protected RepositoryService repositoryService;
 
-    //todo gorbunkov rename to getFlowElementExtensionElements
     @Override
-    public Map<String, List<ExtensionElement>> getTaskExtensionElements(String actProcessDefinitionId, String actTaskDefinitionKey) {
+    public Map<String, List<ExtensionElement>> getFlowElementExtensionElements(String actProcessDefinitionId, String actFlowElementDefinitionKey) {
         BpmnModel bpmnModel = repositoryService.getBpmnModel(actProcessDefinitionId);
-        FlowElement taskElement = bpmnModel.getFlowElement(actTaskDefinitionKey);
-        return taskElement.getExtensionElements();
+        FlowElement flowElement = bpmnModel.getFlowElement(actFlowElementDefinitionKey);
+        return flowElement.getExtensionElements();
     }
 
     @Override
@@ -48,5 +47,16 @@ public class ExtensionElementsManagerBean implements ExtensionElementsManager {
         BpmnModel bpmnModel = repositoryService.getBpmnModel(actProcessDefinitionId);
         Process mainProcess = bpmnModel.getMainProcess();
         return mainProcess.getExtensionElements();
+    }
+
+    @Override
+    public String getTimerOutcome(String actProcessDefinitionId, String actBoundaryEventDefinitionKey) {
+        Map<String, List<ExtensionElement>> flowElementExtensionElements = getFlowElementExtensionElements(actProcessDefinitionId, actBoundaryEventDefinitionKey);
+        List<ExtensionElement> outcomeElements = flowElementExtensionElements.get("outcome");
+        if (outcomeElements != null) {
+            ExtensionElement outcomeElement = outcomeElements.get(0);
+            return outcomeElement.getElementText();
+        }
+        return null;
     }
 }
