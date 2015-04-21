@@ -11,7 +11,6 @@ import com.haulmont.bpm.gui.procactor.ProcActorsFrame;
 import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
 import com.haulmont.bpm.gui.proctaskactions.ProcTaskActionsFrame;
 import com.haulmont.bpm.service.ProcessFormService;
-import com.haulmont.bpm.service.ProcessMessagesService;
 import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
@@ -60,7 +59,6 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     @Named("procActorsFrame.procActorsDs")
     protected CollectionDatasource<ProcActor, UUID> procActorsDs;
 
-
     @Inject
     protected ComponentsFactory componentsFactory;
 
@@ -69,12 +67,6 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
 
     @Inject
     protected ProcAttachmentsFrame procAttachmentsFrame;
-
-    @Inject
-    protected ProcessMessagesService processMessagesService;
-
-    @Inject
-    protected Table procTasksTable;
 
     @Named("fieldGroup.procDefinition")
     protected LookupField procDefinitionLookup;
@@ -88,7 +80,6 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     @Inject
     protected UserSession userSession;
 
-
     @Override
     public void setItem(Entity item) {
         super.setItem(item);
@@ -97,14 +88,6 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
 
         procTasksDs.refresh();
         initProcTaskActionsFrame();
-
-        if (getItem().getStartDate() == null) {
-            procTaskActionsFrame.addProcessAction(new StartProcessAction());
-        }
-
-        if (BooleanUtils.isTrue(getItem().getActive())) {
-            procTaskActionsFrame.addProcessAction(new CancelProcessAction());
-        }
 
         if (getItem().getStartDate() != null) {
             procDefinitionLookup.setEditable(false);
@@ -122,18 +105,6 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         });
 
         addFieldGroupCustomFields();
-
-//        procTasksTable.addGeneratedColumn("outcome", new Table.ColumnGenerator<ProcTask>() {
-//            @Override
-//            public Component generateCell(ProcTask procTask) {
-//                if (Strings.isNullOrEmpty(procTask.getOutcome())) return null;
-//                Label label = componentsFactory.createComponent(Label.class);
-//                ProcDefinition procDefinition = procTask.getProcInstance().getProcDefinition();
-//                String key = procTask.getName() + "." + procTask.getOutcome();
-//                label.setValue(processMessagesService.getMessage(procDefinition.getActId(), key));
-//                return label;
-//            }
-//        });
 
         procActorsFrame.setProcInstance(getItem());
         procActorsFrame.refresh();
@@ -164,6 +135,15 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 close(COMMIT_ACTION_ID);
             }
         });
+
+        if (getItem().getStartDate() == null) {
+            procTaskActionsFrame.addProcessAction(new StartProcessAction());
+        }
+
+        if (BooleanUtils.isTrue(getItem().getActive()) && isCancelActionAllowed()) {
+            procTaskActionsFrame.addProcessAction(new CancelProcessAction());
+        }
+
     }
 
     protected boolean userHasActionsOnTask(ProcTask procTask) {
@@ -241,6 +221,10 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
             procActor.setProcRole(procRole);
             procActorsDs.addItem(procActor);
         }
+    }
+
+    protected boolean isCancelActionAllowed() {
+        return userSession.getCurrentOrSubstitutedUser().equals(getItem().getStartedBy());
     }
 
 
