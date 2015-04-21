@@ -71,7 +71,7 @@ public class StandardProcessForm extends AbstractProcForm {
         procActorsLabel.setVisible(procActorsVisible);
         procActorsFrame.setVisible(procActorsVisible);
 
-        procAttachmentsLabel.setVisible(procActorsVisible);
+        procAttachmentsLabel.setVisible(procAttachmentsVisible);
         procAttachmentsFrame.setVisible(procAttachmentsVisible);
 
         if (procAttachmentsVisible && (procTask != null || procInstance != null)) {
