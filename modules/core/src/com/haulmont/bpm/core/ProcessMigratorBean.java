@@ -29,9 +29,6 @@ public class ProcessMigratorBean implements ProcessMigrator {
     @Inject
     protected RuntimeService runtimeService;
 
-    @Inject
-    protected RepositoryService repositoryService;
-
     @Override
     public void migrate(ProcessDefinition actProcessDefinition) {
         List<ProcessInstance> actProcessInstances = runtimeService.createProcessInstanceQuery()

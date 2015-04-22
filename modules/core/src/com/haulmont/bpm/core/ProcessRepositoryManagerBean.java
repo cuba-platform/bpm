@@ -88,9 +88,10 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
                 procDefinition = metadata.create(ProcDefinition.class);
             } else {
                 procDefinition = em.reload(procDefinition);
+                if (procDefinition == null)
+                    throw new BpmException("Error when deploying process. Process definition has been removed");
                 processMigrator.migrate(activitiProcessDefinition);
             }
-            //noinspection ConstantConditions
             procDefinition.setName(activitiProcessDefinition.getName());
             procDefinition.setActKey(activitiProcessDefinition.getKey());
             procDefinition.setActId(activitiProcessDefinition.getId());

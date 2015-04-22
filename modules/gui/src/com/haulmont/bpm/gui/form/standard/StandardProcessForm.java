@@ -19,6 +19,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Standard process form that is used for:
+ * <ol>
+ *     <li>entering procTask comment</li>
+ *     <li>adding process attachment</li>
+ *     <li>setting process actors</li>
+ * </ol>
+ * Visibility of components (comment field, frames for attachments and actors) are defined by
+ * parameters of {@code formDefinition}
  * @author gorbunkov
  */
 public class StandardProcessForm extends AbstractProcForm {
@@ -47,6 +55,10 @@ public class StandardProcessForm extends AbstractProcForm {
     @WindowParam(name = "formDefinition", required = true)
     protected ProcFormDefinition formDefinition;
 
+    protected static final String COMMENT_REQUIRED_PARAM = "commentRequired";
+    protected static final String PROC_ACTORS_VISIBLE_PARAM = "procActorsVisible";
+    protected static final String ATTACHMENTS_VISIBLE_PARAM = "attachmentsVisible";
+
     protected boolean procActorsVisible;
     protected boolean procAttachmentsVisible;
 
@@ -57,15 +69,15 @@ public class StandardProcessForm extends AbstractProcForm {
         getDialogParams().setResizable(true);
         getDialogParams().setWidth(700);
 
-        ProcFormParam commentRequiredParam = formDefinition.getParams().get("commentRequired");
+        ProcFormParam commentRequiredParam = formDefinition.getParams().get(COMMENT_REQUIRED_PARAM);
         if (commentRequiredParam != null && "true".equals(commentRequiredParam.getValue())) {
             comment.setRequired(true);
         }
 
-        ProcFormParam procActorsVisibleParam = formDefinition.getParams().get("procActorsVisible");
+        ProcFormParam procActorsVisibleParam = formDefinition.getParams().get(PROC_ACTORS_VISIBLE_PARAM);
         procActorsVisible = procActorsVisibleParam != null && "true".equals(procActorsVisibleParam.getValue());
 
-        ProcFormParam procAttachmentsVisibleParam = formDefinition.getParams().get("attachmentsVisible");
+        ProcFormParam procAttachmentsVisibleParam = formDefinition.getParams().get(ATTACHMENTS_VISIBLE_PARAM);
         procAttachmentsVisible = procAttachmentsVisibleParam != null && "true".equals(procAttachmentsVisibleParam.getValue());
 
         procActorsLabel.setVisible(procActorsVisible);

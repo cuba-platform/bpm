@@ -4,18 +4,17 @@
 
 package com.haulmont.bpm.gui.form;
 
-import com.haulmont.bpm.form.ProcFormParam;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
+ * Empty implementation of {@link ProcForm}. Use it if you need to implement only few methods.
  * @author gorbunkov
  * @version $Id$
  */
-public class AbstractProcForm extends AbstractWindow implements ProcForm {
+public abstract class AbstractProcForm extends AbstractWindow implements ProcForm {
 
     @Override
     public String getComment() {

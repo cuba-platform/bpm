@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Factory that produces field generators for {@link com.haulmont.bpm.gui.form.generic.GenericProcessForm}
  * @author gorbunkov
  * @version $Id$
  */

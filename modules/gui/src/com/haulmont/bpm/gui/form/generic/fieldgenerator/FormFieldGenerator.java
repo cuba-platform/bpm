@@ -11,6 +11,7 @@ import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Field;
 
 /**
+ * Interface to be implemented by field generators of {@link com.haulmont.bpm.gui.form.generic.GenericProcessForm}
  * @author gorbunkov
  * @version $Id$
  */

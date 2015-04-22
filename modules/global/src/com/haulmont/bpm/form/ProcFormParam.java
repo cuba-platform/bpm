@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * POJO representation of form parameter from BPMN process xml
  * @author gorbunkov
  * @version $Id$
  */

@@ -26,10 +26,11 @@ import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 
 import javax.inject.Inject;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
+ * Form that dynamically generates components for editing parameters that are defined
+ * in form description in BPMN process xml.
  * @author gorbunkov
  * @version $Id$
  */
@@ -68,43 +69,41 @@ public class GenericProcessForm extends AbstractProcForm {
     }
 
     protected void createLayout() {
-        if (formDefinition != null) {
-            reloadProcInstance();
-            if (procTask != null) {
-                reloadProcTask();
-            }
-            String actExecutionId = procTask == null ? null : procTask.getActExecutionId();
-
-            FormFieldGeneratorsFactory fieldGeneratorsFactory = new FormFieldGeneratorsFactory();
-            Map<String, ProcFormParam> formParams = formDefinition.getParams();
-            GridLayout grid = componentsFactory.createComponent(GridLayout.class);
-            grid.setRows(formParams.size());
-            grid.setColumns(2);
-            grid.setSpacing(true);
-            int i = 0;
-            for (ProcFormParam formParam : formParams.values()) {
-
-                Label label = componentsFactory.createComponent(Label.class);
-                label.setValue(formParam.getLocCaption());
-                label.setAlignment(Alignment.MIDDLE_LEFT);
-                grid.add(label, 0, i);
-
-                String paramTypeName = !Strings.isNullOrEmpty(formParam.getTypeName()) ? formParam.getTypeName() : "string";
-                FormFieldGenerator generator = fieldGeneratorsFactory.createFormFieldGenerator(paramTypeName);
-                Field field = generator.createField(formParam, actExecutionId);
-                field.setWidth(FIELD_WIDTH);
-                grid.add(field, 1, i);
-
-                componentsMap.put(formParam, field);
-                i++;
-            }
-            add(grid, 0);
+        reloadProcInstance();
+        if (procTask != null) {
+            reloadProcTask();
         }
+        String actExecutionId = procTask == null ? null : procTask.getActExecutionId();
+
+        FormFieldGeneratorsFactory fieldGeneratorsFactory = new FormFieldGeneratorsFactory();
+        Map<String, ProcFormParam> formParams = formDefinition.getParams();
+        GridLayout grid = componentsFactory.createComponent(GridLayout.class);
+        grid.setRows(formParams.size());
+        grid.setColumns(2);
+        grid.setSpacing(true);
+        int i = 0;
+        for (ProcFormParam formParam : formParams.values()) {
+
+            Label label = componentsFactory.createComponent(Label.class);
+            label.setValue(formParam.getLocCaption());
+            label.setAlignment(Alignment.MIDDLE_LEFT);
+            grid.add(label, 0, i);
+
+            String paramTypeName = !Strings.isNullOrEmpty(formParam.getTypeName()) ? formParam.getTypeName() : "string";
+            FormFieldGenerator generator = fieldGeneratorsFactory.createFormFieldGenerator(paramTypeName);
+            Field field = generator.createField(formParam, actExecutionId);
+            field.setWidth(FIELD_WIDTH);
+            grid.add(field, 1, i);
+
+            componentsMap.put(formParam, field);
+            i++;
+        }
+        add(grid, 0);
     }
 
     protected void reloadProcInstance() {
         View view = new View(ProcInstance.class)
-                .addProperty("procDefinition", new View(ProcDefinition.class).addProperty("actId"));
+                .addProperty("procDefinition", new View(ProcDefinition.class).addProperty("actProcessInstanceId"));
         procInstance = dataManager.reload(procInstance, view);
     }
 

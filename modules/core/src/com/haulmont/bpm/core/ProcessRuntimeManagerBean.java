@@ -22,6 +22,8 @@ import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.IdentityLink;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.Nullable;
@@ -53,6 +55,8 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     @Inject
     protected Metadata metadata;
 
+    protected static final Log log = LogFactory.getLog(ProcessRuntimeManagerBean.class);
+
     @Override
     public ProcInstance startProcess(ProcInstance procInstance, String comment) {
         return startProcess(procInstance, comment, new HashMap<String, Object>());
@@ -69,23 +73,24 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             EntityManager em = persistence.getEntityManager();
             procInstance = em.reload(procInstance, "procInstance-start");
             if (procInstance == null) {
-                throw new BpmException("Cannot start process. ProcInstance has been deleted.");
+                throw new BpmException("Cannot start process. ProcInstance not found in database.");
             }
             if (procInstance.getProcDefinition() == null) {
                 throw new BpmException("Cannot start process. ProcDefinition property is null.");
             }
             if (BooleanUtils.isTrue(procInstance.getActive())) {
-                throw new BpmException("Cannot start process. Process already started.");
+                throw new BpmException("Cannot start process. ProcessInstance is already active.");
             }
             if (!procInstance.getProcDefinition().getActive()) {
-                throw new BpmException("Cannot start process. Process definition is not active");
+                throw new BpmException("Cannot start process. Process definition is not active.");
             }
 
             if (variables == null)
                 variables = new HashMap<>();
-
             variables.put("bpmProcInstanceId", procInstance.getId());
+
             ProcessInstance activitiProcessInstance = runtimeService.startProcessInstanceById(procInstance.getProcDefinition().getActId(), variables);
+
             procInstance.setActProcessInstanceId(activitiProcessInstance.getProcessInstanceId());
             procInstance.setStartComment(comment);
             procInstance.setActive(true);
@@ -127,28 +132,6 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         } finally {
             tx.end();
         }
-    }
-
-    @Override
-    @Nullable
-    public ProcActor findProcActor(UUID procInstanceId, String procRoleCode, UUID userId) {
-        Transaction tx = persistence.getTransaction();
-        ProcActor procActor;
-        try {
-            EntityManager em = persistence.getEntityManager();
-            TypedQuery<ProcActor> query = em.createQuery("select pa from bpm$ProcActor pa " +
-                    "where pa.procInstance.id = :procInstanceId and pa.procRole.code = :procRoleCode " +
-                    "and pa.user.id = :userId", ProcActor.class);
-            query.setViewName("procActor-procTaskCreation");
-            query.setParameter("procInstanceId", procInstanceId);
-            query.setParameter("procRoleCode", procRoleCode);
-            query.setParameter("userId", userId);
-            procActor = query.getFirstResult();
-            tx.commit();
-        } finally {
-            tx.end();
-        }
-        return procActor;
     }
 
     @Override
@@ -213,10 +196,10 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             //execution local variable 'outcome' can be used in non-multi-instance user tasks
             runtimeService.setVariableLocal(procTask.getActExecutionId(), "outcome", outcome);
 
-            //execution variable '<taskName>_result' can be used after multi-instance tasks. It holds outcomes
-            //for all task actors
+            //execution variable '<taskName>_result' can be used after multi-instance tasks. It holds outcomes for all task actors
             ProcTaskResult taskResult = (ProcTaskResult) runtimeService.getVariable(procTask.getActExecutionId(), procTask.getName() + "_result");
-            if (taskResult == null) taskResult = new ProcTaskResult();
+            if (taskResult == null)
+                taskResult = new ProcTaskResult();
             taskResult.addOutcome(outcome, procTask.getProcActor().getUser().getId());
             runtimeService.setVariable(procTask.getActExecutionId(), procTask.getName() + "_result", taskResult);
             taskService.complete(procTask.getActTaskId());
@@ -308,7 +291,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
 
         String roleCode = (String) actTask.getExecution().getVariable(actTask.getTaskDefinitionKey() + "_role");
         if (Strings.isNullOrEmpty(roleCode))
-            throw new BpmException("Role code for task " + actTask.getTaskDefinitionKey() + " not defined");
+            throw new BpmException("Role code variable for task " + actTask.getTaskDefinitionKey() + " not defined");
         ProcActor procActor = findProcActor(bpmProcInstanceId, roleCode, UUID.fromString(assignee));
         if (procActor == null)
             throw new BpmException("ProcActor " + roleCode + " not defined");
@@ -333,6 +316,9 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
 
         EntityManager em = persistence.getEntityManager();
         ProcTask procTask = em.find(ProcTask.class, bpmProcTaskId);
+        if (procTask == null) {
+            throw new BpmException("Cannot assign procTask. ProcTask not found in database.");
+        }
 
         UUID bpmProcInstanceId = (UUID) actTask.getVariable("bpmProcInstanceId");
         if (bpmProcInstanceId == null)
@@ -343,6 +329,9 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             throw new BpmException("Process instance with id " + bpmProcInstanceId + " not found");
 
         String roleCode = (String) actTask.getExecution().getVariable(actTask.getTaskDefinitionKey() + "_role");
+        if (Strings.isNullOrEmpty(roleCode))
+            throw new BpmException("Role code variable for task " + actTask.getTaskDefinitionKey() + " not defined");
+
         ProcActor procActor = findProcActor(bpmProcInstanceId, roleCode, UUID.fromString(actTask.getAssignee()));
         if (procActor == null) {
             User assigneeUser = em.find(User.class, UUID.fromString(actTask.getAssignee()));
@@ -355,13 +344,6 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
 
         procTask.setProcActor(procActor);
         procTask.setClaimDate(timeSource.currentTimestamp());
-    }
-
-    protected ProcRole findProcRole(String roleCode) {
-        EntityManager em = persistence.getEntityManager();
-        return (ProcRole) em.createQuery("select pr from bpm$ProcRole pr where pr.code = :code")
-                .setParameter("code", roleCode)
-                .getFirstResult();
     }
 
     @Override
@@ -391,14 +373,47 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         return procTask;
     }
 
+    @Nullable
+    protected ProcActor findProcActor(UUID procInstanceId, String procRoleCode, UUID userId) {
+        Transaction tx = persistence.getTransaction();
+        ProcActor procActor;
+        try {
+            EntityManager em = persistence.getEntityManager();
+            TypedQuery<ProcActor> query = em.createQuery("select pa from bpm$ProcActor pa " +
+                    "where pa.procInstance.id = :procInstanceId " +
+                    "and pa.procRole.code = :procRoleCode " +
+                    "and pa.user.id = :userId", ProcActor.class);
+            query.setViewName("procActor-procTaskCreation");
+            query.setParameter("procInstanceId", procInstanceId);
+            query.setParameter("procRoleCode", procRoleCode);
+            query.setParameter("userId", userId);
+            procActor = query.getFirstResult();
+            tx.commit();
+        } finally {
+            tx.end();
+        }
+        return procActor;
+    }
+
+    @Nullable
+    protected ProcRole findProcRole(String roleCode) {
+        EntityManager em = persistence.getEntityManager();
+        return (ProcRole) em.createQuery("select pr from bpm$ProcRole pr where pr.code = :code")
+                .setParameter("code", roleCode)
+                .getFirstResult();
+    }
+
     protected Set<User> getCandidateUsers(TaskEntity task) {
+        Set<User> candidateUsers = new HashSet<>();
         EntityManager em = persistence.getEntityManager();
         Set<IdentityLink> candidates = task.getCandidates();
-        Set<User> candidateUsers = new HashSet<>();
         for (IdentityLink candidate : candidates) {
             User user = em.find(User.class, UUID.fromString(candidate.getUserId()));
-            if (user != null)
+            if (user != null) {
                 candidateUsers.add(user);
+            } else {
+                log.warn("ProcTask candidate user with id " + candidate.getUserId() + " not found");
+            }
         }
         return candidateUsers;
     }

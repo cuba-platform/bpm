@@ -33,9 +33,6 @@ public interface ProcessRuntimeManager {
 
     ProcInstance cancelProcess(ProcInstance procInstance, String comment);
 
-    @Nullable
-    ProcActor findProcActor(UUID procInstanceId, String procRoleCode, UUID userId);
-
     String getSingleTaskAssignee(UUID procInstanceId, String procRoleCode);
 
     List<String> getTaskAssigneeList(UUID procInstanceId, String procRoleCode);

@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.regex.Pattern;
 
 /**
+ * Abstract class contains common behaviour to FormFieldGenerators
  * @author gorbunkov
  * @version $Id$
  */
@@ -40,6 +41,10 @@ public abstract class AbstractFormFieldGenerator implements FormFieldGenerator {
         processRuntimeService = AppBeans.get(ProcessRuntimeService.class);
     }
 
+    /**
+     * Sets the value from the {@code formParam} to the field. Before setting is performed the value is
+     * parsed or if an UEL expression is stored in {@code formParam} this expression is evaluated.
+     */
     protected void setFieldValue(Field field, ProcFormParam formParam, String datatypeName, String actExecutionId) {
         if (!Strings.isNullOrEmpty(formParam.getValue())) {
             Datatype datatype = Datatypes.get(datatypeName);
