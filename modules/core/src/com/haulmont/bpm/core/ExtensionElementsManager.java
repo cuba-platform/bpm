@@ -6,6 +6,7 @@ package com.haulmont.bpm.core;
 
 import org.activiti.bpmn.model.ExtensionElement;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -25,5 +26,9 @@ public interface ExtensionElementsManager {
 
     Map<String, List<ExtensionElement>> getProcessExtensionElements(String actProcessDefinitionId);
 
+    @Nullable
     String getTimerOutcome(String actProcessDefinitionId, String actBoundaryEventDefinitionKey);
+
+    @Nullable
+    String getTaskProcRole(String actProcessDefinitionId, String actTaskDefinitionKey);
 }

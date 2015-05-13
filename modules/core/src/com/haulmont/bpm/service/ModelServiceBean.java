@@ -6,11 +6,14 @@
 
 package com.haulmont.bpm.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Joiner;
 import com.haulmont.bpm.exception.BpmException;
-import org.activiti.engine.ActivitiException;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.impl.util.json.JSONObject;
 import org.activiti.engine.repository.Model;
 import org.apache.commons.lang3.StringUtils;
@@ -20,10 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author gorbunkov
@@ -111,6 +113,14 @@ public class ModelServiceBean implements ModelService {
         stencilSetNode.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");
         editorNode.put("stencilset", stencilSetNode);
 
+        ObjectNode propertiesNode = objectMapper.createObjectNode();
+        propertiesNode.put("process_id", toCamelCase(name));
+        propertiesNode.put("name", name);
+
+        fillEventListeners(objectMapper, propertiesNode);
+
+        editorNode.put("properties", propertiesNode);
+
         try {
             repositoryService.saveModel(model);
             repositoryService.addModelEditorSource(model.getId(), editorNode.toString().getBytes("utf-8"));
@@ -119,5 +129,50 @@ public class ModelServiceBean implements ModelService {
         }
 
         return model.getId();
+    }
+
+    protected void fillEventListeners(ObjectMapper objectMapper, ObjectNode propertiesNode) {
+        ObjectNode eventListenerNode = objectMapper.createObjectNode();
+        eventListenerNode.put("className", "com.haulmont.bpm.core.engine.listener.BpmActivitiListener");
+        eventListenerNode.put("implementation", "com.haulmont.bpm.core.engine.listener.BpmActivitiListener");
+        eventListenerNode.put("event", getListenerEventTypesString());
+        ArrayNode eventListenersArray = objectMapper.createArrayNode();
+        eventListenersArray.add(eventListenerNode);
+        ObjectNode eventListenersNode = objectMapper.createObjectNode();
+        eventListenersNode.put("eventListeners", eventListenersArray);
+        propertiesNode.put("eventlisteners", eventListenersNode);
+
+        ArrayNode eventsArrayNode = objectMapper.createArrayNode();
+        for (ActivitiEventType eventType : getActivitiEventTypes()) {
+            ObjectNode eventNode = objectMapper.createObjectNode();
+            eventNode.put("event", eventType.toString());
+            eventsArrayNode.add(eventNode);
+        }
+        eventListenerNode.put("events", eventsArrayNode);
+    }
+
+    protected String toCamelCase(String sentence) {
+        StringBuilder sb = new StringBuilder();
+        String[] words = sentence.split("\\s+");
+        sb.append(words[0].toLowerCase());
+        for (int i = 1; i < words.length; i++) {
+            sb.append(StringUtils.capitalize(words[i].toLowerCase()));
+        }
+        return sb.toString();
+    }
+
+    protected String getListenerEventTypesString() {
+        List<ActivitiEventType> activitiEventTypes = getActivitiEventTypes();
+
+        return Joiner.on(", ").join(activitiEventTypes);
+    }
+
+    protected List<ActivitiEventType> getActivitiEventTypes() {
+        return Arrays.asList(
+                ActivitiEventType.TASK_CREATED,
+                ActivitiEventType.TASK_ASSIGNED,
+                ActivitiEventType.PROCESS_COMPLETED,
+                ActivitiEventType.TIMER_FIRED,
+                ActivitiEventType.ACTIVITY_CANCELLED);
     }
 }

@@ -55,6 +55,9 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     @Inject
     protected Metadata metadata;
 
+    @Inject
+    protected ExtensionElementsManager extensionElementsManager;
+
     protected static final Log log = LogFactory.getLog(ProcessRuntimeManagerBean.class);
 
     @Override
@@ -289,9 +292,9 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         if (procInstance == null)
             throw new BpmException("Process instance with id " + bpmProcInstanceId + " not found");
 
-        String roleCode = (String) actTask.getExecution().getVariable(actTask.getTaskDefinitionKey() + "_role");
+        String roleCode = extensionElementsManager.getTaskProcRole(actTask.getProcessDefinitionId(), actTask.getTaskDefinitionKey());
         if (Strings.isNullOrEmpty(roleCode))
-            throw new BpmException("Role code variable for task " + actTask.getTaskDefinitionKey() + " not defined");
+            throw new BpmException("ProcRole code for task " + actTask.getTaskDefinitionKey() + " not defined");
         ProcActor procActor = findProcActor(bpmProcInstanceId, roleCode, UUID.fromString(assignee));
         if (procActor == null)
             throw new BpmException("ProcActor " + roleCode + " not defined");

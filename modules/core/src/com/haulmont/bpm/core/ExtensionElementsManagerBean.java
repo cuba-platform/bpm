@@ -10,6 +10,7 @@ import org.activiti.bpmn.model.Process;
 import org.activiti.engine.RepositoryService;
 
 import javax.annotation.ManagedBean;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,18 @@ public class ExtensionElementsManagerBean implements ExtensionElementsManager {
         if (outcomeElements != null) {
             ExtensionElement outcomeElement = outcomeElements.get(0);
             return outcomeElement.getElementText();
+        }
+        return null;
+    }
+
+    @Override
+    @Nullable
+    public String getTaskProcRole(String actProcessDefinitionId, String actTaskDefinitionKey) {
+        Map<String, List<ExtensionElement>> taskExtensionElements = getFlowElementExtensionElements(actProcessDefinitionId, actTaskDefinitionKey);
+        List<ExtensionElement> procRoleElements = taskExtensionElements.get("procRole");
+        if (!procRoleElements.isEmpty()) {
+            ExtensionElement procRoleElement = procRoleElements.get(0);
+            return procRoleElement.getElementText();
         }
         return null;
     }
