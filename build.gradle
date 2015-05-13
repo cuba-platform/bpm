@@ -16,6 +16,7 @@ allprojects {
 buildscript {
     ext.cubaVersion = '5.5-SNAPSHOT'
     ext.cubaVersion = rootProject.hasProperty('buildVersion') ? rootProject['buildVersion'] : cubaVersion
+    ext.modelerVersion = '5.17.0.cuba.1-SNAPSHOT'
 
     repositories {
         mavenLocal()
@@ -89,10 +90,14 @@ configure(coreModule) {
         testRuntime(postgres)
 
         compile("com.haulmont.cuba:cuba-core:$cubaVersion")
-        compile(group: 'org.activiti', name: 'activiti-engine', version: '5.17.0')
-        compile(group: 'org.activiti', name: 'activiti-spring', version: '5.17.0') {
+        compile('org.activiti:activiti-engine:5.17.0') {
             exclude group: 'org.springframework'
         }
+        compile('org.activiti:activiti-spring:5.17.0') {
+            exclude group: 'org.springframework'
+        }
+
+        compile("org.activiti:activiti-json-converter:$modelerVersion")
 
         testCompile("com.haulmont.cuba:cuba-core:$cubaVersion:tests")
         testCompile("com.haulmont.cuba:cuba-shared-lib:$cubaVersion")
@@ -150,7 +155,6 @@ configure(guiModule) {
 configure(webModule) {
     configurations {
         webcontent
-        
     }
 
     dependencies {
@@ -160,7 +164,7 @@ configure(webModule) {
         compile("com.haulmont.cuba:cuba-web:$cubaVersion")
         webcontent("com.haulmont.cuba:cuba-web:$cubaVersion:web@zip")
         webcontent("com.haulmont.cuba:cuba-web-toolkit:$cubaVersion:web@zip")
-
+        webcontent("com.haulmont.bpm:cuba-modeler:$modelerVersion:web@zip")
     }
 
     task webArchive(type: Zip) {

@@ -9,5 +9,6 @@
         <item id="bpm$ProcInstance.lookup"/>
         <item id="bpm$ProcTask.lookup"/>
         <item id="bpm$ProcAttachmentType.lookup"/>
+        <item id="bpm$ProcModel.lookup"/>
     </menu>
 </menu-config>

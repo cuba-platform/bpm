@@ -32,4 +32,8 @@
             template="com/haulmont/bpm/gui/procattachment/proc-attachments-frame.xml"/>
     <screen id="bpm$ProcAttachment.edit"
             template="com/haulmont/bpm/gui/procattachment/proc-attachment-edit.xml"/>
+    <screen id="bpm$ProcModel.lookup"
+            template="com/haulmont/bpm/gui/procmodel/proc-model-browse.xml"/>
+    <screen id="bpm$ProcModel.edit"
+            template="com/haulmont/bpm/gui/procmodel/proc-model-edit.xml"/>
 </screen-config>

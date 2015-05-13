@@ -4,15 +4,22 @@
 
 package com.haulmont.bpm.core;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haulmont.bpm.entity.ProcDefinition;
+import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
+import com.haulmont.cuba.core.TypedQuery;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Resources;
+import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.*;
+import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -153,6 +160,36 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             return IOUtils.toString(is);
         } catch (IOException e) {
             throw new BpmException("Error reading process xml", e);
+        }
+    }
+
+    @Override
+    public String getProcessDefinitionXmlFromModel(String actModelId) {
+        JsonNode editorNode = null;
+        try {
+            editorNode = new ObjectMapper().readTree(repositoryService.getModelEditorSource(actModelId));
+            BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
+            BpmnModel model = jsonConverter.convertToBpmnModel(editorNode);
+//            String filename = model.getMainProcess().getId() + ".bpmn20.xml";
+            byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(model);
+            return new String(bpmnBytes, "utf-8");
+        } catch (IOException e) {
+            throw new BpmException("Error converting process model to XML", e);
+        }
+    }
+
+    @Override
+    public List<ProcDefinition> getProcDefinitionsByProcessKey(String processKey) {
+        Transaction tx = persistence.createTransaction();
+        try {
+            EntityManager em = persistence.getEntityManager();
+            TypedQuery<ProcDefinition> query = em.createQuery("select pd from bpm$ProcDefinition pd where pd.actKey = :actKey", ProcDefinition.class);
+            query.setParameter("actKey", processKey);
+            List<ProcDefinition> result = query.getResultList();
+            tx.commit();
+            return result;
+        } finally {
+            tx.end();
         }
     }
 }

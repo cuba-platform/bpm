@@ -29,6 +29,8 @@
                        value="com.haulmont.bpm.service.ProcessFormService"/>
                 <entry key="bpm_ProcessMessagesService"
                        value="com.haulmont.bpm.service.ProcessMessagesService"/>
+                <entry key="bpm_ModelService"
+                       value="com.haulmont.bpm.service.ModelService"/>
             </map>
         </property>
     </bean>

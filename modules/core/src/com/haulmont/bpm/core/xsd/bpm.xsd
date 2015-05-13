@@ -54,7 +54,7 @@
             <xs:element name="param" type="formParamType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="caption" type="xs:string"/>n
+        <xs:attribute name="caption" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="formParamType">

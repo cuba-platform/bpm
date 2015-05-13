@@ -10,5 +10,6 @@
         <class>com.haulmont.bpm.entity.ProcTask</class>
         <class>com.haulmont.bpm.entity.ProcAttachmentType</class>
         <class>com.haulmont.bpm.entity.ProcAttachment</class>
+        <class>com.haulmont.bpm.entity.ProcModel</class>
     </persistence-unit>
 </persistence>

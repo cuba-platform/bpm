@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
+        caption="msg://browseCaption"
+        class="com.haulmont.bpm.gui.procmodel.ProcModelBrowse"
+        focusComponent="procModelsTable"
+        lookupComponent="procModelsTable"
+        messagesPack="com.haulmont.bpm.gui.procmodel">
+    <dsContext>
+        <collectionDatasource id="procModelsDs"
+                              class="com.haulmont.bpm.entity.ProcModel"
+                              view="_local">
+            <query>
+                <![CDATA[select e from bpm$ProcModel e]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <layout expand="procModelsTable"
+            spacing="true">
+        <filter id="filter"
+                datasource="procModelsDs">
+            <properties include=".*"/>
+        </filter>
+        <table id="procModelsTable"
+               width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="openModeler" caption="msg://openModeler" invoke="openModeler" trackSelection="true"/>
+                <action id="deploy" caption="msg://deploy" invoke="deploy" trackSelection="true"/>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="actModelId"/>
+            </columns>
+            <rows datasource="procModelsDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="procModelsTable.create"/>
+                <button id="editBtn"
+                        action="procModelsTable.edit"/>
+                <button id="openModelerBtn"
+                        action="procModelsTable.openModeler"/>
+                <button id="deployBtn"
+                        action="procModelsTable.deploy"/>
+                <button id="removeBtn"
+                        action="procModelsTable.remove"/>
+            </buttonsPanel>
+        </table>
+    </layout>
+</window>

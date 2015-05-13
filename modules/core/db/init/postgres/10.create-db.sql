@@ -150,3 +150,20 @@ create table BPM_PROC_TASK_USER_LINK (
     primary key (PROC_TASK_ID, USER_ID)
 )^
 -- end BPM_PROC_TASK_USER_LINK
+-- begin BPM_PROC_MODEL
+create table BPM_PROC_MODEL (
+    ID uuid,
+    CREATE_TS timestamp,
+    CREATED_BY varchar(50),
+    VERSION integer,
+    UPDATE_TS timestamp,
+    UPDATED_BY varchar(50),
+    DELETE_TS timestamp,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255),
+    ACT_MODEL_ID varchar(255),
+    --
+    primary key (ID)
+)^
+-- end BPM_PROC_MODEL
