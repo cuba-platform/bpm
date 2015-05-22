@@ -20,6 +20,11 @@
         <property name="jobExecutorActivate" value="true" />
         <property name="asyncExecutorEnabled" value="true" />
         <property name="asyncExecutorActivate" value="true" />
+        <property name="preBpmnParseHandlers">
+            <list>
+                <bean class="com.haulmont.bpm.core.engine.parser.BpmUserTaskParseHandler"/>
+            </list>
+        </property>
         <!--<property name="jpaEntityManagerFactory" ref="entityManagerFactory" />-->
     </bean>
 
