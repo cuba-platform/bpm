@@ -33,10 +33,10 @@ buildscript {
     }
 }
 
-def globalModule = project(':app-global')
-def coreModule = project(':app-core')
-def guiModule = project(':app-gui')
-def webModule = project(':app-web')
+def globalModule = project(':bpm-global')
+def coreModule = project(':bpm-core')
+def guiModule = project(':bpm-gui')
+def webModule = project(':bpm-web')
 
 def postgres = 'postgresql:postgresql:9.1-901.jdbc4'
 def servletApi = 'org.apache.tomcat:tomcat-servlet-api:7.0.53'
@@ -106,9 +106,9 @@ configure(coreModule) {
     }
 
     task deploy(dependsOn: assemble, type: CubaDeployment) {
-        appName = 'app-core'
+        appName = 'bpm-core'
         appJars('cuba-core', 'cuba-global', 
-                'app-global', 'app-core')
+                'bpm-global', 'bpm-core')
     }
 
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
@@ -148,7 +148,7 @@ configure(guiModule) {
     task deployConf(type: Copy) {
         from file('src')
         include "com/haulmont/bpm/**"
-        into "$tomcatDir/conf/app"
+        into "$tomcatDir/conf/bpm"
     }
 }
 
@@ -179,11 +179,11 @@ configure(webModule) {
     task deployConf(type: Copy) {
         from file('src')
         include "com/haulmont/bpm/**"
-        into "$tomcatDir/conf/app"
+        into "$tomcatDir/conf/bpm"
     }
     
     task clearMessagesCache(type: CubaClearMessagesCache) {
-        appName = 'app'
+        appName = 'bpm'
     }
     deployConf.dependsOn clearMessagesCache
 
@@ -198,19 +198,19 @@ configure(webModule) {
     }
 
     task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
-        appName = 'app'
+        appName = 'bpm'
         appJars('cuba-web', 'cuba-gui', 'cuba-client', 'cuba-global', 
-                'app-global', 'app-gui', 'app-web')
+                'bpm-global', 'bpm-gui', 'bpm-web')
     }
 }
 
-task undeploy(type: Delete, dependsOn: ':app-web:cleanConf') {
+task undeploy(type: Delete, dependsOn: ':bpm-web:cleanConf') {
     delete("$tomcatDir/shared")
-    delete("$tomcatDir/webapps/app-core")
+    delete("$tomcatDir/webapps/bpm-core")
     delete("$tomcatDir/webapps/app")
 }
 
-task restart(dependsOn: ['stop', ':app-core:deploy', ':app-web:deploy'], description: 'Redeploys applications and restarts local Tomcat') << {
+task restart(dependsOn: ['stop', ':bpm-core:deploy', ':bpm-web:deploy'], description: 'Redeploys applications and restarts local Tomcat') << {
     ant.waitfor(maxwait: 6, maxwaitunit: 'second', checkevery: 2, checkeveryunit: 'second') {
         not {
             socket(server: 'localhost', port: '8787')

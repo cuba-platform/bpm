@@ -1,6 +1,6 @@
 rootProject.name = 'bpm'
-include(':app-global', ':app-core', ':app-gui', ':app-web')
-project(':app-global').projectDir = new File(settingsDir, 'modules/global')
-project(':app-core').projectDir = new File(settingsDir, 'modules/core')
-project(':app-gui').projectDir = new File(settingsDir, 'modules/gui')
-project(':app-web').projectDir = new File(settingsDir, 'modules/web')
+include(':bpm-global', ':bpm-core', ':bpm-gui', ':bpm-web')
+project(':bpm-global').projectDir = new File(settingsDir, 'modules/global')
+project(':bpm-core').projectDir = new File(settingsDir, 'modules/core')
+project(':bpm-gui').projectDir = new File(settingsDir, 'modules/gui')
+project(':bpm-web').projectDir = new File(settingsDir, 'modules/web')
