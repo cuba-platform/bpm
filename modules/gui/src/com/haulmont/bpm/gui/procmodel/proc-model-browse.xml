@@ -21,6 +21,7 @@
             <properties include=".*"/>
         </filter>
         <table id="procModelsTable"
+               multiselect="true"
                width="100%">
             <actions>
                 <action id="create"/>

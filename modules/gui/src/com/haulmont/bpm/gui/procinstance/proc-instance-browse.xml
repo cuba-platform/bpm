@@ -21,7 +21,8 @@
             <properties include=".*"/>
         </filter>
         <table id="procInstancesTable"
-               width="100%">
+               width="100%"
+               multiselect="true">
             <actions>
                 <action id="create"/>
                 <action id="edit"/>

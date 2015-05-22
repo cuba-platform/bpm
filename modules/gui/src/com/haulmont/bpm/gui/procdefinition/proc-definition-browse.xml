@@ -29,6 +29,7 @@
                 <!--icon="icons/remove.png"-->
                 <!--invoke="removeProcDefinition"/>-->
                 <action id="remove"/>
+                <action id="refresh"/>
             </actions>
             <columns>
                 <column id="name"/>
@@ -46,6 +47,8 @@
                         action="procDefinitionTable.edit"/>
                 <button id="removeBtn"
                         action="procDefinitionTable.remove"/>
+                <button id="refreshBtn"
+                        action="procDefinitionTable.refresh"/>
             </buttonsPanel>
         </table>
     </layout>
