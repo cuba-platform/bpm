@@ -169,7 +169,12 @@ public class ProcTaskActionsFrame extends AbstractFrame {
 
         @Override
         public String getCaption() {
-            return processMessagesService.getMessage(procTask.getProcInstance().getProcDefinition().getActId(), procTask.getName() + "." + outcome);
+            String key = procTask.getName() + "." + outcome;
+            String message = processMessagesService.getMessage(procTask.getProcInstance().getProcDefinition().getActId(), key);
+            if (message.equals(key)) {
+                message = outcome;
+            }
+            return message;
         }
     }
 }
