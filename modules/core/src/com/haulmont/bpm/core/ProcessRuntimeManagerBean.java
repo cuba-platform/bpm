@@ -91,6 +91,12 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             if (variables == null)
                 variables = new HashMap<>();
             variables.put("bpmProcInstanceId", procInstance.getId());
+            if (!Strings.isNullOrEmpty(procInstance.getEntityName())) {
+                variables.put("entityName", procInstance.getEntityName());
+            }
+            if (procInstance.getEntityId() != null) {
+                variables.put("entityId", procInstance.getEntityId());
+            }
 
             ProcessInstance activitiProcessInstance = runtimeService.startProcessInstanceById(procInstance.getProcDefinition().getActId(), variables);
 
