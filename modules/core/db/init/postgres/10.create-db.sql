@@ -57,6 +57,7 @@ create table BPM_PROC_ROLE (
     STARTED_BY_ID uuid,
     START_COMMENT text,
     CANCEL_COMMENT text,
+    ENTITY_EDITOR_NAME varchar(255),
     --
     primary key (ID)
 )^-- end BPM_PROC_INSTANCE

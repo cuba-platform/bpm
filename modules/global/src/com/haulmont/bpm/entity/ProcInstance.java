@@ -89,6 +89,19 @@ public class ProcInstance extends StandardEntity {
     @OneToMany(mappedBy = "procInstance")
     protected Set<ProcAttachment> procAttachments;
 
+
+    @Column(name = "ENTITY_EDITOR_NAME")
+    protected String entityEditorName;
+
+    public void setEntityEditorName(String entityEditorName) {
+        this.entityEditorName = entityEditorName;
+    }
+
+    public String getEntityEditorName() {
+        return entityEditorName;
+    }
+
+
     public void setProcAttachments(Set<ProcAttachment> procAttachments) {
         this.procAttachments = procAttachments;
     }
