@@ -105,6 +105,14 @@ configure(coreModule) {
         dbscripts("com.haulmont.cuba:cuba-core:$cubaVersion:db@zip")
     }
 
+    dbScriptsArchive {
+        exclude '10-cuba/**'
+    }
+
+    assembleDbScripts {
+        moduleAlias = '20-bpm'
+    }
+
     task deploy(dependsOn: assemble, type: CubaDeployment) {
         appName = 'bpm-core'
         appJars('cuba-core', 'cuba-global', 
@@ -189,7 +197,7 @@ configure(webModule) {
 
     
     task cleanConf(description: 'Cleans up conf directory') << {
-        def dir = new File(tomcatDir, '/conf/app')
+        def dir = new File(tomcatDir, '/conf/bpm')
         if (dir.isDirectory()) {
             ant.delete(includeemptydirs: true) {
                 fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
