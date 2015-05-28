@@ -192,8 +192,8 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
 
                 hbox.add(openEntityBtn);
                 hbox.add(detailsBtn);
+                openEntityBtn.setAlignment(Alignment.MIDDLE_LEFT);
                 detailsBtn.setAlignment(Alignment.MIDDLE_RIGHT);
-                hbox.expand(openEntityBtn);
                 hbox.setAlignment(Alignment.MIDDLE_LEFT);
                 return hbox;
             }
