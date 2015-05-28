@@ -10,5 +10,21 @@
 <window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
         class="com.haulmont.bpm.gui.proctaskactions.ProcTaskActionsFrame"
         messagesPack="com.haulmont.bpm.gui.proctaskactions">
-    <layout/>
+    <layout spacing="true">
+        <label id="noActionsAvailableLbl" value="msg://noActionsAvailable" visible="false"/>
+        <grid id="taskInfoGrid" spacing="true">
+            <columns count="2"/>
+            <rows>
+                <row>
+                    <label id="taskNameLbl" value="msg://taskName"/>
+                    <label id="taskName"/>
+                </row>
+                <row>
+                    <label id="taskStartDateLbl" value="msg://taskStartDate"/>
+                    <label id="taskStartDate"/>
+                </row>
+            </rows>
+        </grid>
+        <vbox id="actionsBox" spacing="true"/>
+    </layout>
 </window>

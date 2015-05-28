@@ -9,10 +9,6 @@
         <datasource id="procInstanceDs"
                     class="com.haulmont.bpm.entity.ProcInstance"
                     view="procInstance-edit">
-            <!--<collectionDatasource id="procActorsDs"-->
-                                  <!--property="procActors"/>-->
-            <!--<collectionDatasource id="procTasksDs"-->
-                                  <!--property="procTasks"/>-->
         </datasource>
         <collectionDatasource id="procTasksDs"
                               class="com.haulmont.bpm.entity.ProcTask"
@@ -52,38 +48,48 @@
                            editable="false"/>
                     <field id="endDate"
                            editable="false"/>
-                    <field id="entityName" custom="true"/>
-                    <field id="entityId" custom="true"/>
+                    <field id="startComment"
+                           editable="false" rows="3"/>
+                    <field id="entityLink"
+                           caption="msg://linkedEntity"
+                           custom="true"/>
+                    <field id="entityName"
+                           custom="true" visible="false"/>
+                    <field id="entityId"
+                           custom="true" visible="false"/>
+                    <field id="entityEditorName" visible="false"/>
                 </column>
                 <column width="350px">
-                    <field id="actProcessInstanceId"
-                           editable="false"/>
-                    <field id="active"
-                           editable="false"/>
                     <field id="cancelled"
-                           editable="false"/>
-                    <field id="startComment"
-                           editable="false"/>
+                           editable="false" visible="false"/>
                     <field id="cancelComment"
-                           editable="false"/>
+                           editable="false" visible="false"/>
                 </column>
             </fieldGroup>
-            <groupBox id="procTaskActionsGroupBox" caption="msg://processActions">
-                <iframe id="procTaskActionsFrame" screen="procTaskActionsFrame"/>
+            <groupBox id="procTaskActionsGroupBox"
+                      caption="msg://processActions">
+                <iframe id="procTaskActionsFrame"
+                        screen="procTaskActionsFrame"/>
             </groupBox>
         </hbox>
-        <hbox height="300px" width="100%" spacing="true">
-            <groupBox id="procActorsBox"
-                      caption="msg://com.haulmont.bpm.entity/ProcInstance.procActors"
-                    height="100%"
-                    width="100%">
-                <iframe id="procActorsFrame" screen="procActorsFrame" height="100%"/>
-            </groupBox>
+        <hbox height="300px"
+              spacing="true"
+              width="100%">
             <groupBox id="procAttachmentsBox"
                       caption="msg://com.haulmont.bpm.entity/ProcInstance.procAttachments"
                       height="100%"
                       width="100%">
-                <iframe id="procAttachmentsFrame" screen="procAttachmentsFrame" height="100%"/>
+                <iframe id="procAttachmentsFrame"
+                        height="100%"
+                        screen="procAttachmentsFrame"/>
+            </groupBox>
+            <groupBox id="procActorsBox"
+                      caption="msg://com.haulmont.bpm.entity/ProcInstance.procActors"
+                      height="100%"
+                      width="100%">
+                <iframe id="procActorsFrame"
+                        height="100%"
+                        screen="procActorsFrame"/>
             </groupBox>
         </hbox>
         <groupBox id="processTasksBox"
@@ -102,21 +108,17 @@
                 <rows datasource="procTasksDs"/>
             </table>
         </groupBox>
-        <hbox id="windowActions"
-              spacing="true"
-              stylename="cuba-edit-window-actions">
-            <button id="windowCommitBtn"
-                    action="windowCommit"
-                    icon="icons/ok.png"/>
-            <button id="windowCloseBtn"
-                    action="windowClose"
-                    icon="icons/cancel.png"/>
-            <!--<button id="startProcessBtn"-->
-                    <!--caption="msg://startProcess"-->
-                    <!--invoke="startProcess"/>-->
-            <!--<button id="cancelProcessBtn"-->
-                    <!--caption="msg://cancelProcess"-->
-                    <!--invoke="cancelProcess"/>-->
-        </hbox>
+        <iframe id="windowActions"
+                screen="extendedEditWindowActions"/>
+        <!--<hbox id="windowActions"-->
+              <!--spacing="true"-->
+              <!--stylename="cuba-edit-window-actions">-->
+            <!--<button id="windowCommitBtn"-->
+                    <!--action="windowCommit"-->
+                    <!--icon="icons/ok.png"/>-->
+            <!--<button id="windowCloseBtn"-->
+                    <!--action="windowClose"-->
+                    <!--icon="icons/cancel.png"/>-->
+        <!--</hbox>-->
     </layout>
 </window>

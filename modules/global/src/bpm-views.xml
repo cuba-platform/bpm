@@ -29,6 +29,15 @@
             <property name="user"
                       view="_minimal"/>
         </property>
+        <property name="procInstance">
+            <property name="entityName"/>
+            <property name="entityId"/>
+            <property name="actProcessInstanceId"/>
+            <property name="procDefinition">
+                <property name="name"/>
+                <property name="actId"/>
+            </property>
+        </property>
     </view>
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           name="procDefinition-browse">
@@ -116,6 +125,7 @@
                   view="_minimal">
         </property>
         <property name="actId"/>
+        <property name="active"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcTask"
           extends="_local"
@@ -126,9 +136,14 @@
                 <property name="actId"/>
                 <property name="actKey"/>
             </property>
+            <property name="entityName"/>
+            <property name="entityId"/>
+            <property name="entityEditorName"/>
         </property>
         <property name="procActor">
             <property name="procRole"
+                      view="_minimal"/>
+            <property name="user"
                       view="_minimal"/>
         </property>
     </view>
@@ -185,5 +200,41 @@
         </property>
         <property name="candidateUsers"
                   view="_minimal"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcTask"
+          name="procTask-edit">
+        <property name="procInstance">
+            <property name="procDefinition">
+                <property name="name"/>
+                <property name="actId"/>
+                <property name="actKey"/>
+            </property>
+            <property name="procActors">
+                <property name="procRole"
+                          view="_minimal"/>
+                <property name="user"
+                          view="_minimal"/>
+            </property>
+            <property name="procTasks">
+                <property name="name"/>
+                <property name="startDate"/>
+                <property name="endDate"/>
+                <property name="outcome"/>
+                <property name="procActor">
+                    <property name="user"
+                              view="_minimal"/>
+                </property>
+                <property name="comment"/>
+                <property name="claimDate"/>
+            </property>
+        </property>
+        <property name="startDate"/>
+        <property name="name"/>
+        <property name="claimDate"/>
+        <property name="locName"/>
+        <property name="procActor">
+            <property name="user"
+                      view="_minimal"/>
+        </property>
     </view>
 </views>

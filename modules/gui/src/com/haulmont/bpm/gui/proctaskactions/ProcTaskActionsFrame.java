@@ -6,21 +6,18 @@
 
 package com.haulmont.bpm.gui.proctaskactions;
 
-import com.haulmont.bpm.form.ProcFormDefinition;
+import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
-import com.haulmont.bpm.gui.form.ProcForm;
+import com.haulmont.bpm.form.ProcFormDefinition;
+import com.haulmont.bpm.gui.action.*;
 import com.haulmont.bpm.service.ProcessFormService;
-import com.haulmont.bpm.service.ProcessMessagesService;
-import com.haulmont.bpm.service.ProcessRuntimeService;
-import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.gui.components.*;
-import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
+import com.haulmont.cuba.security.global.UserSession;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,152 +26,204 @@ import java.util.Map;
  */
 public class ProcTaskActionsFrame extends AbstractFrame {
 
-    protected BoxLayout actionsBox;
+    @Inject
+    protected DataManager dataManager;
+
+    @Inject
+    protected UserSession userSession;
+
+    @Inject
+    protected ComponentsFactory componentsFactory;
 
     @Inject
     protected ProcessFormService processFormService;
 
     @Inject
-    protected ProcessMessagesService processMessagesService;
+    protected Label noActionsAvailableLbl;
 
     @Inject
-    protected ProcessRuntimeService processRuntimeService;
+    protected Label taskName;
 
     @Inject
-    protected ComponentsFactory componentsFactory;
+    protected Label taskStartDate;
 
-    protected List<ActionListener> actionListeners = new ArrayList<>();
+    @Inject
+    protected GridLayout taskInfoGrid;
 
-    protected Orientation orientation = Orientation.HORIZONTAL;
+    @Inject
+    protected VBoxLayout actionsBox;
 
-    public interface ActionListener {
-        void actionPerformed();
-    }
+    protected ProcTask procTask;
+    protected ProcInstance procInstance;
 
-    public enum Orientation {
-        HORIZONTAL,
-        VERTICAL
-    }
+    protected ProcTaskAction.BeforeActionPredicate beforeStartProcessPredicate;
+    protected ProcTaskAction.BeforeActionPredicate beforeCompleteTaskPredicate;
+    protected ProcTaskAction.BeforeActionPredicate beforeClaimTaskPredicate;
+    protected ProcTaskAction.BeforeActionPredicate beforeCancelProcessPredicate;
+    protected ProcTaskAction.AfterActionListener afterStartProcessListener;
+    protected ProcTaskAction.AfterActionListener afterCompleteTaskListener;
+    protected ProcTaskAction.AfterActionListener afterClaimTaskListener;
+    protected ProcTaskAction.AfterActionListener afterCancelProcessListener;
 
-    public void addProcTaskActions(final ProcTask procTask) {
-        if (actionsBox == null) {
-            createActionsBox();
-        }
+    protected static final String BUTTON_WIDTH = "150px";
 
-        if (procTask.getProcActor() != null) {
-            Map<String, ProcFormDefinition> outcomesWithForms = processFormService.getOutcomesWithForms(procTask);
-            if (outcomesWithForms.isEmpty()) {
-                //todo gorbunkov
-            } else {
-                for (Map.Entry<String, ProcFormDefinition> entry : outcomesWithForms.entrySet()) {
-                    final String outcome = entry.getKey();
-                    final ProcFormDefinition formDefinition = entry.getValue();
-                    Button procActionBtn = componentsFactory.createComponent(Button.class);
-                    procActionBtn.setAction(new ProcTaskAction(procTask, outcome, formDefinition));
-                    actionsBox.add(procActionBtn);
-                }
+    public void init(ProcInstance procInstance) {
+        actionsBox.removeAll();
+        this.procInstance = procInstance;
+        procTask = findProcTask();
+        if (procTask == null) {
+            if (startProcessAllowed())
+                initStartProcessUI();
+            else {
+                noActionsAvailableLbl.setVisible(true);
+                taskInfoGrid.setVisible(false);
             }
+        } else if (procTask.getProcActor() != null
+                && userSession.getCurrentOrSubstitutedUser().equals(procTask.getProcActor().getUser())) {
+            initCompleteTaskUI();
         } else {
-            Button claimTaskBtn = componentsFactory.createComponent(Button.class);
-            claimTaskBtn.setCaption(getMessage("claimTask"));
-            claimTaskBtn.setAction(new BaseAction("claimTask") {
-                @Override
-                public void actionPerform(Component component) {
-                    processRuntimeService.claimProcTask(procTask, userSession.getCurrentOrSubstitutedUser());
-                    fireActionListeners();
-                }
-            });
-            actionsBox.add(claimTaskBtn);
+            initClaimTaskUI();
+        }
+        initAdditionalActions();
+    }
+
+    protected void initClaimTaskUI() {
+        initTaskInfoGrid();
+        Button claimTaskBtn = componentsFactory.createComponent(Button.class);
+        claimTaskBtn.setWidth(BUTTON_WIDTH);;
+        ClaimProcTaskAction claimProcTaskAction = new ClaimProcTaskAction(procTask, claimTaskBtn);
+        claimProcTaskAction.addBeforeActionPredicate(beforeClaimTaskPredicate);
+        claimProcTaskAction.addAfterActionListener(afterClaimTaskListener);
+        claimTaskBtn.setAction(claimProcTaskAction);
+        actionsBox.add(claimTaskBtn);
+    }
+
+    protected void initCompleteTaskUI() {
+        initTaskInfoGrid();
+        Map<String, ProcFormDefinition> outcomesWithForms = processFormService.getOutcomesWithForms(procTask);
+        for (Map.Entry<String, ProcFormDefinition> entry : outcomesWithForms.entrySet()) {
+            Button actionBtn = componentsFactory.createComponent(Button.class);
+            actionBtn.setWidth(BUTTON_WIDTH);
+            CompleteProcTaskAction action = new CompleteProcTaskAction(procTask, entry.getKey(), entry.getValue(), actionBtn);
+            action.addBeforeActionPredicate(beforeCompleteTaskPredicate);
+            action.addAfterActionListener(afterCompleteTaskListener);
+            actionBtn.setAction(action);
+            actionsBox.add(actionBtn);
         }
     }
 
-    public void addProcessAction(AbstractAction action) {
-        if (actionsBox == null)
-            createActionsBox();
-
-        Button button = componentsFactory.createComponent(Button.class);
-        button.setAction(action);
-        actionsBox.add(button);
+    protected void initStartProcessUI() {
+        taskInfoGrid.setVisible(false);
+        Button startProcessBtn = componentsFactory.createComponent(Button.class);
+        startProcessBtn.setWidth(BUTTON_WIDTH);
+        StartProcessAction startProcessAction = new StartProcessAction(procInstance, startProcessBtn);
+        startProcessAction.addBeforeActionPredicate(beforeStartProcessPredicate);
+        startProcessAction.addAfterActionListener(afterStartProcessListener);
+        startProcessBtn.setAction(startProcessAction);
+        actionsBox.add(startProcessBtn);
     }
 
-    protected void createActionsBox() {
-        actionsBox = componentsFactory.createComponent(orientation == Orientation.HORIZONTAL
-                ? HBoxLayout.class : VBoxLayout.class);
-        actionsBox.setSpacing(true);
-        add(actionsBox);
+    protected void initTaskInfoGrid() {
+        taskName.setValue(procTask.getLocName());
+        taskStartDate.setValue(procTask.getStartDate());
     }
 
-    public void addActionListener(ActionListener listener) {
-        actionListeners.add(listener);
-    }
 
-    protected void fireActionListeners() {
-        for (ActionListener listener : actionListeners) {
-            listener.actionPerformed();
+    protected void initAdditionalActions() {
+        if (cancelProcessAllowed()) {
+            Button cancelBtn = componentsFactory.createComponent(Button.class);
+            cancelBtn.setWidth(BUTTON_WIDTH);;
+            CancelProcessAction cancelProcessAction = new CancelProcessAction(procInstance, cancelBtn);
+            cancelProcessAction.addBeforeActionPredicate(beforeCancelProcessPredicate);
+            cancelProcessAction.addAfterActionListener(afterCancelProcessListener);
+            cancelBtn.setAction(cancelProcessAction);
+            actionsBox.add(cancelBtn);
         }
     }
 
-    public void setOrientation(Orientation orientation) {
-        this.orientation = orientation;
+    protected boolean cancelProcessAllowed() {
+        return procInstance.getStartDate() != null
+                && procInstance.getEndDate() == null
+                && userSession.getCurrentOrSubstitutedUser().equals(procInstance.getStartedBy());
     }
 
-    public void removeAllActions() {
-        if (actionsBox != null)
-            actionsBox.removeAll();
+
+    protected boolean startProcessAllowed() {
+        return procInstance.getStartDate() == null;
     }
 
-    protected class ProcTaskAction extends BaseAction {
+    protected ProcTask findProcTask() {
+        LoadContext ctx = new LoadContext(ProcTask.class);
+        ctx.setQueryString("select pt from bpm$ProcTask pt left join pt.candidateUsers cu " +
+                "where pt.procInstance.id = :procInstance and (pt.procActor.user.id = :userId or (pt.procActor is null and cu.id = :userId)) " +
+                "and pt.endDate is null")
+                .setParameter("procInstance", procInstance)
+                .setParameter("userId", userSession.getCurrentOrSubstitutedUser());
+        ctx.setView("procTask-complete");
+        return dataManager.load(ctx);
+    }
 
-        private ProcTask procTask;
-        private String outcome;
-        private ProcFormDefinition formDefinition;
+    public ProcTaskAction.AfterActionListener getAfterStartProcessListener() {
+        return afterStartProcessListener;
+    }
 
-        protected ProcTaskAction(ProcTask procTask, String outcome, ProcFormDefinition formDefinition) {
-            super(outcome);
-            this.procTask = procTask;
-            this.outcome = outcome;
-            this.formDefinition = formDefinition;
-        }
+    public void setAfterStartProcessListener(ProcTaskAction.AfterActionListener afterStartProcessListener) {
+        this.afterStartProcessListener = afterStartProcessListener;
+    }
 
-        @Override
-        public void actionPerform(Component component) {
-            if (formDefinition != null) {
-                Map<String, Object> formParams = new HashMap<>();
-                formParams.put("formDefinition", formDefinition);
-                formParams.put("procTask", procTask);
-                formParams.put("procInstance", procTask.getProcInstance());
+    public ProcTaskAction.AfterActionListener getAfterCompleteTaskListener() {
+        return afterCompleteTaskListener;
+    }
 
-                final Window procForm = openWindow(formDefinition.getName(), WindowManager.OpenType.DIALOG, formParams);
-                procForm.addListener(new Window.CloseListener() {
-                    @Override
-                    public void windowClosed(String actionId) {
-                        if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                            String comment = null;
-                            Map<String, Object> formResult = null;
-                            if (procForm instanceof ProcForm) {
-                                comment = ((ProcForm) procForm).getComment();
-                                formResult = ((ProcForm) procForm).getFormResult();
-                            }
-                            processRuntimeService.completeProcTask(procTask, outcome, comment, formResult);
-                            fireActionListeners();
-                        }
-                    }
-                });
-            } else {
-                processRuntimeService.completeProcTask(procTask, outcome, null, new HashMap<String, Object>());
-                fireActionListeners();
-            }
+    public void setAfterCompleteTaskListener(ProcTaskAction.AfterActionListener afterCompleteTaskListener) {
+        this.afterCompleteTaskListener = afterCompleteTaskListener;
+    }
 
-        }
+    public ProcTaskAction.BeforeActionPredicate getBeforeStartProcessPredicate() {
+        return beforeStartProcessPredicate;
+    }
 
-        @Override
-        public String getCaption() {
-            String key = procTask.getName() + "." + outcome;
-            String message = processMessagesService.getMessage(procTask.getProcInstance().getProcDefinition().getActId(), key);
-            if (message.equals(key)) {
-                message = outcome;
-            }
-            return message;
-        }
+    public void setBeforeStartProcessPredicate(ProcTaskAction.BeforeActionPredicate beforeStartProcessPredicate) {
+        this.beforeStartProcessPredicate = beforeStartProcessPredicate;
+    }
+
+    public ProcTaskAction.AfterActionListener getAfterClaimTaskListener() {
+        return afterClaimTaskListener;
+    }
+
+    public void setAfterClaimTaskListener(ProcTaskAction.AfterActionListener afterClaimTaskListener) {
+        this.afterClaimTaskListener = afterClaimTaskListener;
+    }
+
+    public ProcTaskAction.AfterActionListener getAfterCancelProcessListener() {
+        return afterCancelProcessListener;
+    }
+
+    public void setAfterCancelProcessListener(ProcTaskAction.AfterActionListener afterCancelProcessListener) {
+        this.afterCancelProcessListener = afterCancelProcessListener;
+    }
+
+    public ProcTaskAction.BeforeActionPredicate getBeforeCompleteTaskPredicate() {
+        return beforeCompleteTaskPredicate;
+    }
+
+    public void setBeforeCompleteTaskPredicate(ProcTaskAction.BeforeActionPredicate beforeCompleteTaskPredicate) {
+        this.beforeCompleteTaskPredicate = beforeCompleteTaskPredicate;
+    }
+
+    public ProcTaskAction.BeforeActionPredicate getBeforeClaimTaskPredicate() {
+        return beforeClaimTaskPredicate;
+    }
+
+    public void setBeforeClaimTaskPredicate(ProcTaskAction.BeforeActionPredicate beforeClaimTaskPredicate) {
+        this.beforeClaimTaskPredicate = beforeClaimTaskPredicate;
+    }
+
+    public ProcTaskAction.BeforeActionPredicate getBeforeCancelProcessPredicate() {
+        return beforeCancelProcessPredicate;
+    }
+
+    public void setBeforeCancelProcessPredicate(ProcTaskAction.BeforeActionPredicate beforeCancelProcessPredicate) {
+        this.beforeCancelProcessPredicate = beforeCancelProcessPredicate;
     }
 }
