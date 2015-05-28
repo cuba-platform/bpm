@@ -24,9 +24,14 @@ public class ProcTaskResult implements Serializable {
         users.add(userId);
     }
 
-    public int getOutcomesCount(String outcome) {
+    public int count(String outcome) {
         List<UUID> users = outcomes.get(outcome);
         return users == null ? 0 : users.size();
+    }
+
+    public boolean exists(String outcome) {
+        List<UUID> users = outcomes.get(outcome);
+        return users != null && users.size() > 0;
     }
 
     public Map<String, List<UUID>> getOutcomes() {
