@@ -15,7 +15,9 @@ import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.GlobalConfig;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.AbstractLookup;
+import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Table;
+import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -64,6 +66,12 @@ public class ProcModelBrowse extends AbstractLookup {
             @Override
             public void handle(Entity entity) {
                 _openModeler((ProcModel) entity);
+            }
+        });
+        procModelsTable.setItemClickAction(new BaseAction("openModeler") {
+            @Override
+            public void actionPerform(Component component) {
+                openModeler();
             }
         });
     }
