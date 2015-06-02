@@ -24,4 +24,6 @@ public interface ProcessMessagesManager {
     String loadString(String actProcessDefinitionId, String key);
 
     String loadString(String actProcessDefinitionId, String key, Locale locale);
+
+    void clearCaches();
 }

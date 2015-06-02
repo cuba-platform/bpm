@@ -92,6 +92,12 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
         }
     }
 
+    @Override
+    public void clearCaches() {
+        msgCache.clear();
+        propsCache.clear();
+    }
+
     protected void cacheMsg(String key, String msg) {
         msgCache.put(key, msg);
     }
@@ -103,12 +109,12 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
             return properties;
 
         properties = getLocalizationProperties(actProcessDefinitionId, locale);
-        if (properties != null) {
-            propsCache.put(key, properties);
-            return properties;
+        if (properties == null) {
+            properties = new Properties();
         }
+        propsCache.put(key, properties);
 
-        return new Properties();
+        return properties;
     }
 
     protected String makeMsgCacheKey(String actProcessDefinitionId, String key, Locale locale) {
@@ -129,12 +135,12 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
             if (localizationElements != null) {
                 for (ExtensionElement localizationElement : localizationElements) {
                     if (locale.getLanguage().equals(localizationElement.getAttributeValue(null, "lang"))) {
-                        String localization = localizationElement.getElementText();
+                        List<ExtensionElement> msgElements = localizationElement.getChildElements().get("msg");
                         Properties properties = new Properties();
-                        try {
-                            properties.load(new StringReader(localization));
-                        } catch (IOException e) {
-                            throw new BpmException("Error when reading process localization", e);
+                        if (msgElements != null) {
+                            for (ExtensionElement msgElement : msgElements) {
+                                properties.put(msgElement.getAttributeValue(null, "key"), msgElement.getAttributeValue(null, "value"));
+                            }
                         }
                         return properties;
                     }

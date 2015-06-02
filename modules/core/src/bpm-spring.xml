@@ -51,4 +51,14 @@
     <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService"/>
 
     <alias name="bpm_ProcessRuntimeManager" alias="prm"/>
+
+    <bean id="bpm_MBeanExporter" class="com.haulmont.cuba.core.sys.jmx.MBeanExporter" lazy-init="false">
+        <property name="beans">
+            <map>
+                <entry key="${cuba.webContextName}.bpm:type=MessagesCache"
+                       value-ref="bpm_MessagesCacheMBean"/>
+            </map>
+        </property>
+    </bean>
+
 </beans>
