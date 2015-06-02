@@ -67,10 +67,8 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     @Named("fieldGroup.procDefinition")
     protected LookupField procDefinitionLookup;
 
-    @Named("fieldGroup.entityName")
     protected LookupField entityNameLookup;
 
-    @Named("fieldGroup.entityId")
     protected PickerField entityIdPickerField;
 
     @Named("fieldGroup.entityEditorName")
@@ -92,21 +90,26 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     public void setItem(Entity item) {
         super.setItem(item);
 
-//        setShowSaveNotification(false);
         procTasksDs.refresh();
 
+        addFieldGroupCustomFields();
         setComponentsVisible();
         setComponentsEditable();
-
-        addFieldGroupCustomFields();
 
         procInstanceDs.addListener(new DsListenerAdapter<ProcInstance>() {
             @Override
             public void valueChanged(ProcInstance source, String property, Object prevValue, Object value) {
-                if ("procDefinition".equals(property)) {
-                    procActorsFrame.setProcInstance(getItem());
-                    procActorsFrame.refresh();
-                    initProcActors((ProcDefinition) value);
+                switch (property) {
+                    case "procDefinition":
+                        procActorsFrame.setProcInstance(getItem());
+                        procActorsFrame.refresh();
+                        initProcActors((ProcDefinition) value);
+                        break;
+                    case "entityEditorName":
+                        PickerField.LookupAction action = (PickerField.LookupAction) entityIdPickerField.getAction(PickerField.LookupAction.NAME);
+                        if (action != null)
+                            action.setLookupScreen((String) value);
+                        break;
                 }
             }
         });
@@ -202,12 +205,12 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         fieldGroup.addCustomField("entityName", new FieldGroup.CustomFieldGenerator() {
             @Override
             public Component generateField(Datasource datasource, String propertyId) {
-                LookupField component = componentsFactory.createComponent(LookupField.class);
+                entityNameLookup = componentsFactory.createComponent(LookupField.class);
                 Collection<MetaClass> persistentMetaClasses = metadata.getTools().getAllPersistentMetaClasses();
-                component.setOptionsList(new ArrayList<>(persistentMetaClasses));
-                component.setValue(metadata.getClass(getItem().getEntityName()));
+                entityNameLookup.setOptionsList(new ArrayList<>(persistentMetaClasses));
+                entityNameLookup.setValue(metadata.getClass(getItem().getEntityName()));
 
-                component.addListener(new ValueListener() {
+                entityNameLookup.addListener(new ValueListener() {
                     @Override
                     public void valueChanged(Object source, String property, Object prevValue, Object value) {
                         MetaClass metaClass = (MetaClass) value;
@@ -217,7 +220,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                         entityIdPickerField.setEditable(value != null);
                     }
                 });
-                return component;
+                return entityNameLookup;
             }
         });
         fieldGroup.setVisible("entityName", false);
@@ -225,11 +228,11 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         fieldGroup.addCustomField("entityId", new FieldGroup.CustomFieldGenerator() {
             @Override
             public Component generateField(Datasource datasource, String propertyId) {
-                PickerField component = componentsFactory.createComponent(PickerField.class);
-                component.addLookupAction();
-                component.addOpenAction();
-                component.addClearAction();
-                component.setMetaClass((MetaClass) fieldGroup.getFieldValue("entityName"));
+                entityIdPickerField = componentsFactory.createComponent(PickerField.class);
+                entityIdPickerField.addLookupAction();
+                entityIdPickerField.addOpenAction();
+                entityIdPickerField.addClearAction();
+                entityIdPickerField.setMetaClass((MetaClass) fieldGroup.getFieldValue("entityName"));
 
                 UUID entityId = getItem().getEntityId();
                 String entityName = getItem().getEntityName();
@@ -237,11 +240,11 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                     MetaClass metaClass = metadata.getClass(entityName);
                     if (metaClass != null) {
                         Entity entity = dataManager.load(new LoadContext(metaClass).setId(entityId));
-                        component.setValue(entity);
+                        entityIdPickerField.setValue(entity);
                     }
                 }
 
-                component.addListener(new ValueListener() {
+                entityIdPickerField.addListener(new ValueListener() {
                     @Override
                     public void valueChanged(Object source, String property, Object prevValue, Object value) {
                         UUID entityId = value == null ? null : ((Entity) value).getUuid();
@@ -250,7 +253,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                     }
                 });
 
-                return component;
+                return entityIdPickerField;
             }
         });
         fieldGroup.setVisible("entityId", false);
