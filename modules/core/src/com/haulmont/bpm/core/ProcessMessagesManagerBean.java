@@ -126,16 +126,18 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
         if (localizationsElements != null) {
             ExtensionElement localizationsElement = localizationsElements.get(0);
             List<ExtensionElement> localizationElements = localizationsElement.getChildElements().get("localization");
-            for (ExtensionElement localizationElement : localizationElements) {
-                if (locale.getLanguage().equals(localizationElement.getAttributeValue(null, "lang"))) {
-                    String localization = localizationElement.getElementText();
-                    Properties properties = new Properties();
-                    try {
-                        properties.load(new StringReader(localization));
-                    } catch (IOException e) {
-                        throw new BpmException("Error when reading process localization", e);
+            if (localizationElements != null) {
+                for (ExtensionElement localizationElement : localizationElements) {
+                    if (locale.getLanguage().equals(localizationElement.getAttributeValue(null, "lang"))) {
+                        String localization = localizationElement.getElementText();
+                        Properties properties = new Properties();
+                        try {
+                            properties.load(new StringReader(localization));
+                        } catch (IOException e) {
+                            throw new BpmException("Error when reading process localization", e);
+                        }
+                        return properties;
                     }
-                    return properties;
                 }
             }
         }
