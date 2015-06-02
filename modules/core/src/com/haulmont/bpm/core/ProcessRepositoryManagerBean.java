@@ -98,6 +98,7 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
                 if (procDefinition == null)
                     throw new BpmException("Error when deploying process. Process definition has been removed");
                 processMigrator.migrate(activitiProcessDefinition);
+                processMigrator.migrateProcTasks(procDefinition, activitiProcessDefinition.getId());
             }
             procDefinition.setName(activitiProcessDefinition.getName());
             procDefinition.setActKey(activitiProcessDefinition.getKey());
