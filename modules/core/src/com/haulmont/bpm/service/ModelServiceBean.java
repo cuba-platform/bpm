@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Joiner;
 import com.haulmont.bpm.exception.BpmException;
+import com.haulmont.bpm.rest.RestModel;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.impl.util.json.JSONObject;
@@ -40,17 +41,12 @@ public class ModelServiceBean implements ModelService {
     protected static final Log log = LogFactory.getLog(ModelServiceBean.class);
 
     @Override
-    public String getModelJson(String actModelId) {
+    public RestModel getModelJson(String actModelId) {
         Model model = repositoryService.getModel(actModelId);
         if (model != null) {
             try {
-                JSONObject resultJsonObject = new JSONObject();
                 String modelJson = new String(repositoryService.getModelEditorSource(model.getId()), "utf-8");
-                JSONObject modelJsonObject = new JSONObject(modelJson);
-                resultJsonObject.put("modelId", model.getId());
-                resultJsonObject.put("name", model.getName());
-                resultJsonObject.put("model", modelJsonObject);
-                return resultJsonObject.toString();
+                return new RestModel(model.getId(), model.getName(), modelJson);
             } catch (Exception e) {
                 log.error("Error creating model JSON", e);
                 throw new BpmException("Error creating model JSON", e);

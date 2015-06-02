@@ -6,6 +6,8 @@
 
 package com.haulmont.bpm.service;
 
+import com.haulmont.bpm.rest.RestModel;
+
 /**
  * Service for working with activiti models
  * @author gorbunkov
@@ -15,9 +17,9 @@ public interface ModelService {
     String NAME = "bpm_ModelService";
 
     /**
-     * @return activiti model JSON
+     * @return
      */
-    String getModelJson(String actModelId);
+    RestModel getModelJson(String actModelId);
 
     /**
      * Saves activiti model to the database

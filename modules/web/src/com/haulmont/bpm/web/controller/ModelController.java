@@ -6,7 +6,11 @@
 
 package com.haulmont.bpm.web.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Strings;
+import com.haulmont.bpm.rest.RestModel;
 import com.haulmont.bpm.service.ModelService;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.SecurityContext;
@@ -36,15 +40,22 @@ public class ModelController {
 
     @RequestMapping(value = "/{actModelId}", method = RequestMethod.GET)
     @ResponseBody
-    public String getModel(@PathVariable String actModelId,
+    public JsonNode getModel(@PathVariable String actModelId,
                            HttpServletRequest request,
                            HttpServletResponse response) throws IOException {
         if (auth(request, response)) {
-            String modelJson = modelService.getModelJson(actModelId);
-            if (Strings.isNullOrEmpty(modelJson)) {
+            RestModel restModel = modelService.getModelJson(actModelId);
+            if (restModel == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return null;
             }
-            return modelJson;
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode objectNode = objectMapper.createObjectNode();
+            objectNode.put("modelId", restModel.getModelId());
+            objectNode.put("name", restModel.getName());
+            JsonNode modelNode = objectMapper.readTree(restModel.getModel());
+            objectNode.set("model", modelNode);
+            return objectNode;
         }
         return null;
     }
