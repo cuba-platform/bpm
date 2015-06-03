@@ -17,12 +17,12 @@ public class RestModel implements Serializable {
 
     private String modelId;
     private String name;
-    private String model;
+    private String modelJson;
 
-    public RestModel(String modelId, String name, String model) {
+    public RestModel(String modelId, String name, String modelJson) {
         this.modelId = modelId;
         this.name = name;
-        this.model = model;
+        this.modelJson = modelJson;
     }
 
     public String getModelId() {
@@ -41,11 +41,11 @@ public class RestModel implements Serializable {
         this.name = name;
     }
 
-    public String getModel() {
-        return model;
+    public String getModelJson() {
+        return modelJson;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public void setModelJson(String modelJson) {
+        this.modelJson = modelJson;
     }
 }

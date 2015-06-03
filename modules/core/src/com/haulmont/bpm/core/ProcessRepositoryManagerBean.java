@@ -165,13 +165,12 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
     }
 
     @Override
-    public String getProcessDefinitionXmlFromModel(String actModelId) {
-        JsonNode editorNode = null;
+    public String convertModelToProcessXML(String actModelId) {
+        JsonNode editorNode;
         try {
             editorNode = new ObjectMapper().readTree(repositoryService.getModelEditorSource(actModelId));
             BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
             BpmnModel model = jsonConverter.convertToBpmnModel(editorNode);
-//            String filename = model.getMainProcess().getId() + ".bpmn20.xml";
             byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(model);
             return new String(bpmnBytes, "utf-8");
         } catch (IOException e) {
@@ -189,6 +188,17 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             List<ProcDefinition> result = query.getResultList();
             tx.commit();
             return result;
+        } finally {
+            tx.end();
+        }
+    }
+
+    @Override
+    public void undeployProcess(String actDeploymentId) {
+        Transaction tx = persistence.createTransaction();
+        try {
+            repositoryService.deleteDeployment(actDeploymentId);
+            tx.commit();
         } finally {
             tx.end();
         }

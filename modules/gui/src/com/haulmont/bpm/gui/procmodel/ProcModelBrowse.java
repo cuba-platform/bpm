@@ -95,7 +95,7 @@ public class ProcModelBrowse extends AbstractLookup {
     }
 
     public void deploy() {
-        final String processXml = processRepositoryService.getProcessDefinitionXmlFromModel(procModelsDs.getItem().getActModelId());
+        final String processXml = processRepositoryService.convertModelToProcessXml(procModelsDs.getItem().getActModelId());
         String processKey = ProcDefinitionUtils.getProcessKeyFromXml(processXml);
         List<ProcDefinition> procDefinitionsWithTheSameKey = processRepositoryService.getProcDefinitionsByProcessKey(processKey);
         if (procDefinitionsWithTheSameKey.isEmpty()) {

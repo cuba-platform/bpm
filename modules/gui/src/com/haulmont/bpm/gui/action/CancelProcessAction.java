@@ -23,7 +23,7 @@ import java.util.Map;
  * @author gorbunkov
  * @version $Id$
  */
-public class CancelProcessAction extends ProcTaskAction {
+public class CancelProcessAction extends ProcAction {
 
     private ProcInstance procInstance;
     private Component.BelongToFrame target;

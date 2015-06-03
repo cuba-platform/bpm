@@ -23,6 +23,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -139,6 +140,9 @@ public class ProcDefinitionBrowse extends AbstractLookup {
                 showNotification(getMessage("cannotRemoveActiveProcesses"), NotificationType.ERROR);
             } else {
                 super.doRemove(selected, autocommit);
+                for (Object selectedItem : selected) {
+                    processRepositoryService.undeployProcess(((ProcDefinition)selectedItem).getActDeploymentId());
+                }
             }
         }
     }

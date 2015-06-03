@@ -56,14 +56,14 @@ public class ProcTaskActionsFrame extends AbstractFrame {
     protected ProcTask procTask;
     protected ProcInstance procInstance;
 
-    protected ProcTaskAction.BeforeActionPredicate beforeStartProcessPredicate;
-    protected ProcTaskAction.BeforeActionPredicate beforeCompleteTaskPredicate;
-    protected ProcTaskAction.BeforeActionPredicate beforeClaimTaskPredicate;
-    protected ProcTaskAction.BeforeActionPredicate beforeCancelProcessPredicate;
-    protected ProcTaskAction.AfterActionListener afterStartProcessListener;
-    protected ProcTaskAction.AfterActionListener afterCompleteTaskListener;
-    protected ProcTaskAction.AfterActionListener afterClaimTaskListener;
-    protected ProcTaskAction.AfterActionListener afterCancelProcessListener;
+    protected ProcAction.BeforeActionPredicate beforeStartProcessPredicate;
+    protected ProcAction.BeforeActionPredicate beforeCompleteTaskPredicate;
+    protected ProcAction.BeforeActionPredicate beforeClaimTaskPredicate;
+    protected ProcAction.BeforeActionPredicate beforeCancelProcessPredicate;
+    protected ProcAction.AfterActionListener afterStartProcessListener;
+    protected ProcAction.AfterActionListener afterCompleteTaskListener;
+    protected ProcAction.AfterActionListener afterClaimTaskListener;
+    protected ProcAction.AfterActionListener afterCancelProcessListener;
 
     protected static final String BUTTON_WIDTH = "150px";
 
@@ -163,67 +163,67 @@ public class ProcTaskActionsFrame extends AbstractFrame {
         return dataManager.load(ctx);
     }
 
-    public ProcTaskAction.AfterActionListener getAfterStartProcessListener() {
+    public ProcAction.AfterActionListener getAfterStartProcessListener() {
         return afterStartProcessListener;
     }
 
-    public void setAfterStartProcessListener(ProcTaskAction.AfterActionListener afterStartProcessListener) {
+    public void setAfterStartProcessListener(ProcAction.AfterActionListener afterStartProcessListener) {
         this.afterStartProcessListener = afterStartProcessListener;
     }
 
-    public ProcTaskAction.AfterActionListener getAfterCompleteTaskListener() {
+    public ProcAction.AfterActionListener getAfterCompleteTaskListener() {
         return afterCompleteTaskListener;
     }
 
-    public void setAfterCompleteTaskListener(ProcTaskAction.AfterActionListener afterCompleteTaskListener) {
+    public void setAfterCompleteTaskListener(ProcAction.AfterActionListener afterCompleteTaskListener) {
         this.afterCompleteTaskListener = afterCompleteTaskListener;
     }
 
-    public ProcTaskAction.BeforeActionPredicate getBeforeStartProcessPredicate() {
+    public ProcAction.BeforeActionPredicate getBeforeStartProcessPredicate() {
         return beforeStartProcessPredicate;
     }
 
-    public void setBeforeStartProcessPredicate(ProcTaskAction.BeforeActionPredicate beforeStartProcessPredicate) {
+    public void setBeforeStartProcessPredicate(ProcAction.BeforeActionPredicate beforeStartProcessPredicate) {
         this.beforeStartProcessPredicate = beforeStartProcessPredicate;
     }
 
-    public ProcTaskAction.AfterActionListener getAfterClaimTaskListener() {
+    public ProcAction.AfterActionListener getAfterClaimTaskListener() {
         return afterClaimTaskListener;
     }
 
-    public void setAfterClaimTaskListener(ProcTaskAction.AfterActionListener afterClaimTaskListener) {
+    public void setAfterClaimTaskListener(ProcAction.AfterActionListener afterClaimTaskListener) {
         this.afterClaimTaskListener = afterClaimTaskListener;
     }
 
-    public ProcTaskAction.AfterActionListener getAfterCancelProcessListener() {
+    public ProcAction.AfterActionListener getAfterCancelProcessListener() {
         return afterCancelProcessListener;
     }
 
-    public void setAfterCancelProcessListener(ProcTaskAction.AfterActionListener afterCancelProcessListener) {
+    public void setAfterCancelProcessListener(ProcAction.AfterActionListener afterCancelProcessListener) {
         this.afterCancelProcessListener = afterCancelProcessListener;
     }
 
-    public ProcTaskAction.BeforeActionPredicate getBeforeCompleteTaskPredicate() {
+    public ProcAction.BeforeActionPredicate getBeforeCompleteTaskPredicate() {
         return beforeCompleteTaskPredicate;
     }
 
-    public void setBeforeCompleteTaskPredicate(ProcTaskAction.BeforeActionPredicate beforeCompleteTaskPredicate) {
+    public void setBeforeCompleteTaskPredicate(ProcAction.BeforeActionPredicate beforeCompleteTaskPredicate) {
         this.beforeCompleteTaskPredicate = beforeCompleteTaskPredicate;
     }
 
-    public ProcTaskAction.BeforeActionPredicate getBeforeClaimTaskPredicate() {
+    public ProcAction.BeforeActionPredicate getBeforeClaimTaskPredicate() {
         return beforeClaimTaskPredicate;
     }
 
-    public void setBeforeClaimTaskPredicate(ProcTaskAction.BeforeActionPredicate beforeClaimTaskPredicate) {
+    public void setBeforeClaimTaskPredicate(ProcAction.BeforeActionPredicate beforeClaimTaskPredicate) {
         this.beforeClaimTaskPredicate = beforeClaimTaskPredicate;
     }
 
-    public ProcTaskAction.BeforeActionPredicate getBeforeCancelProcessPredicate() {
+    public ProcAction.BeforeActionPredicate getBeforeCancelProcessPredicate() {
         return beforeCancelProcessPredicate;
     }
 
-    public void setBeforeCancelProcessPredicate(ProcTaskAction.BeforeActionPredicate beforeCancelProcessPredicate) {
+    public void setBeforeCancelProcessPredicate(ProcAction.BeforeActionPredicate beforeCancelProcessPredicate) {
         this.beforeCancelProcessPredicate = beforeCancelProcessPredicate;
     }
 }

@@ -69,12 +69,22 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
             public void actionPerform(Component component) {
                 close(COMMIT_ACTION_ID);
             }
+
+            @Override
+            public String getCaption() {
+                return getMessage("actions.Ok");
+            }
         });
 
         addAction(new BaseAction("windowClose") {
             @Override
             public void actionPerform(Component component) {
                 close(CLOSE_ACTION_ID);
+            }
+
+            @Override
+            public String getCaption() {
+                return getMessage("actions.Cancel");
             }
         });
     }

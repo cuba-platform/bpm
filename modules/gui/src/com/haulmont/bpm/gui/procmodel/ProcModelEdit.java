@@ -9,6 +9,7 @@ import com.haulmont.bpm.service.ModelService;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.bpm.entity.ProcModel;
+import com.haulmont.cuba.gui.components.FieldGroup;
 
 import javax.inject.Inject;
 
@@ -20,6 +21,9 @@ public class ProcModelEdit extends AbstractEditor<ProcModel> {
     @Inject
     protected ModelService modelService;
 
+    @Inject
+    protected FieldGroup fieldGroup;
+
     @Override
     protected boolean preCommit() {
         if (PersistenceHelper.isNew(getItem())) {
@@ -27,5 +31,10 @@ public class ProcModelEdit extends AbstractEditor<ProcModel> {
             getItem().setActModelId(actModelId);
         }
         return true;
+    }
+
+    @Override
+    protected void initNewItem(ProcModel item) {
+        fieldGroup.setVisible("actModelId", false);
     }
 }

@@ -5,7 +5,6 @@ package com.haulmont.bpm.service;
 
 import com.haulmont.bpm.core.ProcessRepositoryManager;
 import com.haulmont.bpm.entity.ProcDefinition;
-import com.haulmont.cuba.core.global.LoadContext;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
@@ -37,12 +36,17 @@ public class ProcessRepositoryServiceBean implements ProcessRepositoryService {
     }
 
     @Override
-    public String getProcessDefinitionXmlFromModel(String actModelId) {
-        return processRepositoryManager.getProcessDefinitionXmlFromModel(actModelId);
+    public String convertModelToProcessXml(String actModelId) {
+        return processRepositoryManager.convertModelToProcessXML(actModelId);
     }
 
     @Override
     public List<ProcDefinition> getProcDefinitionsByProcessKey(String processKey) {
         return processRepositoryManager.getProcDefinitionsByProcessKey(processKey);
+    }
+
+    @Override
+    public void undeployProcess(String actDeploymentId) {
+        processRepositoryManager.undeployProcess(actDeploymentId);
     }
 }

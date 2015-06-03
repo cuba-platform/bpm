@@ -9,18 +9,16 @@ package com.haulmont.bpm.gui.action;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.components.Action;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.DialogAction;
 import com.haulmont.cuba.gui.components.IFrame;
-import com.haulmont.cuba.gui.components.actions.BaseAction;
 
 /**
  * @author gorbunkov
  * @version $Id$
  */
-public class ClaimProcTaskAction extends ProcTaskAction {
+public class ClaimProcTaskAction extends ProcAction {
 
     protected ProcTask procTask;
     private Component.BelongToFrame target;

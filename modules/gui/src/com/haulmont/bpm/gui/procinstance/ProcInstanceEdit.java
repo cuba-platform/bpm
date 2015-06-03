@@ -5,14 +5,10 @@ package com.haulmont.bpm.gui.procinstance;
 
 import com.google.common.base.Strings;
 import com.haulmont.bpm.entity.*;
-import com.haulmont.bpm.form.ProcFormDefinition;
-import com.haulmont.bpm.gui.action.ProcTaskAction;
-import com.haulmont.bpm.gui.form.ProcForm;
+import com.haulmont.bpm.gui.action.ProcAction;
 import com.haulmont.bpm.gui.procactor.ProcActorsFrame;
 import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
 import com.haulmont.bpm.gui.proctaskactions.ProcTaskActionsFrame;
-import com.haulmont.bpm.service.ProcessFormService;
-import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
@@ -27,7 +23,6 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.ValueListener;
 import com.haulmont.cuba.gui.data.impl.DsListenerAdapter;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
-import com.haulmont.cuba.security.entity.User;
 import com.haulmont.cuba.security.global.UserSession;
 
 import javax.annotation.Nullable;
@@ -149,7 +144,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     }
 
     protected void initProcTaskActionsFrame() {
-        procTaskActionsFrame.setBeforeStartProcessPredicate(new ProcTaskAction.BeforeActionPredicate() {
+        procTaskActionsFrame.setBeforeStartProcessPredicate(new ProcAction.BeforeActionPredicate() {
             @Override
             public boolean evaluate() {
                 if (PersistenceHelper.isNew(getItem())) {
@@ -298,7 +293,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         }
     }
 
-    protected class MessageAndCloseAfterActionListener implements ProcTaskAction.AfterActionListener {
+    protected class MessageAndCloseAfterActionListener implements ProcAction.AfterActionListener {
 
         protected String message;
 
@@ -313,7 +308,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         }
     }
 
-    protected class CommitEditorBeforeActionPredicate implements ProcTaskAction.BeforeActionPredicate {
+    protected class CommitEditorBeforeActionPredicate implements ProcAction.BeforeActionPredicate {
 
         @Override
         public boolean evaluate() {

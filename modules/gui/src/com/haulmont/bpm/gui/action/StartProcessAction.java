@@ -14,20 +14,16 @@ import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.Component;
-import com.haulmont.cuba.gui.components.IFrame;
 import com.haulmont.cuba.gui.components.Window;
-import com.haulmont.cuba.gui.components.actions.BaseAction;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author gorbunkov
  * @version $Id$
  */
-public class StartProcessAction extends ProcTaskAction {
+public class StartProcessAction extends ProcAction {
 
     protected ProcInstance procInstance;
     protected final ProcessRuntimeService processRuntimeService;

@@ -28,9 +28,6 @@ import java.io.IOException;
 @RequestMapping(value = "/modeler/**")
 public class ContentController extends StaticContentController {
 
-    @Inject
-    protected UserSessionSource userSessionSource;
-
     @Override
     public String handleGetRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (checkUserSession(request, response)) {

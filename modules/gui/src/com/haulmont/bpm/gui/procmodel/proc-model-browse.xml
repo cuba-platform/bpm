@@ -32,7 +32,6 @@
             </actions>
             <columns>
                 <column id="name"/>
-                <column id="actModelId"/>
             </columns>
             <rows datasource="procModelsDs"/>
             <rowsCount/>

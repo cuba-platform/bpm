@@ -21,7 +21,9 @@ public interface ProcessRepositoryService {
 
     String getProcessDefinitionXML(String actDeploymentId);
 
-    String getProcessDefinitionXmlFromModel(String actModelId);
+    String convertModelToProcessXml(String actModelId);
 
     List<ProcDefinition> getProcDefinitionsByProcessKey(String processKey);
+
+    void undeployProcess(String actDeploymentId);
 }

@@ -6,11 +6,13 @@
 
 package com.haulmont.bpm.gui.form.generic.fieldgenerator;
 
+import com.haulmont.bpm.gui.form.generic.GenericProcForm;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Factory that produces field generators for {@link com.haulmont.bpm.gui.form.generic.GenericProcessForm}
+ * Factory that produces field generators for {@link GenericProcForm}
  * @author gorbunkov
  * @version $Id$
  */

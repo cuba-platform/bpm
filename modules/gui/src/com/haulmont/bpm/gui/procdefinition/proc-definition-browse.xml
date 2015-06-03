@@ -24,10 +24,6 @@
                width="100%">
             <actions>
                 <action id="edit"/>
-                <!--<action id="removeProcDefinition"-->
-                <!--caption="msg://actions.Remove"-->
-                <!--icon="icons/remove.png"-->
-                <!--invoke="removeProcDefinition"/>-->
                 <action id="remove"/>
                 <action id="refresh"/>
             </actions>
@@ -35,7 +31,6 @@
                 <column id="name"/>
                 <column id="actKey"/>
                 <column id="active"/>
-                <column id="actVersion"/>
             </columns>
             <rows datasource="procDefinitionsDs"/>
             <rowsCount/>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
-        caption="msg://caption"
         class="com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame"
         messagesPack="com.haulmont.bpm.gui.procattachment">
     <dsContext>

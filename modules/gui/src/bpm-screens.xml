@@ -14,10 +14,10 @@
             template="com/haulmont/bpm/gui/proctask/proc-task-browse.xml"/>
     <screen id="bpm$ProcTask.edit"
             template="com/haulmont/bpm/gui/proctask/proc-task-edit.xml"/>
-    <screen id="standardProcessForm"
-            template="/com/haulmont/bpm/gui/form/standard/standard-process-form.xml"/>
-    <screen id="genericProcessForm"
-            template="/com/haulmont/bpm/gui/form/generic/generic-process-form.xml"/>
+    <screen id="standardProcForm"
+            template="/com/haulmont/bpm/gui/form/standard/standard-proc-form.xml"/>
+    <screen id="genericProcForm"
+            template="/com/haulmont/bpm/gui/form/generic/generic-proc-form.xml"/>
     <screen id="procActorsFrame"
             template="/com/haulmont/bpm/gui/procactor/proc-actors-frame.xml"/>
     <screen id="procTaskActionsFrame"

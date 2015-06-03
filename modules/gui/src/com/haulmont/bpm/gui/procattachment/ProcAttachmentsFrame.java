@@ -38,9 +38,6 @@ public class ProcAttachmentsFrame extends AbstractFrame {
     protected CollectionDatasource<ProcAttachment, UUID> procAttachmentsDs;
 
     @Inject
-    protected DataManager dataManager;
-
-    @Inject
     protected Table procAttachmentsTable;
 
     @Inject

@@ -16,20 +16,15 @@ import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Window;
-import com.haulmont.cuba.gui.components.actions.BaseAction;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Transaction;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author gorbunkov
  * @version $Id$
  */
-public class CompleteProcTaskAction extends ProcTaskAction {
+public class CompleteProcTaskAction extends ProcAction {
 
     protected final ProcessRuntimeService processRuntimeService;
     protected ProcTask procTask;

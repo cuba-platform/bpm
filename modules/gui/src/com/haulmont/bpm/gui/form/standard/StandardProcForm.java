@@ -29,7 +29,7 @@ import java.util.Map;
  * parameters of {@code formDefinition}
  * @author gorbunkov
  */
-public class StandardProcessForm extends AbstractProcForm {
+public class StandardProcForm extends AbstractProcForm {
 
     @Inject
     protected TextArea comment;

@@ -6,17 +6,18 @@
 
 package com.haulmont.bpm.gui.action;
 
-import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Class provides an API for injecting some logic before and after
+ * an action is performed
  * @author gorbunkov
  * @version $Id$
  */
-public abstract class ProcTaskAction extends BaseAction {
+public abstract class ProcAction extends BaseAction {
 
     public interface BeforeActionPredicate {
         boolean evaluate();
@@ -29,7 +30,7 @@ public abstract class ProcTaskAction extends BaseAction {
     protected List<BeforeActionPredicate> beforePredicates = new ArrayList<>();
     protected List<AfterActionListener> afterListeners = new ArrayList<>();
 
-    protected ProcTaskAction(String id) {
+    protected ProcAction(String id) {
         super(id);
     }
 

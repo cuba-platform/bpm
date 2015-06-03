@@ -23,7 +23,7 @@ import java.util.*;
  * @version $Id$
  */
 @ManagedBean(ProcessFormManager.NAME)
-public class ProcessFromManagerBean implements ProcessFormManager {
+public class ProcessFormManagerBean implements ProcessFormManager {
 
     @Inject
     protected ExtensionElementsManager extensionElementsManager;
@@ -39,6 +39,7 @@ public class ProcessFromManagerBean implements ProcessFormManager {
         Map<String, ProcFormDefinition> result = new HashMap<>();
 
         Task task = taskService.createTaskQuery().taskId(procTask.getActTaskId()).singleResult();
+        if (task == null) return result;
 
         Map<String, List<ExtensionElement>> extensionElements = extensionElementsManager.getFlowElementExtensionElements(task.getProcessDefinitionId(), task.getTaskDefinitionKey());
         List<ExtensionElement> outcomesElements = extensionElements.get("outcomes");
@@ -72,7 +73,7 @@ public class ProcessFromManagerBean implements ProcessFormManager {
     public ProcFormDefinition getCancelForm(ProcDefinition procDefinition) {
         ProcFormDefinition procFormDefinition = new ProcFormDefinition();
         procFormDefinition.setName("standardProcessForm");
-        procFormDefinition.setCaption(messages.getMessage(ProcessFromManagerBean.class, "cancelProcess"));
+        procFormDefinition.setCaption(messages.getMessage(ProcessFormManagerBean.class, "cancelProcess"));
         procFormDefinition.setActProcessDefinitionId(procDefinition.getActId());
         ProcFormParam commentRequiredParam = new ProcFormParam();
         commentRequiredParam.setName("commentRequired");

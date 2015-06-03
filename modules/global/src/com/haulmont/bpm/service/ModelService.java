@@ -17,7 +17,7 @@ public interface ModelService {
     String NAME = "bpm_ModelService";
 
     /**
-     * @return
+     * @return an object that contains all necessary information for displaying a model in modeler
      */
     RestModel getModelJson(String actModelId);
 

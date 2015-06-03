@@ -9,7 +9,6 @@ package com.haulmont.bpm.web.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Strings;
 import com.haulmont.bpm.rest.RestModel;
 import com.haulmont.bpm.service.ModelService;
 import com.haulmont.cuba.core.sys.AppContext;
@@ -26,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Controller for working with model designed in modeler
+ * Controller is used by modeler for manipulating with models
  * @author gorbunkov
  * @version $Id$
  */
@@ -53,7 +52,7 @@ public class ModelController {
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("modelId", restModel.getModelId());
             objectNode.put("name", restModel.getName());
-            JsonNode modelNode = objectMapper.readTree(restModel.getModel());
+            JsonNode modelNode = objectMapper.readTree(restModel.getModelJson());
             objectNode.set("model", modelNode);
             return objectNode;
         }

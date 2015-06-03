@@ -34,7 +34,7 @@ import java.util.Map;
  * @author gorbunkov
  * @version $Id$
  */
-public class GenericProcessForm extends AbstractProcForm {
+public class GenericProcForm extends AbstractProcForm {
 
     @WindowParam(name = "formDefinition", required = true)
     protected ProcFormDefinition formDefinition;

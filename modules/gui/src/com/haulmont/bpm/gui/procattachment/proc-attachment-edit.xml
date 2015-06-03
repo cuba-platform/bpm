@@ -25,7 +25,7 @@
                        optionsDatasource="attachmentTypesDs"/>
                 <field id="comment"
                        rows="5"/>
-                <field id="author"/>
+                <field id="author" editable="false"/>
             </column>
         </fieldGroup>
         <iframe id="windowActions"
