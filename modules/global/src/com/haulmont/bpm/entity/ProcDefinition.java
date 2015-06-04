@@ -30,8 +30,7 @@ public class ProcDefinition extends StandardEntity {
     @Column(name = "ACT_ID")
     protected String actId;
 
-
-    @Column(name = "ACT_KEY")
+    @Column(name = "ACT_KEY", unique = true)
     protected String actKey;
 
     @Composition

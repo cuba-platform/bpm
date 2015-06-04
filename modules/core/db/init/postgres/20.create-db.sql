@@ -38,3 +38,6 @@ create index IDX_BPM_PROC_TASK_PROC_INSTANCE on BPM_PROC_TASK (PROC_INSTANCE_ID)
 alter table BPM_PROC_TASK_USER_LINK add constraint FK_BPTUL_PROC_TASK foreign key (PROC_TASK_ID) references BPM_PROC_TASK (ID)^
 alter table BPM_PROC_TASK_USER_LINK add constraint FK_BPTUL_USER foreign key (USER_ID) references SEC_USER (ID)^
 -- end BPM_PROC_TASK_USER_LINK
+-- begin BPM_PROC_DEFINITION
+create unique index IDX_BPM_PROC_DEFINITION_UNIQ_ACT_KEY on BPM_PROC_DEFINITION (ACT_KEY) where DELETE_TS is null ^
+-- end BPM_PROC_DEFINITION
