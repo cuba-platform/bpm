@@ -21,9 +21,6 @@ public class ProcModelEdit extends AbstractEditor<ProcModel> {
     @Inject
     protected ModelService modelService;
 
-    @Inject
-    protected FieldGroup fieldGroup;
-
     @Override
     protected boolean preCommit() {
         if (PersistenceHelper.isNew(getItem())) {
@@ -34,7 +31,10 @@ public class ProcModelEdit extends AbstractEditor<ProcModel> {
     }
 
     @Override
-    protected void initNewItem(ProcModel item) {
-        fieldGroup.setVisible("actModelId", false);
+    protected boolean postCommit(boolean committed, boolean close) {
+        if (committed) {
+            modelService.updateModel(getItem().getActModelId(), getItem().getName(), getItem().getDescription());
+        }
+        return super.postCommit(committed, close);
     }
 }

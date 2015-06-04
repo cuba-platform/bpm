@@ -13,6 +13,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Joiner;
 import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.bpm.rest.RestModel;
+import com.haulmont.cuba.core.EntityManager;
+import com.haulmont.cuba.core.Persistence;
+import com.haulmont.cuba.core.Transaction;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.impl.util.json.JSONObject;
@@ -38,6 +41,9 @@ public class ModelServiceBean implements ModelService {
     @Inject
     protected RepositoryService repositoryService;
 
+    @Inject
+    protected Persistence persistence;
+
     protected static final Log log = LogFactory.getLog(ModelServiceBean.class);
 
     @Override
@@ -56,7 +62,7 @@ public class ModelServiceBean implements ModelService {
     }
 
     @Override
-    public void saveModel(String actModelId, String modelName, String modelDescription,
+    public void updateModel(String actModelId, String modelName, String modelDescription,
                           String modelJsonStr, String modelSvgStr) {
         Model model = repositoryService.getModel(actModelId);
 
@@ -87,6 +93,18 @@ public class ModelServiceBean implements ModelService {
         } catch (UnsupportedEncodingException e) {
             throw new BpmException("Error when saving model", e);
         }
+    }
+
+    @Override
+    public void updateModel(String actModelId, String modelName, String modelDescription) {
+        Model model = repositoryService.getModel(actModelId);
+        if (model == null) return;
+        JSONObject modelJsonObject = new JSONObject(model.getMetaInfo());
+        modelJsonObject.put("name", modelName);
+        modelJsonObject.put("description", modelDescription);
+        model.setMetaInfo(modelJsonObject.toString());
+        model.setName(modelName);
+        repositoryService.saveModel(model);
     }
 
     @Override

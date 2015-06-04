@@ -24,8 +24,10 @@ public interface ModelService {
     /**
      * Saves activiti model to the database
      */
-    void saveModel(String actModelId, String modelName, String modelDescription,
-                   String modelJsonStr, String modelSvgStr);
+    void updateModel(String actModelId, String modelName, String modelDescription,
+                     String modelJsonStr, String modelSvgStr);
+
+    void updateModel(String actModelId, String modelName, String modelDescription);
 
     /**
      * Creates new activiti model

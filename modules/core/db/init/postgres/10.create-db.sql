@@ -164,6 +164,7 @@ create table BPM_PROC_MODEL (
     --
     NAME varchar(255) not null,
     ACT_MODEL_ID varchar(255),
+    DESCRIPTION text,
     --
     primary key (ID)
 )^

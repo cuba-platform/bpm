@@ -26,12 +26,24 @@
             <actions>
                 <action id="create"/>
                 <action id="edit"/>
-                <action id="openModeler" caption="msg://openModeler" invoke="openModeler" trackSelection="true"/>
-                <action id="deploy" caption="msg://deploy" invoke="deploy" trackSelection="true"/>
                 <action id="remove"/>
+                <action id="refresh"/>
+                <action id="openModeler"
+                        caption="msg://openModeler"
+                        invoke="openModeler"
+                        trackSelection="true"/>
+                <action id="deploy"
+                        caption="msg://deploy"
+                        invoke="deploy"
+                        trackSelection="true"/>
+                <action id="export"
+                        caption="msg://exportModel"
+                        invoke="exportModel"
+                        trackSelection="true"/>
             </actions>
             <columns>
                 <column id="name"/>
+                <column id="description" maxTextLength="60"/>
             </columns>
             <rows datasource="procModelsDs"/>
             <rowsCount/>
@@ -41,12 +53,18 @@
                         action="procModelsTable.create"/>
                 <button id="editBtn"
                         action="procModelsTable.edit"/>
-                <button id="openModelerBtn"
-                        action="procModelsTable.openModeler"/>
-                <button id="deployBtn"
-                        action="procModelsTable.deploy"/>
                 <button id="removeBtn"
                         action="procModelsTable.remove"/>
+                <button id="refreshBtn"
+                        action="procModelsTable.refresh"/>
+                <button id="openModelerBtn"
+                        action="procModelsTable.openModeler"/>
+                <button id="exportBtn"
+                        action="procModelsTable.export"/>
+                <upload id="modelUpload"
+                        caption="msg://importModel"/>
+                <button id="deployBtn"
+                        action="procModelsTable.deploy"/>
             </buttonsPanel>
         </table>
     </layout>

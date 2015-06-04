@@ -16,7 +16,7 @@
                     datasource="procModelDs">
             <column width="250px">
                 <field id="name"/>
-                <field id="actModelId" editable="false"/>
+                <field id="description" rows="3"/>
             </column>
         </fieldGroup>
         <iframe id="windowActions"

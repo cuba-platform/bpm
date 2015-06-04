@@ -60,16 +60,16 @@ public class ModelController {
     }
 
     @RequestMapping(value = "/{actModelId}", method = RequestMethod.PUT)
-    public void saveModel(@PathVariable String actModelId,
-                          @RequestBody MultiValueMap<String, String> values,
-                          HttpServletRequest request,
-                          HttpServletResponse response) throws IOException {
+    public void updateModel(@PathVariable String actModelId,
+                            @RequestBody MultiValueMap<String, String> values,
+                            HttpServletRequest request,
+                            HttpServletResponse response) throws IOException {
         if (auth(request, response)) {
             String modelName = values.getFirst("name");
             String modelDescription = values.getFirst("description");
             String modelJsonStr = values.getFirst("json_xml");
             String modelSvgStr = values.getFirst("svg_xml");
-            modelService.saveModel(actModelId, modelName, modelDescription, modelJsonStr, modelSvgStr);
+            modelService.updateModel(actModelId, modelName, modelDescription, modelJsonStr, modelSvgStr);
         }
     }
 
