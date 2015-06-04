@@ -68,8 +68,8 @@
             </fieldGroup>
             <groupBox id="procTaskActionsGroupBox"
                       caption="msg://processActions">
-                <iframe id="procTaskActionsFrame"
-                        screen="procTaskActionsFrame"/>
+                <iframe id="procActionsFrame"
+                        screen="procActionsFrame"/>
             </groupBox>
         </hbox>
         <hbox height="300px"

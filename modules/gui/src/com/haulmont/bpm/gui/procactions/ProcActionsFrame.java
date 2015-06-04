@@ -4,7 +4,7 @@
  *   Use is subject to license terms.
  */
 
-package com.haulmont.bpm.gui.proctaskactions;
+package com.haulmont.bpm.gui.procactions;
 
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
@@ -24,7 +24,7 @@ import java.util.Map;
  * @author gorbunkov
  * @version $Id$
  */
-public class ProcTaskActionsFrame extends AbstractFrame {
+public class ProcActionsFrame extends AbstractFrame {
 
     @Inject
     protected DataManager dataManager;
@@ -51,46 +51,58 @@ public class ProcTaskActionsFrame extends AbstractFrame {
     protected GridLayout taskInfoGrid;
 
     @Inject
-    protected VBoxLayout actionsBox;
+    protected BoxLayout actionsBox;
 
     protected ProcTask procTask;
     protected ProcInstance procInstance;
+    protected String buttonWidth = "150px";
 
     protected ProcAction.BeforeActionPredicate beforeStartProcessPredicate;
     protected ProcAction.BeforeActionPredicate beforeCompleteTaskPredicate;
     protected ProcAction.BeforeActionPredicate beforeClaimTaskPredicate;
     protected ProcAction.BeforeActionPredicate beforeCancelProcessPredicate;
+
     protected ProcAction.AfterActionListener afterStartProcessListener;
     protected ProcAction.AfterActionListener afterCompleteTaskListener;
     protected ProcAction.AfterActionListener afterClaimTaskListener;
     protected ProcAction.AfterActionListener afterCancelProcessListener;
 
-    protected static final String BUTTON_WIDTH = "150px";
+    protected boolean startProcessEnabled = true;
+    protected boolean cancelProcessEnabled = true;
+    protected boolean completeTaskEnabled = true;
+    protected boolean claimTaskEnabled = true;
+    protected boolean taskInfoEnabled = true;
 
     public void init(ProcInstance procInstance) {
-        actionsBox.removeAll();
         this.procInstance = procInstance;
-        procTask = findProcTask();
+        resetUI();
+        procTask = findCurrentUserProcTask();
         if (procTask == null) {
-            if (startProcessAllowed())
+            if (startProcessEnabled && startProcessAllowed())
                 initStartProcessUI();
-            else {
-                noActionsAvailableLbl.setVisible(true);
-                taskInfoGrid.setVisible(false);
-            }
-        } else if (procTask.getProcActor() != null
-                && userSession.getCurrentOrSubstitutedUser().equals(procTask.getProcActor().getUser())) {
-            initCompleteTaskUI();
+        } else if (procTask.getProcActor() != null) {
+            if (completeTaskEnabled)
+                initCompleteTaskUI();
         } else {
-            initClaimTaskUI();
+            if (claimTaskEnabled)
+                initClaimTaskUI();
         }
-        initAdditionalActions();
+        if (cancelProcessEnabled && cancelProcessAllowed())
+            initCancelAction();
+    }
+
+    protected void resetUI() {
+        actionsBox.removeAll();
+        noActionsAvailableLbl.setVisible(true);
+        taskInfoGrid.setVisible(false);
     }
 
     protected void initClaimTaskUI() {
-        initTaskInfoGrid();
+        if (taskInfoEnabled)
+            initTaskInfoGrid();
+        noActionsAvailableLbl.setVisible(false);
         Button claimTaskBtn = componentsFactory.createComponent(Button.class);
-        claimTaskBtn.setWidth(BUTTON_WIDTH);;
+        claimTaskBtn.setWidth(buttonWidth);;
         ClaimProcTaskAction claimProcTaskAction = new ClaimProcTaskAction(procTask, claimTaskBtn);
         claimProcTaskAction.addBeforeActionPredicate(beforeClaimTaskPredicate);
         claimProcTaskAction.addAfterActionListener(afterClaimTaskListener);
@@ -99,11 +111,13 @@ public class ProcTaskActionsFrame extends AbstractFrame {
     }
 
     protected void initCompleteTaskUI() {
-        initTaskInfoGrid();
+        if (taskInfoEnabled)
+            initTaskInfoGrid();
+        noActionsAvailableLbl.setVisible(false);
         Map<String, ProcFormDefinition> outcomesWithForms = processFormService.getOutcomesWithForms(procTask);
         for (Map.Entry<String, ProcFormDefinition> entry : outcomesWithForms.entrySet()) {
             Button actionBtn = componentsFactory.createComponent(Button.class);
-            actionBtn.setWidth(BUTTON_WIDTH);
+            actionBtn.setWidth(buttonWidth);
             CompleteProcTaskAction action = new CompleteProcTaskAction(procTask, entry.getKey(), entry.getValue(), actionBtn);
             action.addBeforeActionPredicate(beforeCompleteTaskPredicate);
             action.addAfterActionListener(afterCompleteTaskListener);
@@ -114,8 +128,9 @@ public class ProcTaskActionsFrame extends AbstractFrame {
 
     protected void initStartProcessUI() {
         taskInfoGrid.setVisible(false);
+        noActionsAvailableLbl.setVisible(false);
         Button startProcessBtn = componentsFactory.createComponent(Button.class);
-        startProcessBtn.setWidth(BUTTON_WIDTH);
+        startProcessBtn.setWidth(buttonWidth);
         StartProcessAction startProcessAction = new StartProcessAction(procInstance, startProcessBtn);
         startProcessAction.addBeforeActionPredicate(beforeStartProcessPredicate);
         startProcessAction.addAfterActionListener(afterStartProcessListener);
@@ -123,22 +138,20 @@ public class ProcTaskActionsFrame extends AbstractFrame {
         actionsBox.add(startProcessBtn);
     }
 
-    protected void initTaskInfoGrid() {
-        taskName.setValue(procTask.getLocName());
-        taskStartDate.setValue(procTask.getStartDate());
+    protected void initCancelAction() {
+        Button cancelBtn = componentsFactory.createComponent(Button.class);
+        cancelBtn.setWidth(buttonWidth);
+        CancelProcessAction cancelProcessAction = new CancelProcessAction(procInstance, cancelBtn);
+        cancelProcessAction.addBeforeActionPredicate(beforeCancelProcessPredicate);
+        cancelProcessAction.addAfterActionListener(afterCancelProcessListener);
+        cancelBtn.setAction(cancelProcessAction);
+        actionsBox.add(cancelBtn);
     }
 
-
-    protected void initAdditionalActions() {
-        if (cancelProcessAllowed()) {
-            Button cancelBtn = componentsFactory.createComponent(Button.class);
-            cancelBtn.setWidth(BUTTON_WIDTH);;
-            CancelProcessAction cancelProcessAction = new CancelProcessAction(procInstance, cancelBtn);
-            cancelProcessAction.addBeforeActionPredicate(beforeCancelProcessPredicate);
-            cancelProcessAction.addAfterActionListener(afterCancelProcessListener);
-            cancelBtn.setAction(cancelProcessAction);
-            actionsBox.add(cancelBtn);
-        }
+    protected void initTaskInfoGrid() {
+        taskInfoGrid.setVisible(true);
+        taskName.setValue(procTask.getLocName());
+        taskStartDate.setValue(procTask.getStartDate());
     }
 
     protected boolean cancelProcessAllowed() {
@@ -147,12 +160,11 @@ public class ProcTaskActionsFrame extends AbstractFrame {
                 && userSession.getCurrentOrSubstitutedUser().equals(procInstance.getStartedBy());
     }
 
-
     protected boolean startProcessAllowed() {
         return procInstance.getStartDate() == null;
     }
 
-    protected ProcTask findProcTask() {
+    protected ProcTask findCurrentUserProcTask() {
         LoadContext ctx = new LoadContext(ProcTask.class);
         ctx.setQueryString("select pt from bpm$ProcTask pt left join pt.candidateUsers cu " +
                 "where pt.procInstance.id = :procInstance and (pt.procActor.user.id = :userId or (pt.procActor is null and cu.id = :userId)) " +
@@ -225,5 +237,53 @@ public class ProcTaskActionsFrame extends AbstractFrame {
 
     public void setBeforeCancelProcessPredicate(ProcAction.BeforeActionPredicate beforeCancelProcessPredicate) {
         this.beforeCancelProcessPredicate = beforeCancelProcessPredicate;
+    }
+
+    public boolean isStartProcessEnabled() {
+        return startProcessEnabled;
+    }
+
+    public void setStartProcessEnabled(boolean startProcessEnabled) {
+        this.startProcessEnabled = startProcessEnabled;
+    }
+
+    public boolean isCancelProcessEnabled() {
+        return cancelProcessEnabled;
+    }
+
+    public void setCancelProcessEnabled(boolean cancelProcessEnabled) {
+        this.cancelProcessEnabled = cancelProcessEnabled;
+    }
+
+    public boolean isCompleteTaskEnabled() {
+        return completeTaskEnabled;
+    }
+
+    public void setCompleteTaskEnabled(boolean completeTaskEnabled) {
+        this.completeTaskEnabled = completeTaskEnabled;
+    }
+
+    public boolean isClaimTaskEnabled() {
+        return claimTaskEnabled;
+    }
+
+    public void setClaimTaskEnabled(boolean claimTaskEnabled) {
+        this.claimTaskEnabled = claimTaskEnabled;
+    }
+
+    public boolean isTaskInfoEnabled() {
+        return taskInfoEnabled;
+    }
+
+    public void setTaskInfoEnabled(boolean taskInfoEnabled) {
+        this.taskInfoEnabled = taskInfoEnabled;
+    }
+
+    public String getButtonWidth() {
+        return buttonWidth;
+    }
+
+    public void setButtonWidth(String buttonWidth) {
+        this.buttonWidth = buttonWidth;
     }
 }

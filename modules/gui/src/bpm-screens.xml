@@ -20,8 +20,8 @@
             template="/com/haulmont/bpm/gui/form/generic/generic-proc-form.xml"/>
     <screen id="procActorsFrame"
             template="/com/haulmont/bpm/gui/procactor/proc-actors-frame.xml"/>
-    <screen id="procTaskActionsFrame"
-            template="/com/haulmont/bpm/gui/proctaskactions/proc-task-actions-frame.xml"/>
+    <screen id="procActionsFrame"
+            template="/com/haulmont/bpm/gui/procactions/proc-actions-frame.xml"/>
     <screen id="procDefinitionDeploy"
             template="com/haulmont/bpm/gui/procdefinition/proc-definition-deploy.xml"/>
     <screen id="bpm$ProcAttachmentType.lookup"

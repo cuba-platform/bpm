@@ -8,11 +8,11 @@
   -->
 
 <window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
-        class="com.haulmont.bpm.gui.proctaskactions.ProcTaskActionsFrame"
-        messagesPack="com.haulmont.bpm.gui.proctaskactions">
+        class="com.haulmont.bpm.gui.procactions.ProcActionsFrame"
+        messagesPack="com.haulmont.bpm.gui.procactions">
     <layout spacing="true">
-        <label id="noActionsAvailableLbl" value="msg://noActionsAvailable" visible="false"/>
-        <grid id="taskInfoGrid" spacing="true">
+        <label id="noActionsAvailableLbl" value="msg://noActionsAvailable" visible="true"/>
+        <grid id="taskInfoGrid" spacing="true" visible="false">
             <columns count="2"/>
             <rows>
                 <row>

@@ -8,7 +8,7 @@ import com.haulmont.bpm.entity.*;
 import com.haulmont.bpm.gui.action.ProcAction;
 import com.haulmont.bpm.gui.procactor.ProcActorsFrame;
 import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
-import com.haulmont.bpm.gui.proctaskactions.ProcTaskActionsFrame;
+import com.haulmont.bpm.gui.procactions.ProcActionsFrame;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
@@ -70,7 +70,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     protected TextField entityEditorNameField;
 
     @Inject
-    protected ProcTaskActionsFrame procTaskActionsFrame;
+    protected ProcActionsFrame procActionsFrame;
 
     @Inject
     protected CollectionDatasource<ProcTask, UUID> procTasksDs;
@@ -144,7 +144,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     }
 
     protected void initProcTaskActionsFrame() {
-        procTaskActionsFrame.setBeforeStartProcessPredicate(new ProcAction.BeforeActionPredicate() {
+        procActionsFrame.setBeforeStartProcessPredicate(new ProcAction.BeforeActionPredicate() {
             @Override
             public boolean evaluate() {
                 if (PersistenceHelper.isNew(getItem())) {
@@ -155,16 +155,16 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 }
             }
         });
-        procTaskActionsFrame.setAfterStartProcessListener(new MessageAndCloseAfterActionListener(getMessage("processStarted")));
-        procTaskActionsFrame.setAfterCancelProcessListener(new MessageAndCloseAfterActionListener(getMessage("processCancelled")));
-        procTaskActionsFrame.setAfterCompleteTaskListener(new MessageAndCloseAfterActionListener(getMessage("taskCompleted")));
-        procTaskActionsFrame.setAfterClaimTaskListener(new MessageAndCloseAfterActionListener(getMessage("taskClaimed")));
+        procActionsFrame.setAfterStartProcessListener(new MessageAndCloseAfterActionListener(getMessage("processStarted")));
+        procActionsFrame.setAfterCancelProcessListener(new MessageAndCloseAfterActionListener(getMessage("processCancelled")));
+        procActionsFrame.setAfterCompleteTaskListener(new MessageAndCloseAfterActionListener(getMessage("taskCompleted")));
+        procActionsFrame.setAfterClaimTaskListener(new MessageAndCloseAfterActionListener(getMessage("taskClaimed")));
 
-        procTaskActionsFrame.setBeforeCompleteTaskPredicate(new CommitEditorBeforeActionPredicate());
-        procTaskActionsFrame.setBeforeClaimTaskPredicate(new CommitEditorBeforeActionPredicate());
-        procTaskActionsFrame.setBeforeCancelProcessPredicate(new CommitEditorBeforeActionPredicate());
+        procActionsFrame.setBeforeCompleteTaskPredicate(new CommitEditorBeforeActionPredicate());
+        procActionsFrame.setBeforeClaimTaskPredicate(new CommitEditorBeforeActionPredicate());
+        procActionsFrame.setBeforeCancelProcessPredicate(new CommitEditorBeforeActionPredicate());
 
-        procTaskActionsFrame.init(getItem());
+        procActionsFrame.init(getItem());
     }
 
     protected void addFieldGroupCustomFields() {
