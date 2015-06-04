@@ -6,6 +6,7 @@ package com.haulmont.bpm.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.entity.ProcRole;
@@ -156,7 +157,16 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
     @Override
     public String getProcessDefinitionXML(String actDeploymentId) {
         List<String> deploymentResourceNames = repositoryService.getDeploymentResourceNames(actDeploymentId);
-        InputStream is = repositoryService.getResourceAsStream(actDeploymentId, deploymentResourceNames.get(0));
+        String deploymentResourceName = null;
+        for (String name : deploymentResourceNames) {
+            if (name.endsWith("bpmn20.xml")) {
+                deploymentResourceName = name;
+                break;
+            }
+        }
+        if (Strings.isNullOrEmpty(deploymentResourceName))
+            throw new BpmException("Cannot find process xml resource");
+        InputStream is = repositoryService.getResourceAsStream(actDeploymentId, deploymentResourceName);
         try {
             return IOUtils.toString(is);
         } catch (IOException e) {
