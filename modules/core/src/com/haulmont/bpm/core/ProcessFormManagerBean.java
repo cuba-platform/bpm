@@ -36,7 +36,7 @@ public class ProcessFormManagerBean implements ProcessFormManager {
 
     @Override
     public Map<String, ProcFormDefinition> getOutcomesWithForms(ProcTask procTask) {
-        Map<String, ProcFormDefinition> result = new HashMap<>();
+        Map<String, ProcFormDefinition> result = new LinkedHashMap<>();
 
         Task task = taskService.createTaskQuery().taskId(procTask.getActTaskId()).singleResult();
         if (task == null) return result;
@@ -72,7 +72,7 @@ public class ProcessFormManagerBean implements ProcessFormManager {
     @Override
     public ProcFormDefinition getCancelForm(ProcDefinition procDefinition) {
         ProcFormDefinition procFormDefinition = new ProcFormDefinition();
-        procFormDefinition.setName("standardProcessForm");
+        procFormDefinition.setName("standardProcForm");
         procFormDefinition.setCaption(messages.getMessage(ProcessFormManagerBean.class, "cancelProcess"));
         procFormDefinition.setActProcessDefinitionId(procDefinition.getActId());
         ProcFormParam commentRequiredParam = new ProcFormParam();
