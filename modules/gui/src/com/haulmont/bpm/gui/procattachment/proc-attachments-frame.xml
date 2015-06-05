@@ -35,12 +35,12 @@
             </actions>
             <columns>
                 <column id="file.name"/>
+                <column id="author"/>
                 <column id="type"
                         editable="true"
                         optionsDatasource="procAttachmentTypesDs"/>
                 <column id="comment"
                         maxTextLength="30"/>
-                <column id="author"/>
             </columns>
             <rows datasource="procAttachmentsDs"/>
             <buttonsPanel>

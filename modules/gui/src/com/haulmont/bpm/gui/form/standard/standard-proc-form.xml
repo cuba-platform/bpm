@@ -6,11 +6,11 @@
     <dsContext/>
     <actions>
         <action id="windowCommit"
-                caption="actions.Ok"
+                caption="msg://actions.Ok"
                 icon="icons/ok.png"
                 invoke="onWindowCommit"/>
         <action id="windowClose"
-                caption="actions.Cancel"
+                caption="msg://actions.Cancel"
                 icon="icons/cancel.png"
                 invoke="onWindowClose"/>
     </actions>

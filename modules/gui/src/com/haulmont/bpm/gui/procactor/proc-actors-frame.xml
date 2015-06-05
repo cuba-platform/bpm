@@ -50,7 +50,7 @@
                 <column id="user"
                         editable="true"
                         optionsDatasource="usersDs"/>
-                <column id="order" editable="true"/>
+                <!--<column id="order" editable="true"/>-->
             </columns>
             <buttonsPanel>
                 <lookupField id="procRolesLookup" nullName="msg://addProcActor" optionsDatasource="procRolesDs" width="200px"/>
