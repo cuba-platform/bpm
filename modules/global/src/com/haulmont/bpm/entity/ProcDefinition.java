@@ -42,29 +42,6 @@ public class ProcDefinition extends StandardEntity {
     @Column(name = "ACTIVE")
     protected Boolean active;
 
-    @Column(name = "ACT_VERSION")
-    protected Integer actVersion;
-
-    @Column(name = "ACT_DEPLOYMENT_ID")
-    protected String actDeploymentId;
-
-    public void setActDeploymentId(String actDeploymentId) {
-        this.actDeploymentId = actDeploymentId;
-    }
-
-    public String getActDeploymentId() {
-        return actDeploymentId;
-    }
-
-
-    public void setActVersion(Integer actVersion) {
-        this.actVersion = actVersion;
-    }
-
-    public Integer getActVersion() {
-        return actVersion;
-    }
-
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -88,7 +65,6 @@ public class ProcDefinition extends StandardEntity {
     public String getActKey() {
         return actKey;
     }
-
 
     public void setName(String name) {
         this.name = name;

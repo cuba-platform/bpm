@@ -141,7 +141,7 @@ public class ProcDefinitionBrowse extends AbstractLookup {
             } else {
                 super.doRemove(selected, autocommit);
                 for (Object selectedItem : selected) {
-                    processRepositoryService.undeployProcess(((ProcDefinition)selectedItem).getActDeploymentId());
+                    processRepositoryService.undeployProcess(((ProcDefinition)selectedItem).getActId());
                 }
             }
         }

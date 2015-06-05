@@ -44,8 +44,6 @@
         <property name="name"/>
         <property name="actKey"/>
         <property name="active"/>
-        <property name="actDeploymentId"/>
-        <property name="actVersion"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           name="procDefinition-edit">
@@ -56,8 +54,6 @@
         <property name="actId"/>
         <property name="actKey"/>
         <property name="active"/>
-        <property name="actVersion"/>
-        <property name="actDeploymentId"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcRole"
           extends="_local"

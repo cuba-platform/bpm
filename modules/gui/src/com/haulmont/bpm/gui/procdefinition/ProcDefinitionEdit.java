@@ -49,7 +49,7 @@ public class ProcDefinitionEdit extends AbstractEditor<ProcDefinition> {
             @Override
             public void tabChanged(TabSheet.Tab newTab) {
                 if ("xmlTab".equals(newTab.getName()) && !xmlTabInitialized) {
-                    String processXml = processRepositoryService.getProcessDefinitionXML(getItem().getActDeploymentId());
+                    String processXml = processRepositoryService.getProcessDefinitionXML(getItem().getActId());
                     xmlField.setValue(processXml);
                     xmlTabInitialized = true;
                 }

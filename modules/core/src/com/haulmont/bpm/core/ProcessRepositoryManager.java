@@ -24,11 +24,11 @@ public interface ProcessRepositoryManager {
 
     ProcDefinition deployProcessFromXML(String xml, ProcDefinition procDefinition);
 
-    String getProcessDefinitionXML(String actDeploymentId);
+    String getProcessDefinitionXML(String actProcessDefinitionId);
 
     String convertModelToProcessXML(String actModelId);
 
     List<ProcDefinition> getProcDefinitionsByProcessKey(String processKey);
 
-    void undeployProcess(String actDeploymentId);
+    void undeployProcess(String actProcessDefinitionId);
 }

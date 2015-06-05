@@ -22,8 +22,10 @@ import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.*;
 import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.ManagedBean;
@@ -42,6 +44,9 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
 
     @Inject
     protected RepositoryService repositoryService;
+
+    @Inject
+    protected RuntimeService runtimeService;
 
     @Inject
     protected Metadata metadata;
@@ -104,8 +109,6 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             procDefinition.setName(activitiProcessDefinition.getName());
             procDefinition.setActKey(activitiProcessDefinition.getKey());
             procDefinition.setActId(activitiProcessDefinition.getId());
-            procDefinition.setActDeploymentId(activitiProcessDefinition.getDeploymentId());
-            procDefinition.setActVersion(activitiProcessDefinition.getVersion());
             procDefinition.setActive(true);
             em.persist(procDefinition);
 
@@ -155,7 +158,10 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
     }
 
     @Override
-    public String getProcessDefinitionXML(String actDeploymentId) {
+    public String getProcessDefinitionXML(String actProcessDefinitionId) {
+        ProcessDefinition actProcessDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(actProcessDefinitionId).singleResult();
+        if (actProcessDefinition == null) return null;
+        String actDeploymentId = actProcessDefinition.getDeploymentId();
         List<String> deploymentResourceNames = repositoryService.getDeploymentResourceNames(actDeploymentId);
         String deploymentResourceName = null;
         for (String name : deploymentResourceNames) {
@@ -204,9 +210,12 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
     }
 
     @Override
-    public void undeployProcess(String actDeploymentId) {
+    public void undeployProcess(String actProcessDefinitionId) {
         Transaction tx = persistence.createTransaction();
         try {
+            ProcessDefinition actProcessDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(actProcessDefinitionId).singleResult();
+            if (actProcessDefinition == null) return;
+            String actDeploymentId = actProcessDefinition.getDeploymentId();
             repositoryService.deleteDeployment(actDeploymentId);
             tx.commit();
         } finally {
