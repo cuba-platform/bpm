@@ -17,9 +17,13 @@ import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.components.actions.EditAction;
+import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.config.WindowConfig;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.impl.CollectionDsListenerAdapter;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
+import org.apache.commons.lang.BooleanUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +40,9 @@ public class ProcInstanceBrowse extends AbstractLookup {
 
     @Named("procInstancesTable.edit")
     protected EditAction editAction;
+
+    @Named("procInstancesTable.remove")
+    protected RemoveAction removeAction;
 
     @Inject
     protected CollectionDatasource<ProcInstance, UUID> procInstancesDs;
@@ -73,6 +80,14 @@ public class ProcInstanceBrowse extends AbstractLookup {
             public void handle(Entity entity) {
                 ProcInstance reloadedEntity = (ProcInstance) dataManager.reload(entity, procInstancesDs.getView());
                 procInstancesDs.updateItem(reloadedEntity);
+            }
+        });
+
+        procInstancesDs.addListener(new CollectionDsListenerAdapter<ProcInstance>() {
+            @Override
+            public void itemChanged(Datasource<ProcInstance> ds, ProcInstance prevItem, ProcInstance item) {
+                super.itemChanged(ds, prevItem, item);
+                removeAction.setEnabled(item != null && BooleanUtils.isNotTrue(item.getActive()));
             }
         });
 
