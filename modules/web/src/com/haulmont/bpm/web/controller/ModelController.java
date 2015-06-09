@@ -42,7 +42,7 @@ public class ModelController {
     public JsonNode getModel(@PathVariable String actModelId,
                            HttpServletRequest request,
                            HttpServletResponse response) throws IOException {
-        if (auth(request, response)) {
+        if (BpmControllerUtils.auth(request, response)) {
             RestModel restModel = modelService.getModelJson(actModelId);
             if (restModel == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -64,22 +64,12 @@ public class ModelController {
                             @RequestBody MultiValueMap<String, String> values,
                             HttpServletRequest request,
                             HttpServletResponse response) throws IOException {
-        if (auth(request, response)) {
+        if (BpmControllerUtils.auth(request, response)) {
             String modelName = values.getFirst("name");
             String modelDescription = values.getFirst("description");
             String modelJsonStr = values.getFirst("json_xml");
             String modelSvgStr = values.getFirst("svg_xml");
             modelService.updateModel(actModelId, modelName, modelDescription, modelJsonStr, modelSvgStr);
         }
-    }
-
-    protected boolean auth(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        UserSession userSession = ControllerUtils.getUserSession(request);
-        if (userSession == null) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return false;
-        }
-        AppContext.setSecurityContext(new SecurityContext(userSession));
-        return true;
     }
 }

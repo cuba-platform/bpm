@@ -34,6 +34,9 @@ public class ProcessFormManagerBean implements ProcessFormManager {
     @Inject
     protected Messages messages;
 
+    @Inject
+    protected ProcessFormRepository processFormRepository;
+
     @Override
     public Map<String, ProcFormDefinition> getOutcomesWithForms(ProcTask procTask) {
         Map<String, ProcFormDefinition> result = new LinkedHashMap<>();
@@ -79,7 +82,7 @@ public class ProcessFormManagerBean implements ProcessFormManager {
         commentRequiredParam.setName("commentRequired");
         commentRequiredParam.setValue("true");
         commentRequiredParam.setTypeName("boolean");
-        procFormDefinition.getParams().put("commentRequired", commentRequiredParam);
+        procFormDefinition.getParams().add(commentRequiredParam);
         return procFormDefinition;
     }
 
@@ -89,12 +92,12 @@ public class ProcessFormManagerBean implements ProcessFormManager {
         procFormDefinition.setCaption(formElement.getAttributeValue(null, "caption"));
         procFormDefinition.setActProcessDefinitionId(actProcessDefinitionId);
 
-        Map<String, ProcFormParam> params = new LinkedHashMap<>();
+        List<ProcFormParam> params = new ArrayList<>();
         List<ExtensionElement> paramElements = formElement.getChildElements().get("param");
         if (paramElements != null) {
             for (ExtensionElement paramElement : paramElements) {
                 ProcFormParam param = extractProcFormParam(paramElement, procFormDefinition);
-                params.put(param.getName(), param);
+                params.add(param);
             }
         }
         procFormDefinition.setParams(params);
@@ -134,5 +137,10 @@ public class ProcessFormManagerBean implements ProcessFormManager {
             }
         }
         return enumItems;
+    }
+
+    @Override
+    public List<ProcFormDefinition> getAllForms() {
+        return processFormRepository.getForms();
     }
 }

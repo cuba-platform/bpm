@@ -26,6 +26,7 @@ import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 
 import javax.inject.Inject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -76,13 +77,13 @@ public class GenericProcForm extends AbstractProcForm {
         String actExecutionId = procTask == null ? null : procTask.getActExecutionId();
 
         FormFieldGeneratorsFactory fieldGeneratorsFactory = new FormFieldGeneratorsFactory();
-        Map<String, ProcFormParam> formParams = formDefinition.getParams();
+        List<ProcFormParam> formParams = formDefinition.getParams();
         GridLayout grid = componentsFactory.createComponent(GridLayout.class);
         grid.setRows(formParams.size());
         grid.setColumns(2);
         grid.setSpacing(true);
         int i = 0;
-        for (ProcFormParam formParam : formParams.values()) {
+        for (ProcFormParam formParam : formParams) {
 
             Label label = componentsFactory.createComponent(Label.class);
             label.setValue(formParam.getLocCaption());

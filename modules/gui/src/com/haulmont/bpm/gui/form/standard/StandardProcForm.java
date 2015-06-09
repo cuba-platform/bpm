@@ -69,15 +69,15 @@ public class StandardProcForm extends AbstractProcForm {
         getDialogParams().setResizable(true);
         getDialogParams().setWidth(700);
 
-        ProcFormParam commentRequiredParam = formDefinition.getParams().get(COMMENT_REQUIRED_PARAM);
+        ProcFormParam commentRequiredParam = formDefinition.getParam(COMMENT_REQUIRED_PARAM);
         if (commentRequiredParam != null && "true".equals(commentRequiredParam.getValue())) {
             comment.setRequired(true);
         }
 
-        ProcFormParam procActorsVisibleParam = formDefinition.getParams().get(PROC_ACTORS_VISIBLE_PARAM);
+        ProcFormParam procActorsVisibleParam = formDefinition.getParam(PROC_ACTORS_VISIBLE_PARAM);
         procActorsVisible = procActorsVisibleParam != null && "true".equals(procActorsVisibleParam.getValue());
 
-        ProcFormParam procAttachmentsVisibleParam = formDefinition.getParams().get(ATTACHMENTS_VISIBLE_PARAM);
+        ProcFormParam procAttachmentsVisibleParam = formDefinition.getParam(ATTACHMENTS_VISIBLE_PARAM);
         procAttachmentsVisible = procAttachmentsVisibleParam != null && "true".equals(procAttachmentsVisibleParam.getValue());
 
         procActorsLabel.setVisible(procActorsVisible);

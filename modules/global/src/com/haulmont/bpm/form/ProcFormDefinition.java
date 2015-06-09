@@ -4,11 +4,9 @@
 
 package com.haulmont.bpm.form;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * POJO representation of form definition from BPMN process xml
@@ -21,7 +19,7 @@ public class ProcFormDefinition implements Serializable {
 
     protected String caption;
 
-    protected Map<String, ProcFormParam> params = new LinkedHashMap<>();
+    protected List<ProcFormParam> params = new ArrayList<>();
 
     protected String actProcessDefinitionId;
 
@@ -33,12 +31,20 @@ public class ProcFormDefinition implements Serializable {
         this.name = name;
     }
 
-    public Map<String, ProcFormParam> getParams() {
+    public List<ProcFormParam> getParams() {
         return params;
     }
 
-    public void setParams(Map<String, ProcFormParam> params) {
+    public void setParams(List<ProcFormParam> params) {
         this.params = params;
+    }
+
+    @Nullable
+    public ProcFormParam getParam(String name) {
+        for (ProcFormParam param : params) {
+            if (name.equals(param.getName())) return param;
+        }
+        return null;
     }
 
     public String getActProcessDefinitionId() {

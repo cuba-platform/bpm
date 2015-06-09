@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,5 +37,10 @@ public class ProcessFormServiceBean implements ProcessFormService {
     @Override
     public ProcFormDefinition getCancelForm(ProcDefinition procDefinition) {
         return processFormManager.getCancelForm(procDefinition);
+    }
+
+    @Override
+    public List<ProcFormDefinition> getAllForms() {
+        return processFormManager.getAllForms();
     }
 }

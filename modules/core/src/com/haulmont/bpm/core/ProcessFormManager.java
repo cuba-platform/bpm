@@ -9,6 +9,7 @@ import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.form.ProcFormDefinition;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,4 +25,6 @@ public interface ProcessFormManager {
     ProcFormDefinition getStartForm(ProcDefinition procDefinition);
 
     ProcFormDefinition getCancelForm(ProcDefinition procDefinition);
+
+    List<ProcFormDefinition> getAllForms();
 }
