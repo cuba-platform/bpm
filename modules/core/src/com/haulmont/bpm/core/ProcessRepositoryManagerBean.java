@@ -8,14 +8,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.haulmont.bpm.entity.ProcDefinition;
-import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TypedQuery;
-import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Resources;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -25,7 +23,6 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.ManagedBean;
@@ -112,7 +109,7 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             procDefinition.setActive(true);
             em.persist(procDefinition);
 
-            List<ProcRole> procRoles = createProcRoles(procDefinition);
+            List<ProcRole> procRoles = syncProcRoles(procDefinition);
             procDefinition.setProcRoles(procRoles);
 
             tx.commit();
@@ -122,39 +119,53 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
         }
     }
 
-    protected List<ProcRole> createProcRoles(ProcDefinition procDefinition) {
+    protected List<ProcRole> syncProcRoles(ProcDefinition procDefinition) {
         List<ProcRole> result = new ArrayList<>();
         Map<String, List<ExtensionElement>> processExtensionElements = extensionElementsManager.getProcessExtensionElements(procDefinition.getActId());
         List<ExtensionElement> procRoles = processExtensionElements.get("procRoles");
+        List<ProcRole> rolesToRemove = new ArrayList<>();
+        if (procDefinition.getProcRoles() != null)
+            rolesToRemove.addAll(procDefinition.getProcRoles());
+        EntityManager em = persistence.getEntityManager();
         if (procRoles != null) {
-            List<String> existingProcRolesCodes = getExistingProcRolesCodes(procDefinition);
-            EntityManager em = persistence.getEntityManager();
             ExtensionElement procRolesElement = procRoles.get(0);
             List<ExtensionElement> procRoleElements = procRolesElement.getChildElements().get("procRole");
             int order = 0;
             for (ExtensionElement procRoleElement : procRoleElements) {
                 String roleCode = procRoleElement.getAttributeValue(null, "code");
-                if (existingProcRolesCodes.contains(roleCode)) continue;
-                ProcRole procRole = metadata.create(ProcRole.class);
-                procRole.setName(procRoleElement.getAttributeValue(null, "name"));
-                procRole.setCode(roleCode);
-                procRole.setOrder(order++);
-                procRole.setProcDefinition(procDefinition);
-                em.persist(procRole);
-                result.add(procRole);
+                String roleName = procRoleElement.getAttributeValue(null, "name");
+                ProcRole existingProcRole = getProcRoleByCode(procDefinition, roleCode);
+                if (existingProcRole == null) {
+                    ProcRole procRole = metadata.create(ProcRole.class);
+                    procRole.setCode(roleCode);
+                    procRole.setName(roleName);
+                    procRole.setOrder(order++);
+                    procRole.setProcDefinition(procDefinition);
+                    em.persist(procRole);
+                    result.add(procRole);
+                } else {
+                    rolesToRemove.remove(existingProcRole);
+                    existingProcRole.setOrder(order++);
+                    existingProcRole.setName(roleName);
+                    em.merge(existingProcRole);
+                    result.add(existingProcRole);
+                }
             }
+        }
+        for (ProcRole roleToRemove : rolesToRemove) {
+            em.remove(roleToRemove);
         }
         return result;
     }
 
-    protected List<String> getExistingProcRolesCodes(ProcDefinition procDefinition) {
-        List<String> result = new ArrayList<>();
+    @Nullable
+    protected ProcRole getProcRoleByCode(ProcDefinition procDefinition, String code) {
         if (procDefinition.getProcRoles() != null) {
             for (ProcRole procRole : procDefinition.getProcRoles()) {
-                result.add(procRole.getCode());
+                if (code.equals(procRole.getCode())) return procRole;
             }
         }
-        return result;
+        return null;
     }
 
     @Override
