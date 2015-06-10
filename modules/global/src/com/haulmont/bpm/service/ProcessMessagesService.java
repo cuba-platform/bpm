@@ -20,5 +20,11 @@ public interface ProcessMessagesService {
 
     String loadString(String actProcessDefinitionId, String key);
 
+    @Nullable
+    String findMessage(String actProcessDefinitionId, String key);
+
+    @Nullable
+    String findMessage(String actProcessDefinitionId, String key, Locale locale);
+
     String loadString(String actProcessDefinitionId, String key, Locale locale);
 }

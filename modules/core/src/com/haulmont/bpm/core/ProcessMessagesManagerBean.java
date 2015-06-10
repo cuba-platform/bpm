@@ -40,6 +40,7 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
 
     protected Map<String, String> msgCache = new ConcurrentHashMap<>();
     protected Map<String, Properties> propsCache = new ConcurrentHashMap<>();
+    protected Map<String, String> notFoundCache = new ConcurrentHashMap<>();
 
     @Override
     public String getMessage(String actProcessDefinitionId, String key) {
@@ -48,6 +49,22 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
 
     @Override
     public String getMessage(String actProcessDefinitionId, String key, Locale locale) {
+        return internalGetMessage(actProcessDefinitionId, key, locale, key);
+    }
+
+    @Nullable
+    @Override
+    public String findMessage(String actProcessDefinitionId, String key) {
+        return internalGetMessage(actProcessDefinitionId, key, getUserLocale(), null);
+    }
+
+    @Nullable
+    @Override
+    public String findMessage(String actProcessDefinitionId, String key, Locale locale) {
+        return internalGetMessage(actProcessDefinitionId, key, locale, null);
+    }
+
+    protected String internalGetMessage(String actProcessDefinitionId, String key, Locale locale, String defaultValue) {
         locale = messageTools.trimLocale(locale);
 
         String cacheKey = makeMsgCacheKey(actProcessDefinitionId, key, locale);
@@ -55,6 +72,10 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
         String msg = msgCache.get(cacheKey);
         if (msg != null)
             return msg;
+
+        String notFound = notFoundCache.get(cacheKey);
+        if (notFound != null)
+            return defaultValue;
 
         Properties properties = getProperties(actProcessDefinitionId, locale);
         msg = properties.getProperty(key);
@@ -65,17 +86,15 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
         }
 
         if (!messageTools.getDefaultLocale().equals(locale)) {
-            msg = getMessage(actProcessDefinitionId, key, messageTools.getDefaultLocale());
+            msg = internalGetMessage(actProcessDefinitionId, key, messageTools.getDefaultLocale(), defaultValue);
             if (msg != null) {
                 cacheMsg(key, msg);
                 return msg;
             }
         }
 
-        msg = key;
-        cacheMsg(key, msg);
-
-        return msg;
+        notFoundCache.put(cacheKey, key);
+        return defaultValue;
     }
 
     @Override
@@ -96,6 +115,7 @@ public class ProcessMessagesManagerBean implements ProcessMessagesManager{
     public void clearCaches() {
         msgCache.clear();
         propsCache.clear();
+        notFoundCache.clear();
     }
 
     protected void cacheMsg(String key, String msg) {

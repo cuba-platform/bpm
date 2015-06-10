@@ -6,6 +6,7 @@ package com.haulmont.bpm.service;
 import com.haulmont.bpm.core.ProcessMessagesManager;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.Locale;
 
@@ -25,6 +26,18 @@ public class ProcessMessagesServiceBean implements ProcessMessagesService {
     @Override
     public String getMessage(String actProcessDefinitionId, String key, Locale locale) {
         return processMessagesManager.getMessage(actProcessDefinitionId, key, locale);
+    }
+
+    @Override
+    @Nullable
+    public String findMessage(String actProcessDefinitionId, String key) {
+        return processMessagesManager.findMessage(actProcessDefinitionId, key);
+    }
+
+    @Override
+    @Nullable
+    public String findMessage(String actProcessDefinitionId, String key, Locale locale) {
+        return processMessagesManager.findMessage(actProcessDefinitionId, key, locale);
     }
 
     @Override
