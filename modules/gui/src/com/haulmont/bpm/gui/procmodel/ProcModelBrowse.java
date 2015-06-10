@@ -144,10 +144,10 @@ public class ProcModelBrowse extends AbstractLookup {
                     if (COMMIT_ACTION_ID.equals(actionId)) {
                         if (ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING == deployWindow.getDecision()) {
                             ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, deployWindow.getProcDefinition());
-                            showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
+                            showNotification(getMessage("processDeployed"), NotificationType.HUMANIZED);
                         } else {
                             ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, null);
-                            showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
+                            showNotification(getMessage("processDeployed"), NotificationType.HUMANIZED);
                         }
                     }
                 }
