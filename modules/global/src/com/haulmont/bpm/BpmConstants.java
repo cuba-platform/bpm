@@ -12,5 +12,5 @@ package com.haulmont.bpm;
  */
 public class BpmConstants {
     public static final String DEFAULT_TASK_OUTCOME = "defaultComplete";
-    public static final String STANDARD_ROC_FORM = "standardProcForm";
+    public static final String STANDARD_PROC_FORM = "standardProcForm";
 }

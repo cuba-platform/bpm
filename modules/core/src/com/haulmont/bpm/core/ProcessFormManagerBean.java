@@ -4,6 +4,7 @@
 
 package com.haulmont.bpm.core;
 
+import com.haulmont.bpm.BpmConstants;
 import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.form.ProcFormDefinition;
@@ -75,7 +76,7 @@ public class ProcessFormManagerBean implements ProcessFormManager {
     @Override
     public ProcFormDefinition getCancelForm(ProcDefinition procDefinition) {
         ProcFormDefinition procFormDefinition = new ProcFormDefinition();
-        procFormDefinition.setName("standardProcForm");
+        procFormDefinition.setName(BpmConstants.STANDARD_PROC_FORM);
         procFormDefinition.setCaption(messages.getMessage(ProcessFormManagerBean.class, "cancelProcess"));
         procFormDefinition.setActProcessDefinitionId(procDefinition.getActId());
         ProcFormParam commentRequiredParam = new ProcFormParam();
@@ -89,7 +90,7 @@ public class ProcessFormManagerBean implements ProcessFormManager {
     @Override
     public ProcFormDefinition getDefaultCompleteTaskForm(ProcDefinition procDefinition) {
         ProcFormDefinition procFormDefinition = new ProcFormDefinition();
-        procFormDefinition.setName("standardProcForm");
+        procFormDefinition.setName(BpmConstants.STANDARD_PROC_FORM);
         procFormDefinition.setCaption(messages.getMessage(ProcessFormManagerBean.class, "completeTask"));
         procFormDefinition.setActProcessDefinitionId(procDefinition.getActId());
         return procFormDefinition;
