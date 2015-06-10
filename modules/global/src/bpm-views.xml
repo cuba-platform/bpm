@@ -177,19 +177,12 @@
                   view="_minimal"/>
     </view>
     <view entity="bpm$ProcTask"
-          name="procTask-procInstance-edit">
-        <property name="startDate"/>
-        <property name="endDate"/>
-        <property name="claimDate"/>
+          name="procTask-procInstance-edit"
+          extends="_local">
         <property name="procActor">
             <property name="user"
                       view="_minimal"/>
         </property>
-        <property name="actProcessDefinitionId"/>
-        <property name="name"/>
-        <property name="outcome"/>
-        <property name="comment"/>
-        <property name="actTaskId"/>
         <property name="procInstance">
             <property name="procDefinition">
                 <property name="actId"/>

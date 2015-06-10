@@ -14,12 +14,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.google.common.base.Strings;
+import com.haulmont.bpm.BpmConstants;
 import com.haulmont.bpm.service.ProcessMessagesService;
 import com.haulmont.chile.core.annotations.MetaProperty;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import javax.persistence.Lob;
 
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.security.entity.User;
 import java.util.Set;
 import javax.persistence.JoinTable;
@@ -82,20 +84,42 @@ public class ProcTask extends StandardEntity {
     @Column(name = "ACT_PROCESS_DEFINITION_ID")
     protected String actProcessDefinitionId;
 
+    @Column(name = "ACT_TASK_DEFINITION_KEY")
+    protected String actTaskDefinitionKey;
+
+    public void setActTaskDefinitionKey(String actTaskDefinitionKey) {
+        this.actTaskDefinitionKey = actTaskDefinitionKey;
+    }
+
+    public String getActTaskDefinitionKey() {
+        return actTaskDefinitionKey;
+    }
+
     @MetaProperty
     public String getLocName() {
-        if (!Strings.isNullOrEmpty(actProcessDefinitionId) && !Strings.isNullOrEmpty(name)) {
+        if (!Strings.isNullOrEmpty(actProcessDefinitionId) && !Strings.isNullOrEmpty(actTaskDefinitionKey)) {
             ProcessMessagesService processMessagesService = AppBeans.get(ProcessMessagesService.class);
-            return processMessagesService.getMessage(actProcessDefinitionId, name);
+            String message = processMessagesService.findMessage(actProcessDefinitionId, actTaskDefinitionKey);
+            if (message != null) return message;
         }
         return name;
     }
 
     @MetaProperty
     public String getLocOutcome() {
-        if (!Strings.isNullOrEmpty(actProcessDefinitionId) && !Strings.isNullOrEmpty(name) && !Strings.isNullOrEmpty(outcome)) {
+        if (!Strings.isNullOrEmpty(actProcessDefinitionId) && !Strings.isNullOrEmpty(actTaskDefinitionKey) && !Strings.isNullOrEmpty(outcome)) {
             ProcessMessagesService processMessagesService = AppBeans.get(ProcessMessagesService.class);
-            return processMessagesService.getMessage(actProcessDefinitionId, name + "." + outcome);
+            String key = actTaskDefinitionKey + "." + outcome;
+            String message = processMessagesService.findMessage(actProcessDefinitionId, key);
+            if (message == null) {
+                if (BpmConstants.DEFAULT_TASK_OUTCOME.equals(outcome)) {
+                    Messages messages = AppBeans.get(Messages.class);
+                    message = messages.getMessage(getClass(), "ProcTask.defaultTaskOutcome");
+                } else {
+                    message = outcome;
+                }
+            }
+            return message;
         }
         return outcome;
     }
@@ -108,7 +132,6 @@ public class ProcTask extends StandardEntity {
         return actProcessDefinitionId;
     }
 
-
     public void setClaimDate(Date claimDate) {
         this.claimDate = claimDate;
     }
@@ -116,9 +139,6 @@ public class ProcTask extends StandardEntity {
     public Date getClaimDate() {
         return claimDate;
     }
-
-
-
 
     public void setCandidateUsers(Set<User> candidateUsers) {
         this.candidateUsers = candidateUsers;
@@ -136,7 +156,6 @@ public class ProcTask extends StandardEntity {
     public Boolean getCancelled() {
         return cancelled;
     }
-
 
     public void setActExecutionId(String actExecutionId) {
         this.actExecutionId = actExecutionId;
@@ -209,6 +228,4 @@ public class ProcTask extends StandardEntity {
     public ProcActor getProcActor() {
         return procActor;
     }
-
-
 }

@@ -43,4 +43,9 @@ public class ProcessFormServiceBean implements ProcessFormService {
     public List<ProcFormDefinition> getAllForms() {
         return processFormManager.getAllForms();
     }
+
+    @Override
+    public ProcFormDefinition getDefaultCompleteTaskForm(ProcDefinition procDefinition) {
+        return processFormManager.getDefaultCompleteTaskForm(procDefinition);
+    }
 }

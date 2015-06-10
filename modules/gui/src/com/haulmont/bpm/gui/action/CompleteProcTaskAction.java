@@ -86,7 +86,7 @@ public class CompleteProcTaskAction extends ProcAction {
 
     @Override
     public String getCaption() {
-        String key = procTask.getName() + "." + outcome;
+        String key = procTask.getActTaskDefinitionKey() + "." + outcome;
         String message = processMessagesService.getMessage(procTask.getProcInstance().getProcDefinition().getActId(), key);
         if (message.equals(key)) {
             message = outcome;

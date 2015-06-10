@@ -12,8 +12,6 @@
     ACT_ID varchar(255),
     ACT_KEY varchar(255),
     ACTIVE boolean,
-    ACT_VERSION integer,
-    ACT_DEPLOYMENT_ID varchar(255),
     --
     primary key (ID)
 )^-- end BPM_PROC_DEFINITION
@@ -141,6 +139,7 @@ create table BPM_PROC_ATTACHMENT (
     CANCELLED boolean,
     CLAIM_DATE timestamp,
     ACT_PROCESS_DEFINITION_ID varchar(255),
+    ACT_TASK_DEFINITION_KEY varchar(255),
     --
     primary key (ID)
 )^-- end BPM_PROC_TASK

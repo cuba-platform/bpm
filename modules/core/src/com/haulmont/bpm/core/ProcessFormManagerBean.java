@@ -86,6 +86,15 @@ public class ProcessFormManagerBean implements ProcessFormManager {
         return procFormDefinition;
     }
 
+    @Override
+    public ProcFormDefinition getDefaultCompleteTaskForm(ProcDefinition procDefinition) {
+        ProcFormDefinition procFormDefinition = new ProcFormDefinition();
+        procFormDefinition.setName("standardProcForm");
+        procFormDefinition.setCaption(messages.getMessage(ProcessFormManagerBean.class, "completeTask"));
+        procFormDefinition.setActProcessDefinitionId(procDefinition.getActId());
+        return procFormDefinition;
+    }
+
     protected ProcFormDefinition extractProcFormDefinition(ExtensionElement formElement, String actProcessDefinitionId) {
         ProcFormDefinition procFormDefinition = new ProcFormDefinition();
         procFormDefinition.setName(formElement.getAttributeValue(null, "name"));

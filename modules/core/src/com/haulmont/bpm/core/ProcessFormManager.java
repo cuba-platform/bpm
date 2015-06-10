@@ -26,5 +26,7 @@ public interface ProcessFormManager {
 
     ProcFormDefinition getCancelForm(ProcDefinition procDefinition);
 
+    ProcFormDefinition getDefaultCompleteTaskForm(ProcDefinition procDefinition);
+
     List<ProcFormDefinition> getAllForms();
 }

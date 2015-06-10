@@ -6,6 +6,7 @@
 
 package com.haulmont.bpm.gui.procactions;
 
+import com.haulmont.bpm.BpmConstants;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.form.ProcFormDefinition;
@@ -115,13 +116,25 @@ public class ProcActionsFrame extends AbstractFrame {
             initTaskInfoGrid();
         noActionsAvailableLbl.setVisible(false);
         Map<String, ProcFormDefinition> outcomesWithForms = processFormService.getOutcomesWithForms(procTask);
-        for (Map.Entry<String, ProcFormDefinition> entry : outcomesWithForms.entrySet()) {
+        if (!outcomesWithForms.isEmpty()) {
+            for (Map.Entry<String, ProcFormDefinition> entry : outcomesWithForms.entrySet()) {
+                Button actionBtn = componentsFactory.createComponent(Button.class);
+                actionBtn.setWidth(buttonWidth);
+                CompleteProcTaskAction action = new CompleteProcTaskAction(procTask, entry.getKey(), entry.getValue(), actionBtn);
+                action.addBeforeActionPredicate(beforeCompleteTaskPredicate);
+                action.addAfterActionListener(afterCompleteTaskListener);
+                actionBtn.setAction(action);
+                actionsBox.add(actionBtn);
+            }
+        } else {
             Button actionBtn = componentsFactory.createComponent(Button.class);
             actionBtn.setWidth(buttonWidth);
-            CompleteProcTaskAction action = new CompleteProcTaskAction(procTask, entry.getKey(), entry.getValue(), actionBtn);
+            ProcFormDefinition form = processFormService.getDefaultCompleteTaskForm(procInstance.getProcDefinition());
+            CompleteProcTaskAction action = new CompleteProcTaskAction(procTask, BpmConstants.DEFAULT_TASK_OUTCOME, form, actionBtn);
             action.addBeforeActionPredicate(beforeCompleteTaskPredicate);
             action.addAfterActionListener(afterCompleteTaskListener);
             actionBtn.setAction(action);
+            actionBtn.setCaption(getMessage("completeTask"));
             actionsBox.add(actionBtn);
         }
     }

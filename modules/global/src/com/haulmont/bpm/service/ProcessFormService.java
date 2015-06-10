@@ -25,4 +25,6 @@ public interface ProcessFormService {
     ProcFormDefinition getCancelForm(ProcDefinition procDefinition);
 
     List<ProcFormDefinition> getAllForms();
+
+    ProcFormDefinition getDefaultCompleteTaskForm(ProcDefinition procDefinition);
 }

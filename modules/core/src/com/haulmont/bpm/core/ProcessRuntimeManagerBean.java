@@ -310,7 +310,8 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         procTask.setProcActor(procActor);
         procTask.setProcInstance(procInstance);
         procTask.setActExecutionId(actTask.getExecutionId());
-        procTask.setName(actTask.getTaskDefinitionKey());
+        procTask.setName(actTask.getName());
+        procTask.setActTaskDefinitionKey(actTask.getTaskDefinitionKey());
         procTask.setActTaskId(actTask.getId());
         procTask.setStartDate(AppBeans.get(TimeSource.class).currentTimestamp());
         procTask.setActProcessDefinitionId(actTask.getProcessDefinitionId());
