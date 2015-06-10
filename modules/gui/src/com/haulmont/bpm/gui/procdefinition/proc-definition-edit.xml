@@ -36,35 +36,16 @@
                           caption="msg://com.haulmont.bpm.entity/ProcDefinition.procRoles">
                     <table id="procRolesTable"
                            columnControlVisible="false"
-                           editable="true"
                            height="100%"
                            presentations="false"
                            reorderingAllowed="false"
                            sortable="false"
                            width="100%">
-                        <actions>
-                            <action id="create"
-                                    caption="msg://com.haulmont.cuba.gui/actions.Create"
-                                    invoke="addProcRole"/>
-                            <action id="remove"/>
-                        </actions>
                         <columns>
-                            <column id="name"
-                                    editable="true"/>
-                            <column id="code"
-                                    editable="true"/>
+                            <column id="name"/>
+                            <column id="code"/>
                         </columns>
                         <rows datasource="procRolesDs"/>
-                        <buttonsPanel>
-                            <button action="procRolesTable.create"/>
-                            <button action="procRolesTable.remove"/>
-                            <button caption=""
-                                    icon="icons/up.png"
-                                    invoke="moveProcRoleUp"/>
-                            <button caption=""
-                                    icon="icons/down.png"
-                                    invoke="moveProcRoleDown"/>
-                        </buttonsPanel>
                     </table>
                 </groupBox>
             </tab>

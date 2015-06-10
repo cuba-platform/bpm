@@ -22,12 +22,6 @@ import java.util.UUID;
 public class ProcDefinitionEdit extends AbstractEditor<ProcDefinition> {
 
     @Inject
-    protected CollectionDatasource.Ordered<ProcRole, UUID> procRolesDs;
-
-    @Inject
-    protected Metadata metadata;
-
-    @Inject
     protected TabSheet tabSheet;
 
     @Inject
@@ -55,47 +49,5 @@ public class ProcDefinitionEdit extends AbstractEditor<ProcDefinition> {
                 }
             }
         });
-    }
-
-    public void addProcRole() {
-        ProcRole procRole = metadata.create(ProcRole.class);
-        procRole.setProcDefinition(getItem());
-        procRolesDs.addItem(procRole);
-    }
-
-    public void moveProcRoleUp() {
-        ProcRole procRole = procRolesDs.getItem();
-        if (procRole == null || procRolesDs.isFirstId(procRole.getId())) return;
-
-        UUID prevItemId = procRolesDs.prevItemId(procRole.getId());
-        ProcRole prevProcRole = procRolesDs.getItem(prevItemId);
-
-        Integer tmp = prevProcRole.getOrder();
-        prevProcRole.setOrder(procRole.getOrder());
-        procRole.setOrder(tmp);
-
-        sortProcRoles();
-    }
-
-    public void moveProcRoleDown() {
-        ProcRole procRole = procRolesDs.getItem();
-        if (procRole == null || procRolesDs.isLastId(procRole.getId())) return;
-
-        UUID nextItemId = procRolesDs.nextItemId(procRole.getId());
-        ProcRole nextProcRole = procRolesDs.getItem(nextItemId);
-
-        Integer tmp = nextProcRole.getOrder();
-        nextProcRole.setOrder(procRole.getOrder());
-        procRole.setOrder(tmp);
-
-        sortProcRoles();
-    }
-
-    protected void sortProcRoles() {
-        CollectionDatasource.Sortable.SortInfo sortInfo = new CollectionDatasource.Sortable.SortInfo();
-        sortInfo.setOrder(CollectionDatasource.Sortable.Order.ASC);
-        sortInfo.setPropertyPath(procRolesDs.getMetaClass().getPropertyPath("order"));
-        ((CollectionDatasource.Sortable) procRolesDs).sort(new CollectionDatasource.Sortable.SortInfo[] {sortInfo});
-        procRolesDs.refresh();
     }
 }
