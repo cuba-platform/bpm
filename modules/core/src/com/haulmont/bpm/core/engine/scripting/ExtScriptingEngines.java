@@ -9,6 +9,7 @@ package com.haulmont.bpm.core.engine.scripting;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.Resources;
 import org.activiti.engine.delegate.VariableScope;
 import org.activiti.engine.impl.scripting.ScriptBindingsFactory;
 import org.activiti.engine.impl.scripting.ScriptingEngines;
@@ -27,6 +28,14 @@ public class ExtScriptingEngines extends ScriptingEngines {
 
     public ExtScriptingEngines(ScriptBindingsFactory scriptBindingsFactory) {
         super(scriptBindingsFactory);
+    }
+
+    @Override
+    protected Object evaluate(String script, String language, Bindings bindings) {
+        Resources resources = AppBeans.get(Resources.class);
+        String scriptByPath = resources.getResourceAsString(script);
+        if (scriptByPath != null) script = scriptByPath;
+        return super.evaluate(script, language, bindings);
     }
 
     @Override
