@@ -92,20 +92,11 @@
     </view>
     <view class="com.haulmont.bpm.entity.ProcTask"
           extends="_local"
-          name="procTask-journal">
-        <!--<property name="startDate"/>-->
-        <!--<property name="endDate"/>-->
-        <!--<property name="outcome"/>-->
+          name="procTask-frame">
         <property name="procActor">
             <property name="user"
                       view="_minimal"/>
-            <property name="procRole"
-                      view="_minimal"/>
         </property>
-        <property name="candidateUsers"
-                  view="_minimal"/>
-        <!--<property name="comment"/>-->
-        <!--<property name="name"/>-->
     </view>
     <view class="com.haulmont.bpm.entity.ProcActor"
           extends="_local"
@@ -177,8 +168,8 @@
                   view="_minimal"/>
     </view>
     <view entity="bpm$ProcTask"
-          name="procTask-procInstance-edit"
-          extends="_local">
+          extends="_local"
+          name="procTask-browse">
         <property name="procActor">
             <property name="user"
                       view="_minimal"/>

@@ -9,6 +9,7 @@ import com.haulmont.bpm.gui.action.ProcAction;
 import com.haulmont.bpm.gui.procactor.ProcActorsFrame;
 import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
 import com.haulmont.bpm.gui.procactions.ProcActionsFrame;
+import com.haulmont.bpm.gui.proctask.ProcTasksFrame;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
@@ -73,7 +74,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     protected ProcActionsFrame procActionsFrame;
 
     @Inject
-    protected CollectionDatasource<ProcTask, UUID> procTasksDs;
+    protected ProcTasksFrame procTasksFrame;
 
     @Inject
     protected UserSession userSession;
@@ -84,8 +85,6 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     @Override
     public void setItem(Entity item) {
         super.setItem(item);
-
-        procTasksDs.refresh();
 
         addFieldGroupCustomFields();
         setComponentsVisible();
@@ -115,6 +114,8 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         procAttachmentsFrame.setProcInstance(getItem());
         procAttachmentsFrame.refresh();
 
+        procTasksFrame.setProcInstance(getItem());
+        procTasksFrame.refresh();
     }
 
 

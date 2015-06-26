@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/5.6/window.xsd"
+        caption="msg://caption"
+        class="com.haulmont.bpm.gui.proctask.ProcTasksFrame"
+        messagesPack="com.haulmont.bpm.gui.proctask">
+    <dsContext>
+        <collectionDatasource id="procTasksDs"
+                              class="com.haulmont.bpm.entity.ProcTask"
+                              view="procTask-frame">
+            <query>
+                <![CDATA[select e from bpm$ProcTask e
+                where e.procInstance.id = :custom$procInstance
+                order by e.createTs desc]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <layout>
+        <table id="procTasksTable"
+               height="100%"
+               width="100%">
+            <columns>
+                <column id="locName"/>
+                <column id="procActor.user"/>
+                <column id="startDate"/>
+                <column id="endDate"/>
+                <column id="locOutcome"/>
+                <column id="comment"/>
+            </columns>
+            <rows datasource="procTasksDs"/>
+        </table>
+    </layout>
+</window>

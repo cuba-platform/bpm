@@ -148,6 +148,5 @@ public class ProcAttachmentsFrame extends AbstractFrame {
 
     public void commit() {
         getDsContext().commit();
-//        procAttachmentsDs.commit();
     }
 }

@@ -36,4 +36,6 @@
             template="com/haulmont/bpm/gui/procmodel/proc-model-browse.xml"/>
     <screen id="bpm$ProcModel.edit"
             template="com/haulmont/bpm/gui/procmodel/proc-model-edit.xml"/>
+    <screen id="procTasksFrame"
+            template="com/haulmont/bpm/gui/proctask/proc-tasks-frame.xml"/>
 </screen-config>

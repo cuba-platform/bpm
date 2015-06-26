@@ -10,15 +10,6 @@
                     class="com.haulmont.bpm.entity.ProcInstance"
                     view="procInstance-edit">
         </datasource>
-        <collectionDatasource id="procTasksDs"
-                              class="com.haulmont.bpm.entity.ProcTask"
-                              view="procTask-procInstance-edit">
-            <query>
-                <![CDATA[
-                select t from bpm$ProcTask t where t.procInstance.id = :ds$procInstanceDs order by t.startDate desc
-                ]]>
-            </query>
-        </collectionDatasource>
         <collectionDatasource id="usersDs"
                               class="com.haulmont.cuba.security.entity.User"
                               view="_minimal">
@@ -94,31 +85,11 @@
         </hbox>
         <groupBox id="processTasksBox"
                   caption="msg://com.haulmont.bpm.entity/ProcInstance.procTasks">
-            <table id="procTasksTable"
-                   height="100%"
-                   width="100%">
-                <columns>
-                    <column id="locName"/>
-                    <column id="procActor.user"/>
-                    <column id="startDate"/>
-                    <column id="endDate"/>
-                    <column id="locOutcome"/>
-                    <column id="comment"/>
-                </columns>
-                <rows datasource="procTasksDs"/>
-            </table>
+            <iframe id="procTasksFrame"
+                    height="100%"
+                    screen="procTasksFrame"/>
         </groupBox>
         <iframe id="windowActions"
                 screen="extendedEditWindowActions"/>
-        <!--<hbox id="windowActions"-->
-              <!--spacing="true"-->
-              <!--stylename="cuba-edit-window-actions">-->
-            <!--<button id="windowCommitBtn"-->
-                    <!--action="windowCommit"-->
-                    <!--icon="icons/ok.png"/>-->
-            <!--<button id="windowCloseBtn"-->
-                    <!--action="windowClose"-->
-                    <!--icon="icons/cancel.png"/>-->
-        <!--</hbox>-->
     </layout>
 </window>

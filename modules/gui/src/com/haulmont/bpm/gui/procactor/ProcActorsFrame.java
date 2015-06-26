@@ -5,7 +5,6 @@
 package com.haulmont.bpm.gui.procactor;
 
 import com.haulmont.bpm.entity.ProcActor;
-import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.cuba.core.global.Metadata;
@@ -38,8 +37,6 @@ public class ProcActorsFrame extends AbstractFrame {
     protected Metadata metadata;
 
     protected ProcInstance procInstance;
-
-    protected ProcDefinition procDefinition;
 
     @Override
     public void init(Map<String, Object> params) {
