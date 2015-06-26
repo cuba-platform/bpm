@@ -14,9 +14,9 @@ allprojects {
 }
 
 buildscript {
-    ext.cubaVersion = '5.5-SNAPSHOT'
+    ext.cubaVersion = '5.6-SNAPSHOT'
     ext.cubaVersion = rootProject.hasProperty('buildVersion') ? rootProject['buildVersion'] : cubaVersion
-    ext.modelerVersion = '5.17.0.cuba.1-SNAPSHOT'
+    ext.modelerVersion = '5.17.0.cuba.5-SNAPSHOT'
 
     repositories {
         mavenLocal()
