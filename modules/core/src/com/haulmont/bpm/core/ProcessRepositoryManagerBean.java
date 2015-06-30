@@ -17,10 +17,10 @@ import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Resources;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
-import org.activiti.bpmn.model.*;
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.ExtensionElement;
 import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.io.IOUtils;
@@ -30,7 +30,9 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author gorbunkov
@@ -41,9 +43,6 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
 
     @Inject
     protected RepositoryService repositoryService;
-
-    @Inject
-    protected RuntimeService runtimeService;
 
     @Inject
     protected Metadata metadata;
@@ -59,6 +58,9 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
 
     @Inject
     protected ExtensionElementsManager extensionElementsManager;
+
+    @Inject
+    protected ModelTransformer modelTransformer;
 
     @Override
     public ProcDefinition deployProcessFromPath(String path) {
@@ -195,7 +197,9 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
     public String convertModelToProcessXML(String actModelId) {
         JsonNode editorNode;
         try {
-            editorNode = new ObjectMapper().readTree(repositoryService.getModelEditorSource(actModelId));
+            byte[] modelEditorSource = repositoryService.getModelEditorSource(actModelId);
+            String modifiedModelJson = modelTransformer.transformModel(modelEditorSource);
+            editorNode = new ObjectMapper().readTree(modifiedModelJson);
             BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
             BpmnModel model = jsonConverter.convertToBpmnModel(editorNode);
             byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(model);

@@ -8,9 +8,14 @@ package com.haulmont.bpm.web.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.rest.RestModel;
 import com.haulmont.bpm.service.ModelService;
+import com.haulmont.cuba.core.entity.Entity;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.SecurityContext;
 import com.haulmont.cuba.security.global.UserSession;
@@ -23,6 +28,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Controller is used by modeler for manipulating with models
@@ -36,6 +42,9 @@ public class ModelController {
 
     @Inject
     protected ModelService modelService;
+
+    @Inject
+    protected DataManager dataManager;
 
     @RequestMapping(value = "/{actModelId}", method = RequestMethod.GET)
     @ResponseBody
@@ -71,5 +80,26 @@ public class ModelController {
             String modelSvgStr = values.getFirst("svg_xml");
             modelService.updateModel(actModelId, modelName, modelDescription, modelJsonStr, modelSvgStr);
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getModels(HttpServletRequest request,
+                                  HttpServletResponse response) throws IOException {
+        if (BpmControllerUtils.auth(request, response)) {
+            LoadContext ctx = new LoadContext(ProcModel.class);
+            ctx.setQueryString("select m from bpm$ProcModel m order by m.name");
+            List<ProcModel> models = dataManager.loadList(ctx);
+            ObjectMapper objectMapper = new ObjectMapper();
+            ArrayNode arrayNode = objectMapper.createArrayNode();
+            for (ProcModel model : models) {
+                ObjectNode objectNode = objectMapper.createObjectNode();
+                objectNode.put("actModelId", model.getActModelId());
+                objectNode.put("name", model.getName());
+                arrayNode.add(objectNode);
+            }
+            return arrayNode;
+        }
+        return null;
     }
 }

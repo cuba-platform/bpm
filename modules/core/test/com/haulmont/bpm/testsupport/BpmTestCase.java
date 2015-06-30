@@ -16,6 +16,8 @@ import com.haulmont.cuba.testsupport.TestDataSource;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 
@@ -54,7 +56,6 @@ public class BpmTestCase extends CubaTestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-//        dataSet.deleteAll();
         cleanUpDatabase();
     }
 
@@ -65,6 +66,7 @@ public class BpmTestCase extends CubaTestCase {
         cleanUpTable("BPM_PROC_INSTANCE");
         cleanUpTable("BPM_PROC_ROLE");
         cleanUpTable("BPM_PROC_DEFINITION");
+        cleanUpTable("BPM_PROC_MODEL");
         cleanUpUsersTable();
         cleanUpActivitiEngineDatabase();
     }
@@ -98,6 +100,16 @@ public class BpmTestCase extends CubaTestCase {
         List<ProcessDefinition> processDefinitions = repositoryService.createProcessDefinitionQuery().list();
         for (ProcessDefinition processDefinition : processDefinitions) {
             repositoryService.deleteDeployment(processDefinition.getDeploymentId());
+        }
+
+        List<Model> models = repositoryService.createModelQuery().list();
+        for (Model model : models) {
+            repositoryService.deleteModel(model.getId());
+        }
+
+        List<Deployment> deployments = repositoryService.createDeploymentQuery().list();
+        for (Deployment deployment : deployments) {
+            repositoryService.deleteDeployment(deployment.getId());
         }
     }
 
