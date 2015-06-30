@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ Copyright (c) 2015 Haulmont Technology Ltd. All Rights Reserved.
+  ~   Haulmont Technology proprietary and confidential.
+  ~   Use is subject to license terms.
+  -->
+
+<definitions id="definitions"
+             targetNamespace="http://activiti.org/bpmn20"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:cuba="http://schemas.haulmont.com/bpm/5.5/bpm.xsd">
+
+    <process id="basicTest" name="Basic test">
+
+        <extensionElements>
+            <activiti:eventListener class="com.haulmont.bpm.core.engine.listener.BpmActivitiListener"/>
+        </extensionElements>
+
+        <startEvent id="start">
+        </startEvent>
+
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="wait1" />
+
+        <receiveTask id="wait1" name="wait1" />
+
+        <sequenceFlow id="flow11" sourceRef="wait1" targetRef="script1" />
+
+        <scriptTask id="script1" scriptFormat="groovy">
+            <script>
+                def b = a + 3;
+                execution.setVariable('b', b)
+            </script>
+        </scriptTask>
+
+        <sequenceFlow id="flow2" sourceRef="script1" targetRef="wait2" />
+
+        <receiveTask id="wait2" name="wait2" />
+
+        <sequenceFlow id="flow3" sourceRef="wait2" targetRef="end" />
+
+        <endEvent id="end" />
+
+    </process>
+
+</definitions>

@@ -5,6 +5,7 @@
 package com.haulmont.bpm
 
 import com.haulmont.bpm.core.ProcessMessagesManager
+import com.haulmont.bpm.core.ProcessVariablesManager
 import com.haulmont.bpm.entity.ProcDefinition
 import com.haulmont.bpm.entity.ProcInstance
 import com.haulmont.bpm.entity.ProcRole
@@ -14,6 +15,7 @@ import com.haulmont.bpm.testsupport.ObjectGraphBuilderProvider
 import com.haulmont.cuba.core.Transaction
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.security.entity.User
+import org.activiti.engine.runtime.Execution
 
 /**
  *
@@ -27,6 +29,7 @@ class ProcessRuntimeTest extends BpmTestCase {
     static final String MULTI_INSTANCE_SEQUENTIAL_PROCESS_PATH = "com/haulmont/bpm/process/testMultiInstanceSequential.bpmn20.xml";
     static final String CLAIM_TASK_PROCESS_PATH = "com/haulmont/bpm/process/testClaimTask.bpmn20.xml";
     static final String SCRIPT_TASK_PROCESS_PATH = "com/haulmont/bpm/process/testScriptTask.bpmn20.xml";
+    static final String VARIABLES_API_PROCESS_PATH = "com/haulmont/bpm/process/testVariablesApi.bpmn20.xml";
 
 
     void testBasic() {
@@ -404,6 +407,22 @@ class ProcessRuntimeTest extends BpmTestCase {
             User user = em.createQuery("select u from sec\$User u where u.login = 'jack'").getFirstResult()
             assertNotNull(user)
         } as Transaction.Runnable)
+    }
 
+    void testVariablesApi() {
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(VARIABLES_API_PROCESS_PATH)
+        ProcInstance procInstance
+        persistence.createTransaction().execute( {em ->
+            procInstance = new ProcInstance(procDefinition: procDefinition)
+            em.persist(procInstance)
+        } as Transaction.Runnable)
+        procInstance = processRuntimeManager.startProcess(procInstance, '', [:])
+
+        def variablesManager = AppBeans.get(ProcessVariablesManager.class)
+        variablesManager.setVariable(procInstance, 'a', 5)
+        def execution = runtimeService.createExecutionQuery().processInstanceId(procInstance.actProcessInstanceId).singleResult()
+        runtimeService.signal(execution.id)
+        def variable = variablesManager.getVariable(procInstance, 'b')
+        assertEquals(8, variable)
     }
 }
