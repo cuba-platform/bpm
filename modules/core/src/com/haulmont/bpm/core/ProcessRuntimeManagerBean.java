@@ -206,7 +206,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             runtimeService.setVariableLocal(procTask.getActExecutionId(), "outcome", outcome);
 
             //execution variable '<taskName>_result' can be used after multi-instance tasks. It holds outcomes for all task actors
-            String variableName = procTask.getActTaskDefinitionKey() + "_result";
+            String variableName = createResultVariableName(procTask);
             ProcTaskResult taskResult = (ProcTaskResult) runtimeService.getVariable(procTask.getActExecutionId(), variableName);
             if (taskResult == null)
                 taskResult = new ProcTaskResult();
@@ -218,6 +218,10 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         } finally {
             tx.end();
         }
+    }
+
+    protected String createResultVariableName(ProcTask procTask) {
+        return procTask.getActTaskDefinitionKey().replace("-", "") + "_result";
     }
 
     @Override
