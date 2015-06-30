@@ -27,22 +27,14 @@
 
         <startEvent id="start"/>
 
-        <sequenceFlow id="flow1" sourceRef="start" targetRef="setRolesScript" />
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="managerApproval" />
 
-        <scriptTask id="setRolesScript" scriptFormat="groovy">
-            <script>
-                execution.setVariable("managerApproval_role", "manager")
-                execution.setVariable("scanning_role", "operator")
-            </script>
-        </scriptTask>
-
-        <sequenceFlow id="flowSetRolesToApproval" sourceRef="setRolesScript" targetRef="managerApproval"/>
-
-        <userTask id="managerApproval" name="Manager approval"
-                  activiti:assignee="#{assignee}">
+        <userTask id="managerApproval" name="Manager approval">
+            <extensionElements>
+                <cuba:procRole>manager</cuba:procRole>
+            </extensionElements>
             <multiInstanceLoopCharacteristics isSequential="true"
-                                              activiti:collection="#{prm.getTaskAssigneeList(bpmProcInstanceId, managerApproval_role)}"
-                                              activiti:elementVariable="assignee"/>
+                                              activiti:collection="cuba"/>
         </userTask>
 
         <sequenceFlow id="flow2" sourceRef="managerApproval" targetRef="scanningApprovedDecision" />
@@ -52,7 +44,7 @@
         <sequenceFlow id="flow3" sourceRef="scanningApprovedDecision" targetRef="scanning">
             <conditionExpression xsi:type="tFormalExpression">
                 <![CDATA[
-                ${managerApproval_result.getOutcomesCount('reject') == 0}
+                ${managerApproval_result.count('reject') == 0}
                 ]]>
             </conditionExpression>
         </sequenceFlow>
@@ -60,13 +52,15 @@
         <sequenceFlow id="flow4" sourceRef="scanningApprovedDecision" targetRef="theEnd">
             <conditionExpression xsi:type="tFormalExpression">
                 <![CDATA[
-                 ${managerApproval_result.getOutcomesCount('reject') > 0}
+                 ${managerApproval_result.count('reject') > 0}
                  ]]>
             </conditionExpression>
         </sequenceFlow>
 
-        <userTask id="scanning" name="Scanning"
-                  activiti:assignee="#{prm.getSingleTaskAssignee(bpmProcInstanceId, scanning_role)}">
+        <userTask id="scanning" name="Scanning">
+            <extensionElements>
+                <cuba:procRole>operator</cuba:procRole>
+            </extensionElements>
         </userTask>
 
         <sequenceFlow id="flow5" sourceRef="scanning" targetRef="theEnd"/>

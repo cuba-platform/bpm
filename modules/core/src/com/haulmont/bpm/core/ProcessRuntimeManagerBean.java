@@ -341,7 +341,6 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
 
         String roleCode = extensionElementsManager.getTaskProcRole(actTask.getProcessDefinitionId(), actTask.getTaskDefinitionKey());
         if (Strings.isNullOrEmpty(roleCode))
-        if (Strings.isNullOrEmpty(roleCode))
             throw new BpmException("Role code variable for task " + actTask.getTaskDefinitionKey() + " not defined");
 
         ProcActor procActor = findProcActor(bpmProcInstanceId, roleCode, UUID.fromString(actTask.getAssignee()));

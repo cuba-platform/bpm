@@ -21,21 +21,17 @@
             </cuba:procRoles>
             <cuba:localizations>
                 <cuba:localization lang="en">
-                    <![CDATA[
-                            bookScanning = Book scanning
-                            managerApproval = Manager approval
-                            managerApproval.approve = Approve
-                            managerApproval.reject = Reject
-                            scanning = Scanning
-                    ]]>
+                    <cuba:msg key="bookScanning" value="Book scanning"></cuba:msg>
+                    <cuba:msg key="managerApproval" value="Manager approval"></cuba:msg>
+                    <cuba:msg key="managerApproval.approve" value="Approve"></cuba:msg>
+                    <cuba:msg key="managerApproval.reject" value="Reject"></cuba:msg>
+                    <cuba:msg key="scanning" value="Scanning"></cuba:msg>
                 </cuba:localization>
                 <cuba:localization lang="ru">
-                    <![CDATA[
-                            bookScanning = Сканирование книги
-                            managerApproval = Утверждение менеджером
-                            managerApproval.approve = Утвердить
-                            managerApproval.reject = Отклонить
-                    ]]>
+                    <cuba:msg key="bookScanning" value="Сканирование книги"></cuba:msg>
+                    <cuba:msg key="managerApproval" value="Утверждение менеджером"></cuba:msg>
+                    <cuba:msg key="managerApproval.approve" value="Утвердить"></cuba:msg>
+                    <cuba:msg key="managerApproval.reject" value="Отклонить"></cuba:msg>
                 </cuba:localization>
             </cuba:localizations>
         </extensionElements>
@@ -48,19 +44,9 @@
             </extensionElements>
         </startEvent>
 
-        <sequenceFlow id="flow1" sourceRef="start" targetRef="setRolesScript" />
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="managerApproval" />
 
-        <scriptTask id="setRolesScript" scriptFormat="groovy">
-            <script>
-                execution.setVariable("managerApproval_role", "manager")
-                execution.setVariable("scanning_role", "operator")
-            </script>
-        </scriptTask>
-
-        <sequenceFlow id="flowSetRolesToApproval" sourceRef="setRolesScript" targetRef="managerApproval"/>
-
-        <userTask id="managerApproval" name="Manager approval"
-                  activiti:assignee="#{prm.getSingleTaskAssignee(bpmProcInstanceId, managerApproval_role)}">
+        <userTask id="managerApproval" name="Manager approval">
             <extensionElements>
                 <cuba:outcomes>
                     <cuba:outcome name="approve">
@@ -74,6 +60,7 @@
                         </cuba:form>
                     </cuba:outcome>
                 </cuba:outcomes>
+                <cuba:procRole>manager</cuba:procRole>
             </extensionElements>
         </userTask>
 
@@ -89,8 +76,7 @@
             <conditionExpression xsi:type="tFormalExpression">${outcome == 'reject'}</conditionExpression>
         </sequenceFlow>
 
-        <userTask id="scanning" name="Scanning"
-                  activiti:assignee="#{prm.getSingleTaskAssignee(bpmProcInstanceId, scanning_role)}">
+        <userTask id="scanning" name="Scanning">
             <extensionElements>
                 <cuba:outcomes>
                     <cuba:outcome name="complete">
@@ -100,6 +86,7 @@
                         </cuba:form>
                     </cuba:outcome>
                 </cuba:outcomes>
+                <cuba:procRole>operator</cuba:procRole>
             </extensionElements>
         </userTask>
 

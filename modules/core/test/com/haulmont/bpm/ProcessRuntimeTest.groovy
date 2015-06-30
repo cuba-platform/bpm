@@ -107,8 +107,8 @@ class ProcessRuntimeTest extends BpmTestCase {
         def approveForm = procTaskForms['approve']
         assertEquals('standardProcessForm', approveForm.name)
         assertEquals(2, approveForm.params.size())
-        assertEquals("true", approveForm.params['commentRequired'].value)
-        assertEquals("true", approveForm.params['attachmentsVisible'].value)
+        assertEquals("true", approveForm.getParam('commentRequired').value)
+        assertEquals("true", approveForm.getParam('attachmentsVisible').value)
 
         def rejectForm = procTaskForms['reject']
         assertEquals('someOtherProcessForm', rejectForm.name)
@@ -117,7 +117,7 @@ class ProcessRuntimeTest extends BpmTestCase {
         def startForm = processFormManager.getStartForm(procDefinition)
         assertEquals("startProcessForm", startForm.name)
         assertEquals(1, startForm.params.size())
-        assertEquals("true", startForm.params['procActorsVisible'].value)
+        assertEquals("true", startForm.getParam('procActorsVisible').value)
 
         processRuntimeManager.completeProcTask(procTask, 'approve', 'Scanning approved by manager', [:])
 
@@ -137,7 +137,8 @@ class ProcessRuntimeTest extends BpmTestCase {
             assertEquals(1, procTasks.size())
             procTask = procTasks[0]
             assertNotNull(procTask)
-            assertEquals('scanning', procTask.name)
+            assertEquals('scanning', procTask.actTaskDefinitionKey)
+            assertEquals('Scanning', procTask.name)
             assertEquals(marySmithUser.id, procTask.procActor.user.id)
         } as Transaction.Runnable)
 
@@ -205,8 +206,8 @@ class ProcessRuntimeTest extends BpmTestCase {
             johnDoeProcTask = procTasks.find { it.procActor.user.id == johnDoeUser.id }
             bobDylanProcTask = procTasks.find { it.procActor.user.id == bobDylanUser.id }
 
-            assertEquals('managerApproval', johnDoeProcTask.name)
-            assertEquals('managerApproval', bobDylanProcTask.name)
+            assertEquals('managerApproval', johnDoeProcTask.actTaskDefinitionKey)
+            assertEquals('managerApproval', bobDylanProcTask.actTaskDefinitionKey)
         } as Transaction.Runnable)
 
         processRuntimeManager.completeProcTask(johnDoeProcTask, 'approve', '')
@@ -218,7 +219,7 @@ class ProcessRuntimeTest extends BpmTestCase {
             def procTasks = query.getResultList()
             assertEquals(1, procTasks.size())
             bobDylanProcTask = procTasks.find { it.procActor.user.id == bobDylanUser.id }
-            assertEquals('managerApproval', bobDylanProcTask.name)
+            assertEquals('managerApproval', bobDylanProcTask.actTaskDefinitionKey)
         } as Transaction.Runnable)
 
         processRuntimeManager.completeProcTask(bobDylanProcTask, 'reject', '')
@@ -281,7 +282,7 @@ class ProcessRuntimeTest extends BpmTestCase {
             def procTasks = query.getResultList()
             assertEquals(1, procTasks.size())
             johnDoeProcTask = procTasks.find { it.procActor.user.id == johnDoeUser.id }
-            assertEquals('managerApproval', johnDoeProcTask.name)
+            assertEquals('managerApproval', johnDoeProcTask.actTaskDefinitionKey)
         } as Transaction.Runnable)
 
         processRuntimeManager.completeProcTask(johnDoeProcTask, 'approve', '')
@@ -293,7 +294,7 @@ class ProcessRuntimeTest extends BpmTestCase {
             def procTasks = query.getResultList()
             assertEquals(1, procTasks.size())
             bobDylanProcTask = procTasks.find { it.procActor.user.id == bobDylanUser.id }
-            assertEquals('managerApproval', bobDylanProcTask.name)
+            assertEquals('managerApproval', bobDylanProcTask.actTaskDefinitionKey)
         } as Transaction.Runnable)
 
         processRuntimeManager.completeProcTask(bobDylanProcTask, 'reject', '')
@@ -381,10 +382,13 @@ class ProcessRuntimeTest extends BpmTestCase {
     void testProcessLocalization() {
         ProcessMessagesManager processMessagesManager = AppBeans.get(ProcessMessagesManager.class)
         ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(BASIC_PROCESS_PATH)
-        assertEquals ('Manager approval', processMessagesManager.getMessage(procDefinition, "managerApproval"))
-        assertEquals ('Approve', processMessagesManager.getMessage(procDefinition, "managerApproval.approve"))
-        assertEquals ('Утверждение менеджером', processMessagesManager.getMessage(procDefinition, "managerApproval", new Locale("ru")))
-        assertEquals ('Scanning', processMessagesManager.getMessage(procDefinition, "scanning", new Locale("ru")))
+        assertEquals ('Manager approval', processMessagesManager.getMessage(procDefinition.actId, "managerApproval"))
+        assertEquals ('Approve', processMessagesManager.getMessage(procDefinition.actId, "managerApproval.approve"))
+        assertEquals ('Утверждение менеджером', processMessagesManager.getMessage(procDefinition.actId, "managerApproval", new Locale("ru")))
+        assertEquals ('Scanning', processMessagesManager.getMessage(procDefinition.actId, "scanning", new Locale("ru")))
+        assertEquals ('Approve', processMessagesManager.findMessage(procDefinition.actId, "managerApproval.approve"))
+        assertNull ( processMessagesManager.findMessage(procDefinition.actId, "nonExistingKey"))
+
     }
 
     void testScriptTask() {

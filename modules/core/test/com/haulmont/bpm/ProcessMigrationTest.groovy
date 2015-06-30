@@ -48,7 +48,7 @@ class ProcessMigrationTest extends BpmTestCase{
             em.persist(procInstance)
         } as Transaction.Runnable)
 
-        procInstance = processRuntimeManager.startProcess(procInstance, [:],)
+        procInstance = processRuntimeManager.startProcess(procInstance, '')
 
         processRepositoryManager.deployProcessFromPath(PROCESS_PATH_2, procDefinition)
 
