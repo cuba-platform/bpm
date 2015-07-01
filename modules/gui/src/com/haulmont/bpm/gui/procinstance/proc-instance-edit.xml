@@ -33,6 +33,7 @@
                 <column width="250px">
                     <field id="procDefinition"
                            optionsDatasource="procDefinitionsDs"/>
+                    <field id="description"/>
                     <field id="startedBy"
                            editable="false"/>
                     <field id="startDate"

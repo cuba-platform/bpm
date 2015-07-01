@@ -93,6 +93,19 @@ public class ProcInstance extends StandardEntity {
     @Column(name = "ENTITY_EDITOR_NAME")
     protected String entityEditorName;
 
+    @Lob
+    @Column(name = "DESCRIPTION")
+    protected String description;
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+
     public void setEntityEditorName(String entityEditorName) {
         this.entityEditorName = entityEditorName;
     }
