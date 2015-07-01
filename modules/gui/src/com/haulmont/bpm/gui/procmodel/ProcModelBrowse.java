@@ -127,6 +127,25 @@ public class ProcModelBrowse extends AbstractLookup {
         exportDisplay.show(new ModelDataProvider(model), model.getName() + ".json");
     }
 
+    public void copyModel() {
+        ProcModel srcModel = procModelsDs.getItem();
+        ProcModel modelCopy = metadata.create(ProcModel.class);
+        modelCopy.setName(formatMessage("copyOf", srcModel.getName()));
+        modelCopy.setDescription(modelCopy.getDescription());
+
+        final Window.Editor editor = openEditor("bpm$ProcModel.edit", modelCopy, WindowManager.OpenType.THIS_TAB,
+                Collections.<String, Object>singletonMap("srcModel", srcModel));
+        editor.addListener(new CloseListener() {
+            @Override
+            public void windowClosed(String actionId) {
+                if (COMMIT_ACTION_ID.equals(actionId)) {
+                    procModelsDs.refresh();
+                    _openModeler((ProcModel) editor.getItem());
+                }
+            }
+        });
+    }
+
     @Nullable
     protected ProcModel findModelByName(String modelName) {
         View view = new View(ProcModel.class)

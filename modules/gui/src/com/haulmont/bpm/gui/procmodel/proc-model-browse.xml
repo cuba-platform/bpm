@@ -40,6 +40,10 @@
                         caption="msg://exportModel"
                         invoke="exportModel"
                         trackSelection="true"/>
+                <action id="copy"
+                        caption="msg://copy"
+                        invoke="copyModel"
+                        trackSelection="true"/>
             </actions>
             <columns>
                 <column id="name"/>
@@ -65,6 +69,8 @@
                         caption="msg://importModel"/>
                 <button id="deployBtn"
                         action="procModelsTable.deploy"/>
+                <button id="copyBtn"
+                        action="procModelsTable.copy"/>
             </buttonsPanel>
         </table>
     </layout>

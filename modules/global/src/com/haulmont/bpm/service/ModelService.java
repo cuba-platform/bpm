@@ -35,4 +35,6 @@ public interface ModelService {
      * @return activiti model id
      */
     String createModel(String name);
+
+    String updateModelNameInJson(String json, String modelName);
 }

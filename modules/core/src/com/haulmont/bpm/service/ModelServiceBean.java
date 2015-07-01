@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
@@ -188,5 +189,19 @@ public class ModelServiceBean implements ModelService {
                 ActivitiEventType.PROCESS_COMPLETED,
                 ActivitiEventType.TIMER_FIRED,
                 ActivitiEventType.ACTIVITY_CANCELLED);
+    }
+
+    @Override
+    public String updateModelNameInJson(String json, String modelName) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode objectNode = objectMapper.readTree(json);
+            ObjectNode properties = (ObjectNode) objectNode.get("properties");
+            properties.put("name", modelName);
+            properties.put("process_id", toCamelCase(modelName));
+            return objectNode.toString();
+        } catch (IOException e) {
+            throw new BpmException("Error when update model name in JSON", e);
+        }
     }
 }
