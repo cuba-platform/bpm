@@ -10,10 +10,12 @@ import javax.persistence.Table;
 import javax.persistence.Column;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import javax.persistence.Lob;
+import com.haulmont.chile.core.annotations.NamePattern;
 
 /**
  * @author gorbunkov
  */
+@NamePattern("%s|name")
 @Table(name = "BPM_PROC_MODEL")
 @Entity(name = "bpm$ProcModel")
 public class ProcModel extends StandardEntity {

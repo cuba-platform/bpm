@@ -38,5 +38,6 @@ alter table BPM_PROC_TASK_USER_LINK add constraint FK_BPTUL_PROC_TASK foreign ke
 alter table BPM_PROC_TASK_USER_LINK add constraint FK_BPTUL_USER foreign key (USER_ID) references SEC_USER (ID)^
 -- end BPM_PROC_TASK_USER_LINK
 -- begin BPM_PROC_DEFINITION
-create unique index IDX_BPM_PROC_DEFINITION_UNIQ_ACT_KEY on BPM_PROC_DEFINITION (ACT_KEY) where DELETE_TS is null ^
+alter table BPM_PROC_DEFINITION add constraint FK_BPM_PROC_DEFINITION_MODEL_ID foreign key (MODEL_ID) references BPM_PROC_MODEL(ID)^
+create index IDX_BPM_PROC_DEFINITION_MODEL on BPM_PROC_DEFINITION (MODEL_ID)^
 -- end BPM_PROC_DEFINITION

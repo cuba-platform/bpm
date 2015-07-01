@@ -27,11 +27,12 @@ public class ProcDefinition extends StandardEntity {
     @Column(name = "NAME")
     protected String name;
 
+    @Column(name = "CODE")
+    protected String code;
+
     @Column(name = "ACT_ID")
     protected String actId;
 
-    @Column(name = "ACT_KEY", unique = true)
-    protected String actKey;
 
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
@@ -41,6 +42,28 @@ public class ProcDefinition extends StandardEntity {
 
     @Column(name = "ACTIVE")
     protected Boolean active;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MODEL_ID")
+    protected ProcModel model;
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+
+    public void setModel(ProcModel model) {
+        this.model = model;
+    }
+
+    public ProcModel getModel() {
+        return model;
+    }
+
 
     public void setActive(Boolean active) {
         this.active = active;
@@ -58,13 +81,7 @@ public class ProcDefinition extends StandardEntity {
         return procRoles;
     }
 
-    public void setActKey(String actKey) {
-        this.actKey = actKey;
-    }
 
-    public String getActKey() {
-        return actKey;
-    }
 
     public void setName(String name) {
         this.name = name;

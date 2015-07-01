@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.haulmont.bpm.entity.ProcDefinition;
+import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
-import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Resources;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -63,30 +63,16 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
     protected ModelTransformer modelTransformer;
 
     @Override
-    public ProcDefinition deployProcessFromPath(String path) {
+    public ProcDefinition deployProcessFromPath(String path, @Nullable ProcDefinition procDefinition, @Nullable ProcModel model) {
         String processXml = resources.getResourceAsString(path);
         if (processXml == null) {
             throw new BpmException("Error when deploying process. Resource "  + path + " not found");
         }
-        return deployProcessFromXML(processXml, null);
+        return deployProcessFromXML(processXml, procDefinition, model);
     }
 
     @Override
-    public ProcDefinition deployProcessFromPath(String path, ProcDefinition procDefinition) {
-        String processXml = resources.getResourceAsString(path);
-        if (processXml == null) {
-            throw new BpmException("Error when deploying process. Resource "  + path + " not found");
-        }
-        return deployProcessFromXML(processXml, procDefinition);
-    }
-
-    @Override
-    public ProcDefinition deployProcessFromXML(String xml) {
-        return deployProcessFromXML(xml, null);
-    }
-
-    @Override
-    public ProcDefinition deployProcessFromXML(String xml, @Nullable ProcDefinition procDefinition) {
+    public ProcDefinition deployProcessFromXML(String xml, @Nullable ProcDefinition procDefinition, @Nullable ProcModel procModel) {
         Transaction tx = persistence.createTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
@@ -106,8 +92,9 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
                 processMigrator.migrateProcTasks(procDefinition, activitiProcessDefinition.getId());
             }
             procDefinition.setName(activitiProcessDefinition.getName());
-            procDefinition.setActKey(activitiProcessDefinition.getKey());
+            procDefinition.setCode(activitiProcessDefinition.getId());
             procDefinition.setActId(activitiProcessDefinition.getId());
+            procDefinition.setModel(procModel);
             procDefinition.setActive(true);
             em.persist(procDefinition);
 
@@ -206,21 +193,6 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             return new String(bpmnBytes, "utf-8");
         } catch (IOException e) {
             throw new BpmException("Error converting process model to XML", e);
-        }
-    }
-
-    @Override
-    public List<ProcDefinition> getProcDefinitionsByProcessKey(String processKey) {
-        Transaction tx = persistence.createTransaction();
-        try {
-            EntityManager em = persistence.getEntityManager();
-            TypedQuery<ProcDefinition> query = em.createQuery("select pd from bpm$ProcDefinition pd where pd.actKey = :actKey", ProcDefinition.class);
-            query.setParameter("actKey", processKey);
-            List<ProcDefinition> result = query.getResultList();
-            tx.commit();
-            return result;
-        } finally {
-            tx.end();
         }
     }
 

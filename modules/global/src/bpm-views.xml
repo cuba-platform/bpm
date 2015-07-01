@@ -42,8 +42,8 @@
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           name="procDefinition-browse">
         <property name="name"/>
-        <property name="actKey"/>
         <property name="active"/>
+        <property name="code"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           name="procDefinition-edit">
@@ -52,8 +52,10 @@
         </property>
         <property name="name"/>
         <property name="actId"/>
-        <property name="actKey"/>
         <property name="active"/>
+        <property name="model"
+                  view="_minimal"/>
+        <property name="code"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcRole"
           extends="_local"
@@ -122,7 +124,6 @@
             <property name="procDefinition">
                 <property name="name"/>
                 <property name="actId"/>
-                <property name="actKey"/>
             </property>
             <property name="entityName"/>
             <property name="entityId"/>
@@ -188,7 +189,6 @@
             <property name="procDefinition">
                 <property name="name"/>
                 <property name="actId"/>
-                <property name="actKey"/>
             </property>
             <property name="procActors">
                 <property name="procRole"

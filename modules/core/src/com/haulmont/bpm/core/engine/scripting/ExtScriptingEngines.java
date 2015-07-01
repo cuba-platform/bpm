@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Modified ScriptingEngines adds platform infrastructure objects (persistence, metadata, etc.)
+ * to the script binding
  * @author gorbunkov
  * @version $Id$
  */

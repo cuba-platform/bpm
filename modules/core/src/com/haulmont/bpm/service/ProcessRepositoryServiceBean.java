@@ -5,6 +5,7 @@ package com.haulmont.bpm.service;
 
 import com.haulmont.bpm.core.ProcessRepositoryManager;
 import com.haulmont.bpm.entity.ProcDefinition;
+import com.haulmont.bpm.entity.ProcModel;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
@@ -21,13 +22,8 @@ public class ProcessRepositoryServiceBean implements ProcessRepositoryService {
     protected ProcessRepositoryManager processRepositoryManager;
 
     @Override
-    public ProcDefinition deployProcessFromXML(String xml, @Nullable ProcDefinition procDefinition) {
-        return processRepositoryManager.deployProcessFromXML(xml, procDefinition);
-    }
-
-    @Override
-    public ProcDefinition deployProcessFromXML(String xml) {
-        return processRepositoryManager.deployProcessFromXML(xml);
+    public ProcDefinition deployProcessFromXML(String xml, @Nullable ProcDefinition procDefinition, @Nullable ProcModel procModel) {
+        return processRepositoryManager.deployProcessFromXML(xml, procDefinition, procModel);
     }
 
     @Override
@@ -38,11 +34,6 @@ public class ProcessRepositoryServiceBean implements ProcessRepositoryService {
     @Override
     public String convertModelToProcessXml(String actModelId) {
         return processRepositoryManager.convertModelToProcessXML(actModelId);
-    }
-
-    @Override
-    public List<ProcDefinition> getProcDefinitionsByProcessKey(String processKey) {
-        return processRepositoryManager.getProcDefinitionsByProcessKey(processKey);
     }
 
     @Override

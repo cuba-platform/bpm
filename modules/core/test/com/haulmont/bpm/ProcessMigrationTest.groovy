@@ -41,7 +41,7 @@ class ProcessMigrationTest extends BpmTestCase{
     @SuppressWarnings("GroovyAssignabilityCheck")
     void testProcessMigration() throws Exception {
 
-        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(PROCESS_PATH_1)
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(PROCESS_PATH_1, null, null)
 
         ProcInstance procInstance = new ProcInstance(procDefinition: procDefinition)
         persistence.createTransaction().execute( { em ->
@@ -50,7 +50,7 @@ class ProcessMigrationTest extends BpmTestCase{
 
         procInstance = processRuntimeManager.startProcess(procInstance, '')
 
-        processRepositoryManager.deployProcessFromPath(PROCESS_PATH_2, procDefinition)
+        processRepositoryManager.deployProcessFromPath(PROCESS_PATH_2, procDefinition, null)
 
         def task = taskService.createTaskQuery().processInstanceId(procInstance.actProcessInstanceId).singleResult()
 

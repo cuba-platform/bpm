@@ -29,8 +29,8 @@
             </actions>
             <columns>
                 <column id="name"/>
-                <column id="actKey"/>
                 <column id="active"/>
+                <column id="code"/>
             </columns>
             <rows datasource="procDefinitionsDs"/>
             <rowsCount/>

@@ -25,11 +25,10 @@
                             datasource="procDefinitionDs">
                     <column width="250px">
                         <field id="name"/>
+                        <field id="code"/>
                         <field id="active"/>
-                        <field id="actId"
-                               editable="false"/>
-                        <field id="actKey"
-                               editable="false"/>
+                        <field id="actId" editable="false"/>
+                        <field id="model" editable="false"/>
                     </column>
                 </fieldGroup>
                 <groupBox id="procRolesBox"

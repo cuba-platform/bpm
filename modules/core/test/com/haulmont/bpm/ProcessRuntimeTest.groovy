@@ -33,7 +33,7 @@ class ProcessRuntimeTest extends BpmTestCase {
 
 
     void testBasic() {
-        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(BASIC_PROCESS_PATH)
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(BASIC_PROCESS_PATH, null, null)
 
         //check that procInstance object is created in bpm database and internal activiti database
         persistence.createTransaction().execute( {em ->
@@ -155,7 +155,7 @@ class ProcessRuntimeTest extends BpmTestCase {
     }
 
     void testMultiInstanceParallel() {
-        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(MULTI_INSTANCE_PARALLEL_PROCESS_PATH)
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(MULTI_INSTANCE_PARALLEL_PROCESS_PATH, null, null)
         ProcInstance newProcessInstance
 
         User johnDoeUser
@@ -235,7 +235,7 @@ class ProcessRuntimeTest extends BpmTestCase {
     }
 
     void testMultiInstanceSequential() {
-        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(MULTI_INSTANCE_SEQUENTIAL_PROCESS_PATH)
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(MULTI_INSTANCE_SEQUENTIAL_PROCESS_PATH, null, null)
         ProcInstance newProcessInstance
 
         User johnDoeUser
@@ -310,7 +310,7 @@ class ProcessRuntimeTest extends BpmTestCase {
     }
 
     void testClaimTask() {
-        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(CLAIM_TASK_PROCESS_PATH)
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(CLAIM_TASK_PROCESS_PATH, null, null)
 
         ProcInstance newProcessInstance
         User johnDoeUser
@@ -384,7 +384,7 @@ class ProcessRuntimeTest extends BpmTestCase {
 
     void testProcessLocalization() {
         ProcessMessagesManager processMessagesManager = AppBeans.get(ProcessMessagesManager.class)
-        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(BASIC_PROCESS_PATH)
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(BASIC_PROCESS_PATH, null, null)
         assertEquals ('Manager approval', processMessagesManager.getMessage(procDefinition.actId, "managerApproval"))
         assertEquals ('Approve', processMessagesManager.getMessage(procDefinition.actId, "managerApproval.approve"))
         assertEquals ('Утверждение менеджером', processMessagesManager.getMessage(procDefinition.actId, "managerApproval", new Locale("ru")))
@@ -395,7 +395,7 @@ class ProcessRuntimeTest extends BpmTestCase {
     }
 
     void testScriptTask() {
-        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(SCRIPT_TASK_PROCESS_PATH)
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(SCRIPT_TASK_PROCESS_PATH, null, null)
         ProcInstance procInstance
         persistence.createTransaction().execute( {em ->
             procInstance = new ProcInstance(procDefinition: procDefinition)
@@ -410,7 +410,7 @@ class ProcessRuntimeTest extends BpmTestCase {
     }
 
     void testVariablesApi() {
-        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(VARIABLES_API_PROCESS_PATH)
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(VARIABLES_API_PROCESS_PATH, null, null)
         ProcInstance procInstance
         persistence.createTransaction().execute( {em ->
             procInstance = new ProcInstance(procDefinition: procDefinition)

@@ -9,9 +9,10 @@
     DELETED_BY varchar(50),
     --
     NAME varchar(255),
+    CODE varchar(255),
     ACT_ID varchar(255),
-    ACT_KEY varchar(255),
     ACTIVE boolean,
+    MODEL_ID uuid,
     --
     primary key (ID)
 )^-- end BPM_PROC_DEFINITION

@@ -3,9 +3,12 @@
         caption="msg://caption"
         class="com.haulmont.bpm.gui.procdefinition.ProcDefinitionDeployWindow"
         messagesPack="com.haulmont.bpm.gui.procdefinition">
-    <dsContext/>
+    <dsContext>
+        <collectionDatasource id="procDefinitionsDs" class="com.haulmont.bpm.entity.ProcDefinition" view="_minimal">
+            <query><![CDATA[select pd from bpm$ProcDefinition pd order by pd.name]]></query>
+        </collectionDatasource>
+    </dsContext>
     <layout expand="windowActions" spacing="true">
-        <label id="messageLabel" width="100%"/>
         <grid spacing="true">
             <columns count="2"/>
             <rows>
@@ -15,7 +18,7 @@
                 </row>
                 <row>
                     <label value="msg://procDefinition" align="MIDDLE_LEFT"/>
-                    <lookupField id="processLookup"/>
+                    <lookupField id="processLookup" optionsDatasource="procDefinitionsDs"/>
                 </row>
             </rows>
         </grid>

@@ -4,6 +4,10 @@
 package com.haulmont.bpm.gui.procdefinition;
 
 import com.haulmont.bpm.entity.ProcDefinition;
+import com.haulmont.bpm.entity.ProcModel;
+import com.haulmont.bpm.service.ProcessRepositoryService;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
@@ -23,13 +27,16 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
     protected OptionsGroup decisionOptionsGroup;
 
     @Inject
-    protected Label messageLabel;
-
-    @Inject
     protected LookupField processLookup;
 
-    @WindowParam(name = "procDefinitions", required = true)
-    List<ProcDefinition> procDefinitions;
+    @WindowParam(name = "model", required = true)
+    protected ProcModel model;
+
+    @Inject
+    protected DataManager dataManager;
+
+    @Inject
+    protected ProcessRepositoryService processRepositoryService;
 
     public enum Decision {
         UPDATE_EXISTING,
@@ -42,18 +49,19 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
 
         initWindowActions();
 
-        messageLabel.setValue(formatMessage("processesExist", procDefinitions.get(0).getActKey()));
-
-        processLookup.setOptionsList(procDefinitions);
-        processLookup.setValue(procDefinitions.get(0));
-
         Map<String, Object> optionsMap = new HashMap<>();
         for (Decision decision : Decision.values()) {
             optionsMap.put(getMessage(decision.name()), decision);
         }
 
         decisionOptionsGroup.setOptionsMap(optionsMap);
-        decisionOptionsGroup.setValue(Decision.UPDATE_EXISTING);
+        List<ProcDefinition> procDefinitionsByModel = findProcDefinitionsByModel(model);
+        if (procDefinitionsByModel.isEmpty()) {
+            decisionOptionsGroup.setValue(Decision.CREATE_NEW);
+        } else {
+            decisionOptionsGroup.setValue(Decision.UPDATE_EXISTING);
+            processLookup.setValue(procDefinitionsByModel.get(0));
+        }
         decisionOptionsGroup.addListener(new ValueListener() {
             @Override
             public void valueChanged(Object source, String property, Object prevValue, Object value) {
@@ -67,6 +75,11 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
         addAction(new BaseAction("windowCommit") {
             @Override
             public void actionPerform(Component component) {
+                ProcDefinition procDefinition = decisionOptionsGroup.getValue() == Decision.CREATE_NEW
+                        ? null : (ProcDefinition) processLookup.getValue();
+                final String processXml = processRepositoryService.convertModelToProcessXml(model.getActModelId());
+                processRepositoryService.deployProcessFromXML(processXml, procDefinition, model);
+                showNotification(getMessage("processDeployed"), NotificationType.HUMANIZED);
                 close(COMMIT_ACTION_ID);
             }
 
@@ -88,6 +101,14 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
             }
         });
     }
+
+    protected List<ProcDefinition> findProcDefinitionsByModel(ProcModel model) {
+        LoadContext ctx = new LoadContext(ProcDefinition.class);
+        ctx.setQueryString("select pd from bpm$ProcDefinition pd where pd.model.id = :model order by pd.name")
+                .setParameter("model", model);
+        return dataManager.loadList(ctx);
+    }
+
 
     public Decision getDecision() {
         return decisionOptionsGroup.getValue();

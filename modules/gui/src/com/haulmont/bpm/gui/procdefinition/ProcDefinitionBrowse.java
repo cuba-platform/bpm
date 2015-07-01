@@ -92,7 +92,7 @@ public class ProcDefinitionBrowse extends AbstractLookup {
                 String processId = getProcessId(processXml);
                 List<ProcDefinition> procDefinitionsWithTheSameKey = getProcDefinitionsByProcessKey(processId);
                 if (procDefinitionsWithTheSameKey.isEmpty()) {
-                    ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, null);
+                    ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, null, null);
                     procDefinitionsDs.addItem(procDefinition);
                     showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
                 } else {
@@ -104,11 +104,11 @@ public class ProcDefinitionBrowse extends AbstractLookup {
                         public void windowClosed(String actionId) {
                             if (COMMIT_ACTION_ID.equals(actionId)) {
                                 if (ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING == deployWindow.getDecision()) {
-                                    ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, deployWindow.getProcDefinition());
+                                    ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, deployWindow.getProcDefinition(), null);
                                     procDefinitionsDs.updateItem(procDefinition);
                                     showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
                                 } else {
-                                    ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, null);
+                                    ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, null, null);
                                     procDefinitionsDs.addItem(procDefinition);
                                     showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
                                 }

@@ -64,9 +64,6 @@ public class ProcModelBrowse extends AbstractLookup {
     protected CollectionDatasource<ProcModel, UUID> procModelsDs;
 
     @Inject
-    protected ProcessRepositoryService processRepositoryService;
-
-    @Inject
     protected Table procModelsTable;
 
     @Inject
@@ -116,43 +113,13 @@ public class ProcModelBrowse extends AbstractLookup {
     protected void _openModeler(ProcModel procModel) {
         String webAppUrl = globalConfig.getWebAppUrl();
         String modelerUrl = bpmConfig.getModelerUrl();
-        StringBuilder url = new StringBuilder();
-        url.append(webAppUrl)
-                .append("/dispatch")
-                .append(modelerUrl)
-                .append("?modelId=")
-                .append(procModel.getActModelId())
-                .append("&s=")
-                .append(userSession.getId());
-        showWebPage(url.toString(), Collections.<String, Object>singletonMap("tryToOpenAsPopup", Boolean.TRUE));
+        String url = webAppUrl + "/dispatch" + modelerUrl + "?modelId=" + procModel.getActModelId() + "&s=" + userSession.getId();
+        showWebPage(url, Collections.<String, Object>singletonMap("tryToOpenAsPopup", Boolean.TRUE));
     }
 
     public void deploy() {
-        final String processXml = processRepositoryService.convertModelToProcessXml(procModelsDs.getItem().getActModelId());
-        String processKey = ProcDefinitionUtils.getProcessKeyFromXml(processXml);
-        List<ProcDefinition> procDefinitionsWithTheSameKey = processRepositoryService.getProcDefinitionsByProcessKey(processKey);
-        if (procDefinitionsWithTheSameKey.isEmpty()) {
-            ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, null);
-            showNotification(getMessage("processDeployed"), NotificationType.HUMANIZED);
-        } else {
-            Map<String, Object> params = new HashMap<>();
-            params.put("procDefinitions", procDefinitionsWithTheSameKey);
-            final ProcDefinitionDeployWindow deployWindow = openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
-            deployWindow.addListener(new CloseListener() {
-                @Override
-                public void windowClosed(String actionId) {
-                    if (COMMIT_ACTION_ID.equals(actionId)) {
-                        if (ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING == deployWindow.getDecision()) {
-                            ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, deployWindow.getProcDefinition());
-                            showNotification(getMessage("processDeployed"), NotificationType.HUMANIZED);
-                        } else {
-                            ProcDefinition procDefinition = processRepositoryService.deployProcessFromXML(processXml, null);
-                            showNotification(getMessage("processDeployed"), NotificationType.HUMANIZED);
-                        }
-                    }
-                }
-            });
-        }
+        openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG,
+                Collections.<String, Object>singletonMap("model", procModelsDs.getItem()));
     }
 
     public void exportModel() {
@@ -170,7 +137,6 @@ public class ProcModelBrowse extends AbstractLookup {
                 .setParameter("name", modelName);
         return dataManager.load(ctx);
     }
-
 
     protected class ModelDataProvider implements ExportDataProvider {
 
