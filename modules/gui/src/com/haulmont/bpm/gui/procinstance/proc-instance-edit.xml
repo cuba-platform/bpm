@@ -25,72 +25,74 @@
             </query>
         </collectionDatasource>
     </dsContext>
-    <layout expand="processTasksBox"
-            spacing="true">
-        <hbox spacing="true">
-            <fieldGroup id="fieldGroup"
-                        datasource="procInstanceDs">
-                <column width="250px">
-                    <field id="procDefinition"
-                           optionsDatasource="procDefinitionsDs"/>
-                    <field id="description"/>
-                    <field id="startedBy"
-                           editable="false"/>
-                    <field id="startDate"
-                           editable="false"/>
-                    <field id="endDate"
-                           editable="false"/>
-                    <field id="startComment"
-                           editable="false" rows="3"/>
-                    <field id="entityLink"
-                           caption="msg://linkedEntity"
-                           custom="true"/>
-                    <field id="entityName"
-                           custom="true" visible="false"/>
-                    <field id="entityId"
-                           custom="true" visible="false"/>
-                    <field id="entityEditorName" visible="false"/>
-                </column>
-                <column width="350px">
-                    <field id="cancelled"
-                           editable="false" visible="false"/>
-                    <field id="cancelComment"
-                           editable="false" visible="false"/>
-                </column>
-            </fieldGroup>
-            <groupBox id="procTaskActionsGroupBox"
-                      caption="msg://processActions">
-                <iframe id="procActionsFrame"
-                        screen="procActionsFrame"/>
-            </groupBox>
-        </hbox>
-        <hbox height="300px"
-              spacing="true"
-              width="100%">
-            <groupBox id="procAttachmentsBox"
-                      caption="msg://com.haulmont.bpm.entity/ProcInstance.procAttachments"
-                      height="100%"
-                      width="100%">
-                <iframe id="procAttachmentsFrame"
+    <layout spacing="true">
+        <scrollBox height="100%" width="100%" spacing="true">
+            <hbox spacing="true">
+                <fieldGroup id="fieldGroup"
+                            datasource="procInstanceDs">
+                    <column width="250px">
+                        <field id="procDefinition"
+                               optionsDatasource="procDefinitionsDs"/>
+                        <field id="description"/>
+                        <field id="startedBy"
+                               editable="false"/>
+                        <field id="startDate"
+                               editable="false"/>
+                        <field id="endDate"
+                               editable="false"/>
+                        <field id="startComment"
+                               editable="false" rows="2"/>
+                        <field id="entityLink"
+                               caption="msg://linkedEntity"
+                               custom="true"/>
+                        <field id="entityName"
+                               custom="true" visible="false"/>
+                        <field id="entityId"
+                               custom="true" visible="false"/>
+                        <field id="entityEditorName" visible="false"/>
+                    </column>
+                    <column width="350px">
+                        <field id="cancelled"
+                               editable="false" visible="false"/>
+                        <field id="cancelComment"
+                               editable="false" visible="false"/>
+                    </column>
+                </fieldGroup>
+                <groupBox id="procTaskActionsGroupBox"
+                          caption="msg://processActions">
+                    <iframe id="procActionsFrame"
+                            screen="procActionsFrame"/>
+                </groupBox>
+            </hbox>
+            <hbox height="250px"
+                  spacing="true"
+                  width="100%">
+                <groupBox id="procAttachmentsBox"
+                          caption="msg://com.haulmont.bpm.entity/ProcInstance.procAttachments"
+                          height="100%"
+                          width="100%">
+                    <iframe id="procAttachmentsFrame"
+                            height="100%"
+                            screen="procAttachmentsFrame"/>
+                </groupBox>
+                <groupBox id="procActorsBox"
+                          caption="msg://com.haulmont.bpm.entity/ProcInstance.procActors"
+                          height="100%"
+                          width="100%">
+                    <iframe id="procActorsFrame"
+                            height="100%"
+                            screen="procActorsFrame"/>
+                </groupBox>
+            </hbox>
+            <groupBox id="processTasksBox"
+                      height="250px"
+                      caption="msg://com.haulmont.bpm.entity/ProcInstance.procTasks">
+                <iframe id="procTasksFrame"
                         height="100%"
-                        screen="procAttachmentsFrame"/>
+                        screen="procTasksFrame"/>
             </groupBox>
-            <groupBox id="procActorsBox"
-                      caption="msg://com.haulmont.bpm.entity/ProcInstance.procActors"
-                      height="100%"
-                      width="100%">
-                <iframe id="procActorsFrame"
-                        height="100%"
-                        screen="procActorsFrame"/>
-            </groupBox>
-        </hbox>
-        <groupBox id="processTasksBox"
-                  caption="msg://com.haulmont.bpm.entity/ProcInstance.procTasks">
-            <iframe id="procTasksFrame"
-                    height="100%"
-                    screen="procTasksFrame"/>
-        </groupBox>
-        <iframe id="windowActions"
-                screen="extendedEditWindowActions"/>
+            <iframe id="windowActions"
+                    screen="extendedEditWindowActions"/>
+        </scrollBox>
     </layout>
 </window>
