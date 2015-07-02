@@ -10,11 +10,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Joiner;
+import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.bpm.rest.RestModel;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
+import com.haulmont.cuba.core.TypedQuery;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.impl.util.json.JSONObject;
@@ -92,6 +94,21 @@ public class ModelServiceBean implements ModelService {
 //            outStream.close();
         } catch (UnsupportedEncodingException e) {
             throw new BpmException("Error when saving model", e);
+        }
+
+        Transaction tx = persistence.getTransaction();
+        try {
+            EntityManager em = persistence.getEntityManager();
+            TypedQuery<ProcModel> query = em.createQuery("select m from bpm$ProcModel m where m.actModelId = :actModelId", ProcModel.class);
+            query.setParameter("actModelId", actModelId);
+            ProcModel procModel = query.getFirstResult();
+            if (procModel != null) {
+                procModel.setName(modelName);
+                procModel.setDescription(modelDescription);
+            }
+            tx.commit();
+        } finally {
+            tx.end();
         }
     }
 

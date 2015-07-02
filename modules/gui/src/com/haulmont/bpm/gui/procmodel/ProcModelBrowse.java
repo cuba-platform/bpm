@@ -48,9 +48,6 @@ public class ProcModelBrowse extends AbstractLookup {
     @Named("procModelsTable.create")
     protected CreateAction procModelsTableCreate;
 
-    @Named("procModelsTable.edit")
-    protected EditAction procModelsTableEdit;
-
     @Inject
     protected UserSession userSession;
 
@@ -84,25 +81,22 @@ public class ProcModelBrowse extends AbstractLookup {
     @Inject
     protected DataManager dataManager;
 
+    @Named("procModelsTable.openModeler")
+    private Action procModelsTableOpenModeler;
+
     protected static final Log log = LogFactory.getLog(ProcModelBrowse.class);
 
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
         procModelsTableCreate.setOpenType(WindowManager.OpenType.DIALOG);
-        procModelsTableEdit.setOpenType(WindowManager.OpenType.DIALOG);
         procModelsTableCreate.setAfterCommitHandler(new CreateAction.AfterCommitHandler() {
             @Override
             public void handle(Entity entity) {
                 _openModeler((ProcModel) entity);
             }
         });
-        procModelsTable.setItemClickAction(new BaseAction("openModeler") {
-            @Override
-            public void actionPerform(Component component) {
-                openModeler();
-            }
-        });
+        procModelsTable.setItemClickAction(procModelsTableOpenModeler);
         modelUpload.addListener(new ModeUploadListener());
     }
 
@@ -133,7 +127,7 @@ public class ProcModelBrowse extends AbstractLookup {
         modelCopy.setName(formatMessage("copyOf", srcModel.getName()));
         modelCopy.setDescription(modelCopy.getDescription());
 
-        final Window.Editor editor = openEditor("bpm$ProcModel.edit", modelCopy, WindowManager.OpenType.THIS_TAB,
+        final Editor editor = openEditor("bpm$ProcModel.edit", modelCopy, WindowManager.OpenType.THIS_TAB,
                 Collections.<String, Object>singletonMap("srcModel", srcModel));
         editor.addListener(new CloseListener() {
             @Override
