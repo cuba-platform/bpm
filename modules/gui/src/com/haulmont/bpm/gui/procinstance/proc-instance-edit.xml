@@ -26,7 +26,7 @@
         </collectionDatasource>
     </dsContext>
     <layout spacing="true">
-        <scrollBox height="100%" width="100%" spacing="true">
+        <scrollBox id="scrollBox" height="100%" width="100%" spacing="true">
             <hbox spacing="true">
                 <fieldGroup id="fieldGroup"
                             datasource="procInstanceDs">
@@ -85,10 +85,10 @@
                 </groupBox>
             </hbox>
             <groupBox id="processTasksBox"
-                      height="250px"
-                      caption="msg://com.haulmont.bpm.entity/ProcInstance.procTasks">
+                      caption="msg://com.haulmont.bpm.entity/ProcInstance.procTasks"
+                    collapsable="true">
                 <iframe id="procTasksFrame"
-                        height="100%"
+                        height="200px"
                         screen="procTasksFrame"/>
             </groupBox>
             <iframe id="windowActions"
