@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class BpmUserTaskParseHandler extends AbstractBpmnParseHandler<UserTask> {
 
-    protected static final String MAGIC_WORD = "cuba";
+    protected static final String MAGIC_WORD = "auto_evaluation";
 
     @Override
     protected Class<? extends BaseElement> getHandledType() {
