@@ -9,13 +9,18 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import com.google.common.base.Strings;
+import com.haulmont.bpm.service.ProcessMessagesService;
+import com.haulmont.chile.core.annotations.MetaProperty;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.global.AppBeans;
 
 /**
  * @author gorbunkov
  */
-@NamePattern("%s|name")
+@NamePattern("#getLocName|procDefinition,code,name")
 @Table(name = "BPM_PROC_ROLE")
 @Entity(name = "bpm$ProcRole")
 public class ProcRole extends StandardEntity {
@@ -65,5 +70,17 @@ public class ProcRole extends StandardEntity {
     public ProcDefinition getProcDefinition() {
         return procDefinition;
     }
+
+    @MetaProperty
+    public String getLocName() {
+        if (procDefinition != null && !Strings.isNullOrEmpty(procDefinition.getActId())) {
+            ProcessMessagesService processMessagesService = AppBeans.get(ProcessMessagesService.class);
+            String locName = processMessagesService.findMessage(procDefinition.getActId(), code);
+            if (locName != null) return locName;
+        }
+        return name;
+    }
+
+
 
 }
