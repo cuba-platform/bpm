@@ -40,14 +40,17 @@
                 <action id="deploy"
                         caption="msg://deploy"
                         invoke="deploy"
+                        icon="font-icon:FILE_CODE_O"
                         trackSelection="true"/>
                 <action id="export"
                         caption="msg://exportModel"
                         invoke="exportModel"
+                        icon="icons/reports-template-download.png"
                         trackSelection="true"/>
                 <action id="copy"
                         caption="msg://copy"
                         invoke="copyModel"
+                        icon="icons/copy.png"
                         trackSelection="true"/>
             </actions>
             <columns>
@@ -62,20 +65,21 @@
                         action="procModelsTable.create"/>
                 <button id="editBtn"
                         action="procModelsTable.edit"/>
+                <button id="openModelerBtn"
+                        icon="icons/edit.png"
+                        action="procModelsTable.openModeler"/>
                 <button id="removeBtn"
                         action="procModelsTable.remove"/>
-                <button id="refreshBtn"
-                        action="procModelsTable.refresh"/>
-                <button id="openModelerBtn"
-                        action="procModelsTable.openModeler"/>
-                <button id="exportBtn"
-                        action="procModelsTable.export"/>
-                <upload id="modelUpload"
-                        caption="msg://importModel"/>
-                <button id="deployBtn"
-                        action="procModelsTable.deploy"/>
                 <button id="copyBtn"
                         action="procModelsTable.copy"/>
+                <button id="refreshBtn"
+                        action="procModelsTable.refresh"/>
+                <upload id="modelUpload"
+                        caption="msg://importModel"/>
+                <button id="exportBtn"
+                        action="procModelsTable.export"/>
+                <button id="deployBtn"
+                        action="procModelsTable.deploy"/>
             </buttonsPanel>
         </table>
     </layout>
