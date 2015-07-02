@@ -21,7 +21,7 @@ import com.haulmont.chile.core.annotations.NamePattern;
 public class ProcModel extends StandardEntity {
     private static final long serialVersionUID = 4795058970950415977L;
 
-    @Column(name = "NAME", nullable = false)
+    @Column(name = "NAME", nullable = false, unique = true)
     protected String name;
 
     @Column(name = "ACT_MODEL_ID")
