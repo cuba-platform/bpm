@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2015 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+  -->
+
 <window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
         caption="msg://browseCaption"
         class="com.haulmont.bpm.gui.procdefinition.ProcDefinitionBrowse"

@@ -1,5 +1,6 @@
 /*
- * Copyright (c) ${YEAR} ${PACKAGE_NAME}
+ * Copyright (c) 2008-2015 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
  */
 
 package com.haulmont.bpm.core;
@@ -71,14 +72,9 @@ public class ProcessMigratorBean implements ProcessMigrator {
     }
 
     protected boolean isMigrationPossible(ProcessDefinition actProcessDefinition, List<ProcessInstance> actProcessInstances) {
-//        Set<String> checkedActivities = new HashSet<>();
-//        BpmnModel bpmnModel = repositoryService.getBpmnModel(actProcessDefinition.getId());
-//        for (ProcessInstance pi : actProcessInstances) {
-//            List<Execution> executions = runtimeService.createExecutionQuery().processInstanceId(pi.getId()).list();
-//            for (Execution execution : executions) {
-//                if (!)
-//            }
-//        }
+        //activiti does this check by itself. If new process doesn't contain a task with id that is absent in old
+        //processes then an ActivitiException is thrown
+        //todo gorbunkov handle this activiti exception and display more readable message
         return true;
     }
 }

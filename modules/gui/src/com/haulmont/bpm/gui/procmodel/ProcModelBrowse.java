@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 115 Haulmont Technology Ltd. All Rights Reserved.
- *   Haulmont Technology proprietary and confidential.
- *   Use is subject to license terms.
+ * Copyright (c) 2008-2015 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
  */
+
 package com.haulmont.bpm.gui.procmodel;
 
 import com.fasterxml.jackson.databind.JsonNode;
