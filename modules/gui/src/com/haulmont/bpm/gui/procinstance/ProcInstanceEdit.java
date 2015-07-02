@@ -209,10 +209,16 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 entityNameLookup.addListener(new ValueListener() {
                     @Override
                     public void valueChanged(Object source, String property, Object prevValue, Object value) {
-                        MetaClass metaClass = (MetaClass) value;
-                        getItem().setEntityName(metaClass.getName());
+                        if (value != null) {
+                            MetaClass metaClass = (MetaClass) value;
+                            getItem().setEntityName(metaClass.getName());
+                            fieldGroup.setFieldValue("entityId", null);
+                            entityIdPickerField.setMetaClass(metaClass);
+                            entityIdPickerField.setEditable(false);
+                        } else {
+                            getItem().setEntityName(null);
+                        }
                         fieldGroup.setFieldValue("entityId", null);
-                        entityIdPickerField.setMetaClass(metaClass);
                         entityIdPickerField.setEditable(value != null);
                     }
                 });
@@ -228,16 +234,16 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 entityIdPickerField.addLookupAction();
                 entityIdPickerField.addOpenAction();
                 entityIdPickerField.addClearAction();
-                entityIdPickerField.setMetaClass((MetaClass) fieldGroup.getFieldValue("entityName"));
 
                 UUID entityId = getItem().getEntityId();
                 String entityName = getItem().getEntityName();
-                if (entityId != null && !Strings.isNullOrEmpty(entityName)) {
-                    MetaClass metaClass = metadata.getClass(entityName);
-                    if (metaClass != null) {
-                        Entity entity = dataManager.load(new LoadContext(metaClass).setId(entityId));
-                        entityIdPickerField.setValue(entity);
-                    }
+                MetaClass metaClass = metadata.getClass(entityName);
+                entityIdPickerField.setMetaClass(metaClass);
+                entityIdPickerField.setEditable(metaClass != null);
+
+                if (entityId != null && metaClass != null) {
+                    Entity entity = dataManager.load(new LoadContext(metaClass).setId(entityId));
+                    entityIdPickerField.setValue(entity);
                 }
 
                 entityIdPickerField.addListener(new ValueListener() {
