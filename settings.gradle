@@ -1,6 +1,0 @@
-rootProject.name = 'bpm'
-include(':bpm-global', ':bpm-core', ':bpm-gui', ':bpm-web')
-project(':bpm-global').projectDir = new File(settingsDir, 'modules/global')
-project(':bpm-core').projectDir = new File(settingsDir, 'modules/core')
-project(':bpm-gui').projectDir = new File(settingsDir, 'modules/gui')
-project(':bpm-web').projectDir = new File(settingsDir, 'modules/web')
