@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2015 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
+        class="com.haulmont.bpm.gui.procactions.ProcActionsFrame"
+        messagesPack="com.haulmont.bpm.gui.procactions">
+    <layout spacing="true">
+        <label id="noActionsAvailableLbl" value="msg://noActionsAvailable" visible="true"/>
+        <grid id="taskInfoGrid" spacing="true" visible="false">
+            <columns count="2"/>
+            <rows>
+                <row>
+                    <label id="taskNameLbl" value="msg://taskName"/>
+                    <label id="taskName"/>
+                </row>
+                <row>
+                    <label id="taskStartDateLbl" value="msg://taskStartDate"/>
+                    <label id="taskStartDate"/>
+                </row>
+            </rows>
+        </grid>
+        <vbox id="actionsBox" spacing="true"/>
+    </layout>
+</window>
