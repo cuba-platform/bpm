@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (c) 2008-2015 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+  -->
+
+<xs:schema
+        targetNamespace="http://schemas.haulmont.com/bpm/5.5/bpm.xsd"
+        xmlns="http://schemas.haulmont.com/bpm/5.5/bpm.xsd"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        attributeFormDefault="unqualified"
+        elementFormDefault="qualified">
+
+    <xs:annotation>
+        <xs:documentation><![CDATA[
+         Describes BPMN documents extension
+         ]]>
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="procRoles">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="procRole" minOccurs="0" maxOccurs="unbounded" type="procRoleType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="procRoleType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:element name="localizations">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="localization" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute name="lang" type="xs:string" use="required"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="form" type="formType"/>
+
+    <xs:complexType name="formType">
+        <xs:sequence>
+            <xs:element name="param" type="formParamType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="caption" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="formParamType">
+        <xs:sequence>
+            <xs:element name="enumItem" type="enumItemType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string"/>
+        <xs:attribute name="type" type="formParamDatatype"/>
+        <xs:attribute name="caption" type="xs:string"/>
+        <xs:attribute name="required" type="xs:boolean"/>
+        <xs:attribute name="editable" type="xs:boolean"/>
+        <xs:attribute name="entityName" type="xs:string"/>
+        <xs:attribute name="entityLookupScreen" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:simpleType name="formParamDatatype">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="string"/>
+            <xs:enumeration value="int"/>
+            <xs:enumeration value="long"/>
+            <xs:enumeration value="decimal"/>
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="date"/>
+            <xs:enumeration value="dateTime"/>
+            <xs:enumeration value="enum"/>
+            <xs:enumeration value="entity"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="outcomes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="outcome" type="outcomeType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="outcomeType">
+        <xs:sequence>
+            <xs:element name="form" type="formType"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="enumItemType">
+        <xs:attribute name="caption" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+</xs:schema>

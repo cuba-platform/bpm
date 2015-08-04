@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2015 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/5.5/window.xsd"
+        class="com.haulmont.bpm.gui.procactor.ProcActorsFrame"
+        messagesPack="com.haulmont.bpm.gui.procinstance">
+    <dsContext>
+        <collectionDatasource id="procActorsDs"
+                              class="com.haulmont.bpm.entity.ProcActor"
+                              view="procActor-browse">
+            <query>
+                <![CDATA[
+                select pa from bpm$ProcActor pa where pa.procInstance.id = :custom$procInstance
+                order by pa.procRole.order, pa.order
+                ]]>
+            </query>
+        </collectionDatasource>
+        <collectionDatasource id="procRolesDs"
+                              class="com.haulmont.bpm.entity.ProcRole"
+                              view="_minimal">
+            <query>
+                <![CDATA[
+                select pr from bpm$ProcRole pr where pr.procDefinition.id = :custom$procDefinition order by pr.name
+                ]]>
+            </query>
+        </collectionDatasource>
+        <collectionDatasource id="usersDs"
+                              class="com.haulmont.cuba.security.entity.User"
+                              view="_minimal">
+            <query>
+                <![CDATA[select u from sec$User u]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <layout>
+        <table id="procActorsTable"
+               editable="true"
+               height="100%"
+               width="100%"
+               sortable="false"
+               columnControlVisible="false"
+               presentations="false">
+            <actions>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="procRole"/>
+                <column id="user"
+                        editable="true"
+                        optionsDatasource="usersDs"/>
+                <!--<column id="order" editable="true"/>-->
+            </columns>
+            <buttonsPanel>
+                <lookupField id="procRolesLookup" nullName="msg://addProcActor" optionsDatasource="procRolesDs" width="200px"/>
+                <button id="procActorRemoveBtn"
+                        action="procActorsTable.remove"/>
+                <!--<button caption=""-->
+                        <!--icon="icons/up.png"-->
+                        <!--invoke="moveUp"/>-->
+                <!--<button caption=""-->
+                        <!--icon="icons/down.png"-->
+                        <!--invoke="moveDown"/>-->
+            </buttonsPanel>
+            <rows datasource="procActorsDs"/>
+        </table>
+    </layout>
+</window>

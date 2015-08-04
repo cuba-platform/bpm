@@ -1,0 +1,239 @@
+
+allprojects {
+    ext.artifactGroup = 'com.haulmont.bpm'
+    ext.artifactVersion = cubaVersion.replace('-SNAPSHOT', '')
+    ext.isSnapshot = cubaVersion.endsWith('-SNAPSHOT')
+    ext.tomcatDir = "$rootDir/build/tomcat"
+}
+
+buildscript {
+    ext.cubaVersion = '5.6-SNAPSHOT'
+    ext.cubaVersion = rootProject.hasProperty('buildVersion') ? rootProject['buildVersion'] : cubaVersion
+
+    repositories {
+        mavenLocal()
+        maven {
+            url 'http://repository.haulmont.com:8587/nexus/content/groups/work'
+            credentials {
+                username System.getenv('HAULMONT_REPOSITORY_USER')
+                password System.getenv('HAULMONT_REPOSITORY_PASSWORD')
+            }
+        }
+    }
+    dependencies {
+        classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
+    }
+}
+
+def globalModule = project(':bpm-global')
+def coreModule = project(':bpm-core')
+def guiModule = project(':bpm-gui')
+def webModule = project(':bpm-web')
+
+def postgres = 'postgresql:postgresql:9.1-901.jdbc4'
+def servletApi = 'org.apache.tomcat:tomcat-servlet-api:7.0.53'
+
+
+apply(plugin: 'idea')
+apply(plugin: 'cuba')
+apply from: "$rootProject.projectDir/lib.gradle"
+
+
+configure([globalModule, coreModule, guiModule, webModule]) {
+    apply(plugin: 'java')
+    apply(plugin: 'maven')
+    apply(plugin: 'idea')
+    apply(plugin: 'cuba')
+
+    dependencies {
+        testCompile('junit:junit:4.5')
+    }
+
+    task sourceJar(type: Jar) {
+        from file('src')
+        classifier = 'sources'
+    }
+
+    artifacts {
+        archives sourceJar
+    }
+}
+
+configure(globalModule) {
+    dependencies {
+        compile("com.haulmont.cuba:cuba-global:$cubaVersion")
+
+    }
+
+    task enhance(type: CubaEnhancing) {
+        persistenceXml = "$globalModule.projectDir/src/bpm-persistence.xml"
+    }
+}
+
+configure(coreModule) {
+
+    configurations {
+        jdbc
+        dbscripts
+    }
+
+    dependencies {
+        compile(globalModule)
+        provided(servletApi)
+        jdbc(postgres)
+        testRuntime(postgres)
+
+        compile("com.haulmont.cuba:cuba-core:$cubaVersion")
+        compile('org.activiti:activiti-engine:5.17.0') {
+            exclude group: 'org.springframework'
+        }
+        compile('org.activiti:activiti-spring:5.17.0') {
+            exclude group: 'org.springframework'
+        }
+
+        compile(activitiJsonConverter)
+
+        testCompile("com.haulmont.cuba:cuba-core:$cubaVersion:tests")
+        testCompile("com.haulmont.cuba:cuba-shared-lib:$cubaVersion")
+        testCompile("commons-dbcp:commons-dbcp:1.4")
+        dbscripts("com.haulmont.cuba:cuba-core:$cubaVersion:db@zip")
+    }
+
+    dbScriptsArchive {
+        exclude '10-cuba/**'
+    }
+
+    assembleDbScripts {
+        moduleAlias = '20-bpm'
+    }
+
+    task deploy(dependsOn: assemble, type: CubaDeployment) {
+        appName = 'bpm-core'
+        appJars('cuba-core', 'cuba-global', 
+                'bpm-global', 'bpm-core')
+    }
+
+    task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
+        dbms = 'postgres'
+        host = 'localhost'
+        dbName = 'bpm'
+        dbUser = 'root'
+        dbPassword = 'root'
+    }
+
+    task updateDb(dependsOn: assembleDbScripts, description: 'Updates local database', type: CubaDbUpdate) {
+        dbms = 'postgres'
+        host = 'localhost'
+        dbName = 'bpm'
+        dbUser = 'root'
+        dbPassword = 'root'
+    }
+
+    task createTestDb(dependsOn: assembleDbScripts, description: 'Creates test database', type: CubaDbCreation) {
+        dbms = 'postgres'
+        host = 'localhost'
+        dbName = 'bpm_test'
+        dbUser = 'root'
+        dbPassword = 'root'
+    }
+
+}
+
+configure(guiModule) {
+    dependencies {
+        compile(globalModule)
+        compile("com.haulmont.cuba:cuba-gui:$cubaVersion")
+        compile("com.haulmont.cuba:cuba-client:$cubaVersion")
+        compile('com.fasterxml.jackson.core:jackson-databind:2.5.3')
+        compile('org.codehaus.jackson:jackson-mapper-asl:1.9.13')
+    }
+
+    task deployConf(type: Copy) {
+        from file('src')
+        include "com/haulmont/bpm/**"
+        into "$tomcatDir/conf/bpm"
+    }
+}
+
+configure(webModule) {
+    configurations {
+        webcontent
+    }
+
+    dependencies {
+        provided(servletApi)
+        compile(globalModule)
+        compile(guiModule)
+        compile("com.haulmont.cuba:cuba-web:$cubaVersion")
+        webcontent("com.haulmont.cuba:cuba-web:$cubaVersion:web@zip")
+        webcontent("com.haulmont.cuba:cuba-web-toolkit:$cubaVersion:web@zip")
+        webcontent(activitiModeler)
+    }
+
+    task repackWebcontent(description: 'Repack webcontent') << {
+        def cubaModelerFile = configurations.webcontent.files.find { dep ->
+            dep.name.startsWith("cuba-modeler")
+        }
+        if (cubaModelerFile) {
+            copy {
+                from zipTree(cubaModelerFile.absolutePath)
+                into "$webModule.buildDir/web"
+            }
+        }
+    }
+
+    task webArchive(dependsOn: repackWebcontent, type: Zip) {
+        from file("$webModule.buildDir/web")
+        classifier = 'web'
+    }
+
+    artifacts {
+        archives webArchive
+    }
+
+    task deployConf(type: Copy) {
+        from file('src')
+        include "com/haulmont/bpm/**"
+        into "$tomcatDir/conf/bpm"
+    }
+    
+    task clearMessagesCache(type: CubaClearMessagesCache) {
+        appName = 'bpm'
+    }
+    deployConf.dependsOn clearMessagesCache
+
+    
+    task cleanConf(description: 'Cleans up conf directory') << {
+        def dir = new File(tomcatDir, '/conf/bpm')
+        if (dir.isDirectory()) {
+            ant.delete(includeemptydirs: true) {
+                fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
+            }
+        }
+    }
+
+    task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
+        appName = 'bpm'
+        appJars('cuba-web', 'cuba-gui', 'cuba-client', 'cuba-global', 
+                'bpm-global', 'bpm-gui', 'bpm-web')
+    }
+}
+
+task undeploy(type: Delete, dependsOn: ':bpm-web:cleanConf') {
+    delete("$tomcatDir/shared")
+    delete("$tomcatDir/webapps/bpm-core")
+    delete("$tomcatDir/webapps/app")
+}
+
+task restart(dependsOn: ['stop', ':bpm-core:deploy', ':bpm-web:deploy'], description: 'Redeploys applications and restarts local Tomcat') << {
+    ant.waitfor(maxwait: 6, maxwaitunit: 'second', checkevery: 2, checkeveryunit: 'second') {
+        not {
+            socket(server: 'localhost', port: '8787')
+        }
+    }
+    start.execute()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.12'
+}

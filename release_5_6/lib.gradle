@@ -1,0 +1,8 @@
+/*
+ * Copyright (c) 2008-2015 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ */
+
+project.ext.modelerVersion = '5.17.0.cuba.13'
+project.ext.activitiJsonConverter = "org.activiti:activiti-json-converter:$modelerVersion";
+project.ext.activitiModeler = "com.haulmont.bpm:cuba-modeler:$modelerVersion:web@zip";

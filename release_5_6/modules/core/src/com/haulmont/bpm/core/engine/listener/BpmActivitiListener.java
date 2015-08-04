@@ -1,0 +1,131 @@
+/*
+ * Copyright (c) 2008-2015 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ */
+
+package com.haulmont.bpm.core.engine.listener;
+
+import com.google.common.base.Strings;
+import com.haulmont.bpm.core.ExtensionElementsManager;
+import com.haulmont.bpm.exception.BpmException;
+import com.haulmont.bpm.core.ProcessRepositoryManager;
+import com.haulmont.bpm.core.ProcessRuntimeManager;
+import com.haulmont.bpm.entity.ProcTask;
+import com.haulmont.bpm.entity.ProcInstance;
+import com.haulmont.cuba.core.EntityManager;
+import com.haulmont.cuba.core.Persistence;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.TimeSource;
+import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.security.app.Authentication;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.delegate.event.ActivitiEntityEvent;
+import org.activiti.engine.delegate.event.ActivitiEvent;
+import org.activiti.engine.delegate.event.ActivitiEventListener;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.activiti.engine.impl.persistence.entity.TaskEntity;
+import org.activiti.engine.impl.persistence.entity.TimerEntity;
+
+import java.util.*;
+
+/**
+ * @author gorbunkov
+ * @version $Id$
+ */
+public class BpmActivitiListener implements ActivitiEventListener {
+
+    protected ProcessRuntimeManager processRuntimeManager;
+    protected Persistence persistence;
+    protected final TimeSource timeSource;
+    protected final ProcessRepositoryManager processRepositoryManager;
+    protected final Metadata metadata;
+    protected final Authentication authentication;
+    protected final UserSessionSource userSessionSource;
+    protected final ExtensionElementsManager extensionElementsManager;
+
+    public BpmActivitiListener() {
+        processRepositoryManager = AppBeans.get(ProcessRepositoryManager.class);
+        processRuntimeManager = AppBeans.get(ProcessRuntimeManager.class);
+        persistence = AppBeans.get(Persistence.class);
+        timeSource = AppBeans.get(TimeSource.class);
+        metadata = AppBeans.get(Metadata.class);
+        authentication = AppBeans.get(Authentication.class);
+        userSessionSource = AppBeans.get(UserSessionSource.class);
+        extensionElementsManager = AppBeans.get(ExtensionElementsManager.class);
+    }
+
+    @Override
+    public void onEvent(ActivitiEvent event) {
+        switch (event.getType()) {
+            case TASK_CREATED:
+                TaskEntity task = (TaskEntity) ((ActivitiEntityEvent) event).getEntity();
+                UUID bpmProcTaskId = (UUID) task.getVariableLocal("bpmProcTaskId");
+                // bpmProcTaskId is not set in case of group task that doesn't have a particular assignee
+                // but only potential ones. In other cases TASK_ASSIGNED event will be fired first and the variable
+                // will be already set
+                if (bpmProcTaskId == null) {
+                    ProcTask procTask = processRuntimeManager.createNotAssignedProcTask(task);
+                    task.setVariableLocal("bpmProcTaskId", procTask.getId());
+                }
+                break;
+            case TASK_ASSIGNED:
+                task = (TaskEntity) ((ActivitiEntityEvent) event).getEntity();
+                bpmProcTaskId = (UUID) task.getVariableLocal("bpmProcTaskId");
+                // bpmProcTaskId will be not null if the task is claimed
+                if (bpmProcTaskId == null) {
+                    ProcTask procTask = processRuntimeManager.createProcTask(task);
+                    task.setVariableLocal("bpmProcTaskId", procTask.getId());
+                } else {
+                    processRuntimeManager.assignProcTask(task);
+                }
+                break;
+            case PROCESS_COMPLETED:
+                onProcessCompleted(event);
+                break;
+            case TIMER_FIRED:
+                TaskService taskService = event.getEngineServices().getTaskService();
+                TaskEntity actTask = (TaskEntity) taskService.createTaskQuery().executionId(event.getExecutionId()).singleResult();
+                if (actTask == null) break;
+                bpmProcTaskId = (UUID) actTask.getVariableLocal("bpmProcTaskId");
+                if (bpmProcTaskId != null) {
+                    TimerEntity timerEntity = (TimerEntity) ((ActivitiEntityEvent) event).getEntity();
+                    String timerOutcome = extensionElementsManager.getTimerOutcome(event.getProcessDefinitionId(), timerEntity.getJobHandlerConfiguration());
+                    actTask.setVariableLocal("timerOutcome", timerOutcome);
+                }
+                break;
+            case ACTIVITY_CANCELLED:
+                taskService = event.getEngineServices().getTaskService();
+                actTask = (TaskEntity) taskService.createTaskQuery().executionId(event.getExecutionId()).singleResult();
+                if (actTask == null) break;
+                bpmProcTaskId = (UUID) actTask.getVariableLocal("bpmProcTaskId");
+                String timerOutcome = (String) actTask.getVariableLocal("timerOutcome");
+                if (bpmProcTaskId != null && !Strings.isNullOrEmpty(timerOutcome)) {
+                    processRuntimeManager.completeProcTaskOnTimer(bpmProcTaskId, timerOutcome);
+                }
+                break;
+        }
+    }
+
+    protected void onProcessCompleted(ActivitiEvent event) {
+        String processInstanceId = event.getProcessInstanceId();
+        UUID bpmProcInstanceId = (UUID) ((ExecutionEntity) ((ActivitiEntityEvent) event).getEntity()).getVariable("bpmProcInstanceId");
+        if (bpmProcInstanceId == null)
+            throw new BpmException("No 'bpmProcInstanceId' process variable defined for activiti process " + processInstanceId);
+
+        Persistence persistence = AppBeans.get(Persistence.class);
+        EntityManager em = persistence.getEntityManager();
+        ProcInstance procInstance = em.find(ProcInstance.class, bpmProcInstanceId);
+        if (procInstance == null) {
+            throw new BpmException("ProcInstance with id " + bpmProcInstanceId + " not found");
+        }
+
+        procInstance.setEndDate(timeSource.currentTimestamp());
+        procInstance.setActive(false);
+    }
+
+    @Override
+    public boolean isFailOnException() {
+        return true;
+    }
+}
