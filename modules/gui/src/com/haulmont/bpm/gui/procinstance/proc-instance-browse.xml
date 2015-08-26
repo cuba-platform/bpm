@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2015 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.haulmont.bpm.gui.procinstance.ProcInstanceBrowse"
+        focusComponent="procInstancesTable"
+        lookupComponent="procInstancesTable"
+        messagesPack="com.haulmont.bpm.gui.procinstance">
+    <dsContext>
+        <collectionDatasource id="procInstancesDs"
+                              class="com.haulmont.bpm.entity.ProcInstance"
+                              view="procInstance-browse">
+            <query>
+                <![CDATA[select e from bpm$ProcInstance e]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <layout expand="procInstancesTable"
+            spacing="true">
+        <filter id="filter"
+                datasource="procInstancesDs">
+            <properties include=".*"/>
+        </filter>
+        <table id="procInstancesTable"
+               width="100%"
+               multiselect="true">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
+                <action id="refresh"/>
+            </actions>
+            <columns>
+                <column id="procDefinition"/>
+                <column id="description"/>
+                <column id="startDate"/>
+                <column id="endDate"/>
+                <column id="active"/>
+                <column id="startedBy"/>
+                <column id="entityName"/>
+                <column id="cancelled"/>
+                <column id="startComment" maxTextLength="20"/>
+            </columns>
+            <rows datasource="procInstancesDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="procInstancesTable.create"/>
+                <button id="editBtn"
+                        action="procInstancesTable.edit"/>
+                <button id="removeBtn"
+                        action="procInstancesTable.remove"/>
+                <button id="refreshBtn"
+                        action="procInstancesTable.refresh"/>
+            </buttonsPanel>
+        </table>
+    </layout>
+</window>

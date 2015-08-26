@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2015 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://caption"
+        class="com.haulmont.bpm.gui.form.generic.GenericProcForm"
+        messagesPack="com.haulmont.bpm.gui.form.generic">
+    <dsContext/>
+    <actions>
+        <action id="windowCommit"
+                caption="actions.Ok"
+                icon="icons/ok.png"
+                invoke="commit"/>
+        <action id="windowClose"
+                caption="actions.Cancel"
+                icon="icons/cancel.png"
+                invoke="cancel"/>
+    </actions>
+    <layout spacing="true">
+        <hbox spacing="true">
+            <button id="okBtn"
+                    action="windowCommit"/>
+            <button id="cancelBtn"
+                    action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

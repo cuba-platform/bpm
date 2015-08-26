@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2015 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.haulmont.bpm.gui.procmodel.ProcModelBrowse"
+        focusComponent="procModelsTable"
+        lookupComponent="procModelsTable"
+        messagesPack="com.haulmont.bpm.gui.procmodel">
+    <companions>
+        <web class="com.haulmont.bpm.web.ui.procmodel.WebProcModelBrowseCompanion"/>
+    </companions>
+    <dsContext>
+        <collectionDatasource id="procModelsDs"
+                              class="com.haulmont.bpm.entity.ProcModel"
+                              view="_local">
+            <query>
+                <![CDATA[select e from bpm$ProcModel e]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <layout expand="procModelsTable"
+            spacing="true">
+        <filter id="filter"
+                datasource="procModelsDs">
+            <properties include=".*"/>
+        </filter>
+        <table id="procModelsTable"
+               multiselect="true"
+               width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="openModeler"
+                        caption="msg://actions.Edit"
+                        icon="icons/edit.png"
+                        invoke="openModeler"
+                        trackSelection="true"/>
+                <action id="remove"/>
+                <action id="refresh"/>
+                <action id="copy"
+                        caption="msg://copy"
+                        invoke="copyModel"
+                        icon="icons/copy.png"
+                        trackSelection="true"/>
+                <action id="export"
+                        caption="msg://exportModel"
+                        invoke="exportModel"
+                        icon="icons/reports-template-download.png"
+                        trackSelection="true"/>
+                <action id="deploy"
+                        caption="msg://deploy"
+                        invoke="deploy"
+                        icon="font-icon:FILE_CODE_O"
+                        trackSelection="true"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="description" maxTextLength="60"/>
+            </columns>
+            <rows datasource="procModelsDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="procModelsTable.create"/>
+                <button id="openModelerBtn"
+                        action="procModelsTable.openModeler"/>
+                <button id="removeBtn"
+                        action="procModelsTable.remove"/>
+                <button id="refreshBtn"
+                        action="procModelsTable.refresh"/>
+                <button id="copyBtn"
+                        action="procModelsTable.copy"/>
+                <upload id="modelUpload"
+                        caption="msg://importModel"/>
+                <button id="exportBtn"
+                        action="procModelsTable.export"/>
+                <button id="deployBtn"
+                        action="procModelsTable.deploy"/>
+            </buttonsPanel>
+        </table>
+    </layout>
+</window>

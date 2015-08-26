@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2015 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editCaption"
+        class="com.haulmont.bpm.gui.procmodel.ProcModelEdit"
+        datasource="procModelDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.haulmont.bpm.gui.procmodel">
+    <dsContext>
+        <datasource id="procModelDs"
+                    class="com.haulmont.bpm.entity.ProcModel"
+                    view="_local"/>
+    </dsContext>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="procModelDs">
+            <column width="250px">
+                <field id="name"/>
+                <field id="description" rows="3"/>
+            </column>
+        </fieldGroup>
+        <iframe id="windowActions"
+                screen="editWindowActions"/>
+    </layout>
+</window>
