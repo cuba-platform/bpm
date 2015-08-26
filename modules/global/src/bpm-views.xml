@@ -5,6 +5,11 @@
   -->
 
 <views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+    <view class="com.haulmont.bpm.entity.ProcRole" name="procRole-with-definition" extends="_local">
+        <property name="procDefinition" view="_minimal">
+            <property name="actId"/>
+        </property>
+    </view>
     <view class="com.haulmont.bpm.entity.ProcInstance"
           extends="_local"
           name="procInstance-start">

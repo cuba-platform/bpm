@@ -20,7 +20,7 @@
         </collectionDatasource>
         <collectionDatasource id="procRolesDs"
                               class="com.haulmont.bpm.entity.ProcRole"
-                              view="_minimal">
+                              view="procRole-with-definition">
             <query>
                 <![CDATA[
                 select pr from bpm$ProcRole pr where pr.procDefinition.id = :custom$procDefinition order by pr.name

@@ -5,19 +5,15 @@
 
 package com.haulmont.bpm.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import com.google.common.base.Strings;
 import com.haulmont.bpm.service.ProcessMessagesService;
 import com.haulmont.chile.core.annotations.MetaProperty;
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.PersistenceHelper;
+
+import javax.persistence.*;
 
 /**
  * @author gorbunkov
@@ -75,7 +71,7 @@ public class ProcRole extends StandardEntity {
 
     @MetaProperty
     public String getLocName() {
-        if (procDefinition != null && !Strings.isNullOrEmpty(procDefinition.getActId())) {
+        if (PersistenceHelper.isLoaded(this, "procDefinition") && procDefinition != null && PersistenceHelper.isLoaded(this, "actId") && !Strings.isNullOrEmpty(procDefinition.getActId())) {
             ProcessMessagesService processMessagesService = AppBeans.get(ProcessMessagesService.class);
             String locName = processMessagesService.findMessage(procDefinition.getActId(), code);
             if (locName != null) return locName;
