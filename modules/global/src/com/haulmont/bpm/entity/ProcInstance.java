@@ -5,26 +5,17 @@
 
 package com.haulmont.bpm.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import com.haulmont.cuba.security.entity.User;
-import java.util.Date;
-import java.util.UUID;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import org.apache.openjpa.persistence.Persistent;
+import com.haulmont.chile.core.annotations.Composition;
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
+import com.haulmont.cuba.security.entity.User;
+
+import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
-import javax.persistence.OneToMany;
-import com.haulmont.chile.core.annotations.Composition;
-import com.haulmont.chile.core.annotations.NamePattern;
-import javax.persistence.Lob;
+import java.util.UUID;
 
 /**
  * @author gorbunkov
@@ -39,7 +30,6 @@ public class ProcInstance extends StandardEntity {
     @Column(name = "ENTITY_NAME")
     protected String entityName;
 
-    @Persistent
     @Column(name = "ENTITY_ID")
     protected UUID entityId;
 

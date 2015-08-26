@@ -10,7 +10,6 @@ import com.haulmont.cuba.core.sys.AbstractUserSessionSource;
 import com.haulmont.cuba.security.entity.Role;
 import com.haulmont.cuba.security.entity.User;
 import com.haulmont.cuba.security.global.UserSession;
-import org.apache.openjpa.persistence.OpenJPAEntityManager;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 
 import javax.persistence.EntityManagerFactory;
@@ -46,10 +45,12 @@ public class BpmTestUserSessionSource extends AbstractUserSessionSource {
         this.session = session;
     }
 
+    //todo mg fix
     protected User getUser() {
-        EntityManagerFactory jpaEmf = AppBeans.get("entityManagerFactory");
-        OpenJPAEntityManager jpaEm = (OpenJPAEntityManager)
-                EntityManagerFactoryUtils.doGetTransactionalEntityManager(jpaEmf, null);
-        return jpaEm.find(User.class, UUID.fromString(USER_ID));
+//        EntityManagerFactory jpaEmf = AppBeans.get("entityManagerFactory");
+//        OpenJPAEntityManager jpaEm = (OpenJPAEntityManager)
+//                EntityManagerFactoryUtils.doGetTransactionalEntityManager(jpaEmf, null);
+//        return jpaEm.find(User.class, UUID.fromString(USER_ID));
+        return null;
     }
 }

@@ -119,7 +119,7 @@ public class ProcModelBrowse extends AbstractLookup {
         if (!procDefinitionsByModel.isEmpty()) {
             params.put("selectedProcDefinition", procDefinitionsByModel.get(0));
         }
-        final ProcDefinitionDeployWindow deployWindow = openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
+        final ProcDefinitionDeployWindow deployWindow = (ProcDefinitionDeployWindow) openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
         deployWindow.addListener(new CloseListener() {
             @Override
             public void windowClosed(String actionId) {
@@ -166,7 +166,7 @@ public class ProcModelBrowse extends AbstractLookup {
         LoadContext ctx = new LoadContext(ProcModel.class).setView(view);
         ctx.setQueryString("select m from bpm$ProcModel m where m.name = :name")
                 .setParameter("name", modelName);
-        return dataManager.load(ctx);
+        return dataManager.<ProcModel>load(ctx);
     }
 
     protected List<ProcDefinition> findProcDefinitionsByModel(ProcModel model) {

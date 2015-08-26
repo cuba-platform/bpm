@@ -99,7 +99,7 @@ public class ProcDefinitionBrowse extends AbstractLookup {
                 } else {
                     Map<String, Object> params = new HashMap<>();
                     params.put("selectedProcDefinition", procDefinitionsWithTheSameName.get(0));
-                    final ProcDefinitionDeployWindow deployWindow = openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
+                    final ProcDefinitionDeployWindow deployWindow = (ProcDefinitionDeployWindow) openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
                     deployWindow.addListener(new CloseListener() {
                         @Override
                         public void windowClosed(String actionId) {

@@ -184,7 +184,7 @@ public class ProcActionsFrame extends AbstractFrame {
                 .setParameter("procInstance", procInstance)
                 .setParameter("userId", userSession.getCurrentOrSubstitutedUser());
         ctx.setView("procTask-complete");
-        return dataManager.load(ctx);
+        return dataManager.<ProcTask>load(ctx);
     }
 
     public ProcAction.AfterActionListener getAfterStartProcessListener() {

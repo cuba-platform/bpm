@@ -11,7 +11,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.Action;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.DialogAction;
-import com.haulmont.cuba.gui.components.IFrame;
+import com.haulmont.cuba.gui.components.Frame;
 
 /**
  * @author gorbunkov
@@ -35,7 +35,7 @@ public class ClaimProcTaskAction extends ProcAction {
         if (!evaluateBeforeActionPredicates()) return;
         String claimTaskDialogTitle = messages.getMessage(ClaimProcTaskAction.class, "claimTaskDialogTitle");
         String claimTaskDialogMsg = messages.getMessage(ClaimProcTaskAction.class, "claimTaskDialogMsg");
-        target.getFrame().showOptionDialog(claimTaskDialogTitle, claimTaskDialogMsg, IFrame.MessageType.CONFIRMATION, new Action[] {
+        target.getFrame().showOptionDialog(claimTaskDialogTitle, claimTaskDialogMsg, Frame.MessageType.CONFIRMATION, new Action[] {
                 new DialogAction(DialogAction.Type.YES) {
                     @Override
                     public void actionPerform(Component component) {
