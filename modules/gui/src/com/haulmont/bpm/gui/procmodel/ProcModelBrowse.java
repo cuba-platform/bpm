@@ -16,9 +16,14 @@ import com.haulmont.bpm.rest.RestModel;
 import com.haulmont.bpm.service.ModelService;
 import com.haulmont.bpm.service.ProcessRepositoryService;
 import com.haulmont.cuba.core.entity.Entity;
-import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.Action.Status;
+import com.haulmont.cuba.gui.components.DialogAction.Type;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.export.ClosedDataProviderException;
@@ -245,14 +250,13 @@ public class ProcModelBrowse extends AbstractLookup {
                             formatMessage("importModel.existsDialog.message", modelName),
                             MessageType.CONFIRMATION,
                             new Action[]{
-                                    new DialogAction(DialogAction.Type.YES) {
+                                    new DialogAction(Type.YES) {
                                         @Override
                                         public void actionPerform(Component component) {
                                             updateModel(modelJsonNode, existingModel);
                                         }
                                     },
-                                    new DialogAction(DialogAction.Type.NO) {
-                                    }
+                                    new DialogAction(Type.NO, Status.PRIMARY)
                             });
                 } else {
                     createModel(modelJsonNode, modelName);

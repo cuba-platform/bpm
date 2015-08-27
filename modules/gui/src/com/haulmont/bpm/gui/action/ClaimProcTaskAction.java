@@ -11,6 +11,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.Action;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.DialogAction;
+import com.haulmont.cuba.gui.components.DialogAction.Type;
 import com.haulmont.cuba.gui.components.Frame;
 
 /**
@@ -20,7 +21,7 @@ import com.haulmont.cuba.gui.components.Frame;
 public class ClaimProcTaskAction extends ProcAction {
 
     protected ProcTask procTask;
-    private Component.BelongToFrame target;
+    protected Component.BelongToFrame target;
     protected final ProcessRuntimeService processRuntimeService;
 
     public ClaimProcTaskAction(ProcTask procTask, Component.BelongToFrame target) {
@@ -36,14 +37,14 @@ public class ClaimProcTaskAction extends ProcAction {
         String claimTaskDialogTitle = messages.getMessage(ClaimProcTaskAction.class, "claimTaskDialogTitle");
         String claimTaskDialogMsg = messages.getMessage(ClaimProcTaskAction.class, "claimTaskDialogMsg");
         target.getFrame().showOptionDialog(claimTaskDialogTitle, claimTaskDialogMsg, Frame.MessageType.CONFIRMATION, new Action[] {
-                new DialogAction(DialogAction.Type.YES) {
+                new DialogAction(Type.YES) {
                     @Override
                     public void actionPerform(Component component) {
                         processRuntimeService.claimProcTask(procTask, userSession.getCurrentOrSubstitutedUser());
                         fireAfterActionListeners();
                     }
                 },
-                new DialogAction(DialogAction.Type.NO) {}
+                new DialogAction(Type.NO, Status.PRIMARY)
         });
     }
 
