@@ -12,7 +12,6 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.ValueListener;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -46,15 +45,12 @@ public class ProcActorsFrame extends AbstractFrame {
     }
 
     protected void initProcRolesLookup() {
-        procRolesLookup.addListener(new ValueListener() {
-            @Override
-            public void valueChanged(Object source, String property, Object prevValue, Object value) {
-                if (value == null) {
-                    return;
-                }
-                addProcActor((ProcRole) value);
-                procRolesLookup.setValue(null);
+        procRolesLookup.addValueChangeListener(e -> {
+            if (e.getValue() == null) {
+                return;
             }
+            addProcActor((ProcRole) e.getValue());
+            procRolesLookup.setValue(null);
         });
     }
 

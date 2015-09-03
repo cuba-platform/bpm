@@ -13,7 +13,6 @@ import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.OptionsGroup;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
-import com.haulmont.cuba.gui.data.ValueListener;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -59,12 +58,9 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
             decisionOptionsGroup.setValue(Decision.UPDATE_EXISTING);
             processLookup.setValue(selectedProcDefinition);
         }
-        decisionOptionsGroup.addListener(new ValueListener() {
-            @Override
-            public void valueChanged(Object source, String property, Object prevValue, Object value) {
-                processLookup.setEnabled(value == Decision.UPDATE_EXISTING);
-                processLookup.setRequired(value == Decision.UPDATE_EXISTING);
-            }
+        decisionOptionsGroup.addValueChangeListener(e -> {
+            processLookup.setEnabled(e.getValue() == Decision.UPDATE_EXISTING);
+            processLookup.setRequired(e.getValue() == Decision.UPDATE_EXISTING);
         });
     }
 

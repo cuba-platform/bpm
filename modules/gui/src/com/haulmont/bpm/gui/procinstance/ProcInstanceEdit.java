@@ -6,11 +6,14 @@
 package com.haulmont.bpm.gui.procinstance;
 
 import com.google.common.base.Strings;
-import com.haulmont.bpm.entity.*;
+import com.haulmont.bpm.entity.ProcActor;
+import com.haulmont.bpm.entity.ProcDefinition;
+import com.haulmont.bpm.entity.ProcInstance;
+import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.bpm.gui.action.ProcAction;
+import com.haulmont.bpm.gui.procactions.ProcActionsFrame;
 import com.haulmont.bpm.gui.procactor.ProcActorsFrame;
 import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
-import com.haulmont.bpm.gui.procactions.ProcActionsFrame;
 import com.haulmont.bpm.gui.proctask.ProcTasksFrame;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
@@ -23,7 +26,6 @@ import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.data.ValueListener;
 import com.haulmont.cuba.gui.data.impl.DsListenerAdapter;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.cuba.security.global.UserSession;
@@ -31,7 +33,9 @@ import com.haulmont.cuba.security.global.UserSession;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
 
 /**
  * @author gorbunkov
@@ -208,22 +212,20 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 entityNameLookup.setOptionsList(new ArrayList<>(persistentMetaClasses));
                 entityNameLookup.setValue(metadata.getClass(getItem().getEntityName()));
 
-                entityNameLookup.addListener(new ValueListener() {
-                    @Override
-                    public void valueChanged(Object source, String property, Object prevValue, Object value) {
-                        if (value != null) {
-                            MetaClass metaClass = (MetaClass) value;
-                            getItem().setEntityName(metaClass.getName());
-                            fieldGroup.setFieldValue("entityId", null);
-                            entityIdPickerField.setMetaClass(metaClass);
-                            entityIdPickerField.setEditable(false);
-                        } else {
-                            getItem().setEntityName(null);
-                        }
+                entityNameLookup.addValueChangeListener(e -> {
+                    if (e.getValue() != null) {
+                        MetaClass metaClass = (MetaClass) e.getValue();
+                        getItem().setEntityName(metaClass.getName());
                         fieldGroup.setFieldValue("entityId", null);
-                        entityIdPickerField.setEditable(value != null);
+                        entityIdPickerField.setMetaClass(metaClass);
+                        entityIdPickerField.setEditable(false);
+                    } else {
+                        getItem().setEntityName(null);
                     }
+                    fieldGroup.setFieldValue("entityId", null);
+                    entityIdPickerField.setEditable(e.getValue() != null);
                 });
+
                 return entityNameLookup;
             }
         });
@@ -248,13 +250,10 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                     entityIdPickerField.setValue(entity);
                 }
 
-                entityIdPickerField.addListener(new ValueListener() {
-                    @Override
-                    public void valueChanged(Object source, String property, Object prevValue, Object value) {
-                        UUID entityId = value == null ? null : ((Entity) value).getUuid();
-                        getItem().setEntityId(entityId);
-                        initOpenEntityBtn();
-                    }
+                entityIdPickerField.addValueChangeListener(e -> {
+                    UUID entityId1 = e.getValue() == null ? null : ((Entity) e.getValue()).getUuid();
+                    getItem().setEntityId(entityId1);
+                    initOpenEntityBtn();
                 });
 
                 return entityIdPickerField;
