@@ -26,7 +26,6 @@ import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.data.impl.DsListenerAdapter;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.cuba.security.global.UserSession;
 
@@ -96,21 +95,19 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         setComponentsVisible();
         setComponentsEditable();
 
-        procInstanceDs.addListener(new DsListenerAdapter<ProcInstance>() {
-            @Override
-            public void valueChanged(ProcInstance source, String property, Object prevValue, Object value) {
-                switch (property) {
-                    case "procDefinition":
-                        procActorsFrame.setProcInstance(getItem());
-                        procActorsFrame.refresh();
-                        initProcActors((ProcDefinition) value);
-                        break;
-                    case "entityEditorName":
-                        PickerField.LookupAction action = (PickerField.LookupAction) entityIdPickerField.getAction(PickerField.LookupAction.NAME);
-                        if (action != null)
-                            action.setLookupScreen((String) value);
-                        break;
-                }
+        procInstanceDs.addItemPropertyChangeListener(e -> {
+            switch (e.getProperty()) {
+                case "procDefinition":
+                    procActorsFrame.setProcInstance(getItem());
+                    procActorsFrame.refresh();
+                    initProcActors((ProcDefinition) e.getValue());
+                    break;
+                case "entityEditorName":
+                    PickerField.LookupAction action = (PickerField.LookupAction) entityIdPickerField.getAction(PickerField.LookupAction.NAME);
+                    if (action != null) {
+                        action.setLookupScreen((String) e.getValue());
+                    }
+                    break;
             }
         });
 

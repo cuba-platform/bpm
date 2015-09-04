@@ -5,10 +5,7 @@
 
 package com.haulmont.bpm.gui.procinstance;
 
-import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcInstance;
-import com.haulmont.bpm.entity.ProcTask;
-import com.haulmont.bpm.service.ProcessMessagesService;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.AppBeans;
@@ -22,8 +19,6 @@ import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.config.WindowConfig;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.data.impl.CollectionDsListenerAdapter;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import org.apache.commons.lang.BooleanUtils;
 
@@ -85,12 +80,9 @@ public class ProcInstanceBrowse extends AbstractLookup {
             }
         });
 
-        procInstancesDs.addListener(new CollectionDsListenerAdapter<ProcInstance>() {
-            @Override
-            public void itemChanged(Datasource<ProcInstance> ds, ProcInstance prevItem, ProcInstance item) {
-                super.itemChanged(ds, prevItem, item);
-                removeAction.setEnabled(item != null && BooleanUtils.isNotTrue(item.getActive()));
-            }
+        procInstancesDs.addItemChangeListener(e -> {
+            boolean enabled = e.getItem() != null && BooleanUtils.isNotTrue(e.getItem().getActive());
+            removeAction.setEnabled(enabled);
         });
 
         procInstancesTable.addGeneratedColumn("entityName", new Table.ColumnGenerator<ProcInstance>() {
