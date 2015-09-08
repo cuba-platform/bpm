@@ -13,10 +13,7 @@ import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.gui.WindowManager;
-import com.haulmont.cuba.gui.components.AbstractLookup;
-import com.haulmont.cuba.gui.components.FileUploadField;
-import com.haulmont.cuba.gui.components.ListComponent;
-import com.haulmont.cuba.gui.components.Table;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
@@ -59,7 +56,9 @@ public class ProcDefinitionBrowse extends AbstractLookup {
     public void init(Map<String, Object> params) {
         super.init(params);
         procDefinitionTable.addAction(new ProcDefinitionRemoveAction(procDefinitionTable));
-        deployUpload.addListener(new UploadListener());
+
+        deployUpload.addFileUploadSucceedListener(new UploadSucceedListener());
+        deployUpload.addFileUploadErrorListener(new UploadErrorListener());
     }
 
     protected List<ProcDefinition> getProcDefinitionsByName(String name) {
@@ -84,9 +83,13 @@ public class ProcDefinitionBrowse extends AbstractLookup {
         return name;
     }
 
-    protected class UploadListener extends FileUploadField.ListenerAdapter {
+    protected class UploadSucceedListener implements FileUploadField.FileUploadSucceedListener {
+
+        public UploadSucceedListener() {
+        }
+
         @Override
-        public void uploadSucceeded(Event event) {
+        public void fileUploadSucceed(FileUploadField.FileUploadSucceedEvent e) {
             File file = fileUploadingAPI.getFile(deployUpload.getFileId());
             try {
                 final String processXml = FileUtils.readFileToString(file);
@@ -117,13 +120,16 @@ public class ProcDefinitionBrowse extends AbstractLookup {
                         }
                     });
                 }
-            } catch (IOException e) {
-                throw new RuntimeException("Process upload error", e);
+            } catch (IOException ex) {
+                throw new RuntimeException("Process upload error", ex);
             }
         }
+    }
+
+    protected class UploadErrorListener implements FileUploadField.FileUploadErrorListener {
 
         @Override
-        public void uploadFailed(Event event) {
+        public void fileUploadError(UploadComponentSupport.FileUploadErrorEvent e) {
             showNotification(getMessage("processUploadFailed"), NotificationType.ERROR);
         }
     }

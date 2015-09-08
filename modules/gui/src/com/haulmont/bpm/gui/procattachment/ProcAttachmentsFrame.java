@@ -10,13 +10,15 @@ import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.entity.FileDescriptor;
-import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.core.global.FileStorageException;
+import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.PersistenceHelper;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.app.core.file.FileDownloadHelper;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 
 import javax.inject.Inject;
@@ -76,48 +78,42 @@ public class ProcAttachmentsFrame extends AbstractFrame {
     }
 
     protected void initUploadField() {
-        uploadField.addListener(new FileMultiUploadField.UploadListener() {
-            @Override
-            public void queueUploadComplete() {
-                Map<UUID, String> uploadsMap = uploadField.getUploadsMap();
-                for (Map.Entry<UUID, String> entry : uploadsMap.entrySet()) {
-                    UUID fileId = entry.getKey();
-                    String fileName = entry.getValue();
-                    FileDescriptor fd = fileUploadingAPI.getFileDescriptor(fileId, fileName);
-                    addProcAttachment(fd);
-                    temporaryFileIds.put(fd, fileId);
-                }
-                uploadField.clearUploads();
+        uploadField.addQueueUploadCompleteListener(() -> {
+            Map<UUID, String> uploadsMap = uploadField.getUploadsMap();
+            for (Map.Entry<UUID, String> entry : uploadsMap.entrySet()) {
+                UUID fileId = entry.getKey();
+                String fileName = entry.getValue();
+                FileDescriptor fd = fileUploadingAPI.getFileDescriptor(fileId, fileName);
+                addProcAttachment(fd);
+                temporaryFileIds.put(fd, fileId);
             }
+            uploadField.clearUploads();
         });
     }
 
     protected void initParentDsContextCommitListener() {
-        getDsContext().addListener(new DsContext.CommitListenerAdapter() {
-            @Override
-            public void beforeCommit(CommitContext context) {
-                List<FileDescriptor> fileDescriptorsToCommit = new ArrayList<>();
+        getDsContext().addBeforeCommitListener(context -> {
+            List<FileDescriptor> fileDescriptorsToCommit = new ArrayList<>();
 
-                Collection<Entity> commitInstances = context.getCommitInstances();
-                for (Entity commitInstance : commitInstances) {
-                    if (commitInstance instanceof ProcAttachment && PersistenceHelper.isNew(commitInstance)) {
-                        ProcAttachment procAttachment = (ProcAttachment) commitInstance;
-                        fileDescriptorsToCommit.add(procAttachment.getFile());
-                        UUID fileId = temporaryFileIds.get(procAttachment.getFile());
-                        if (fileId != null) {
-                            try {
-                                fileUploadingAPI.putFileIntoStorage(fileId, procAttachment.getFile());
-                            } catch (FileStorageException e) {
-                                new RuntimeException("Error while uploading file", e);
-                            }
+            Collection<Entity> commitInstances = context.getCommitInstances();
+            for (Entity commitInstance : commitInstances) {
+                if (commitInstance instanceof ProcAttachment && PersistenceHelper.isNew(commitInstance)) {
+                    ProcAttachment procAttachment = (ProcAttachment) commitInstance;
+                    fileDescriptorsToCommit.add(procAttachment.getFile());
+                    UUID fileId = temporaryFileIds.get(procAttachment.getFile());
+                    if (fileId != null) {
+                        try {
+                            fileUploadingAPI.putFileIntoStorage(fileId, procAttachment.getFile());
+                        } catch (FileStorageException e) {
+                            new RuntimeException("Error while uploading file", e);
                         }
                     }
                 }
+            }
 
-                if (!fileDescriptorsToCommit.isEmpty()) {
-                    commitInstances.addAll(fileDescriptorsToCommit);
-                    context.setCommitInstances(commitInstances);
-                }
+            if (!fileDescriptorsToCommit.isEmpty()) {
+                commitInstances.addAll(fileDescriptorsToCommit);
+                context.setCommitInstances(commitInstances);
             }
         });
     }

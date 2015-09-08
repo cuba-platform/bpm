@@ -106,7 +106,7 @@ public class ProcModelBrowse extends AbstractLookup {
             }
         });
         procModelsTable.setItemClickAction(procModelsTableOpenModeler);
-        modelUpload.addListener(new ModelUploadListener());
+        modelUpload.addFileUploadSucceedListener(new ModelUploadListener());
     }
 
     public void openModeler() {
@@ -226,9 +226,13 @@ public class ProcModelBrowse extends AbstractLookup {
         }
     }
 
-    protected class ModelUploadListener extends FileUploadField.ListenerAdapter {
+    protected class ModelUploadListener implements FileUploadField.FileUploadSucceedListener {
+
+        public ModelUploadListener() {
+        }
+
         @Override
-        public void uploadSucceeded(Event event) {
+        public void fileUploadSucceed(FileUploadField.FileUploadSucceedEvent e) {
             File file = fileUploadingAPI.getFile(modelUpload.getFileId());
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -261,12 +265,12 @@ public class ProcModelBrowse extends AbstractLookup {
                 } else {
                     createModel(modelJsonNode, modelName);
                 }
-            } catch (Exception e) {
-                throw new BpmException("Error import model", e);
+            } catch (Exception ex) {
+                throw new BpmException("Error import model", ex);
             }
         }
 
-        private void createModel(JsonNode modelJsonNode, String modelName) {
+        protected void createModel(JsonNode modelJsonNode, String modelName) {
             String actModelId = modelService.createModel(modelName);
             modelService.updateModel(actModelId, modelName, "", modelJsonNode.toString(), "");
             ProcModel procModel = metadata.create(ProcModel.class);
@@ -277,7 +281,7 @@ public class ProcModelBrowse extends AbstractLookup {
             showNotification(getMessage("importModel.completed"), NotificationType.HUMANIZED);
         }
 
-        private void updateModel(JsonNode modelJsonNode, ProcModel model) {
+        protected void updateModel(JsonNode modelJsonNode, ProcModel model) {
             modelService.updateModel(model.getActModelId(), model.getName(), "", modelJsonNode.toString(), "");
             showNotification(getMessage("importModel.completed"), NotificationType.HUMANIZED);
         }
