@@ -57,6 +57,12 @@ configure([globalModule, coreModule, guiModule, webModule]) {
     artifacts {
         archives sourceJar
     }
+
+    jar {
+        manifest {
+            attributes("Implementation-Version": cubaVersion)
+        }
+    }
 }
 
 configure(globalModule) {
