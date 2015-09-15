@@ -125,16 +125,13 @@ public class ProcModelBrowse extends AbstractLookup {
             params.put("selectedProcDefinition", procDefinitionsByModel.get(0));
         }
         final ProcDefinitionDeployWindow deployWindow = (ProcDefinitionDeployWindow) openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
-        deployWindow.addListener(new CloseListener() {
-            @Override
-            public void windowClosed(String actionId) {
-                if (COMMIT_ACTION_ID.equals(actionId)) {
-                    ProcDefinition procDefinition = deployWindow.getDecision() == ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING
-                            ? deployWindow.getProcDefinition() : null;
-                    final String processXml = processRepositoryService.convertModelToProcessXml(procModelsDs.getItem().getActModelId());
-                    processRepositoryService.deployProcessFromXml(processXml, procDefinition, procModelsDs.getItem());
-                    showNotification(getMessage("processDeployed"), NotificationType.HUMANIZED);
-                }
+        deployWindow.addCloseListener(actionId -> {
+            if (COMMIT_ACTION_ID.equals(actionId)) {
+                ProcDefinition procDefinition = deployWindow.getDecision() == ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING
+                        ? deployWindow.getProcDefinition() : null;
+                final String processXml = processRepositoryService.convertModelToProcessXml(procModelsDs.getItem().getActModelId());
+                processRepositoryService.deployProcessFromXml(processXml, procDefinition, procModelsDs.getItem());
+                showNotification(getMessage("processDeployed"), NotificationType.HUMANIZED);
             }
         });
     }
@@ -152,13 +149,10 @@ public class ProcModelBrowse extends AbstractLookup {
 
         final Editor editor = openEditor("bpm$ProcModel.edit", modelCopy, WindowManager.OpenType.THIS_TAB,
                 Collections.<String, Object>singletonMap("srcModel", srcModel));
-        editor.addListener(new CloseListener() {
-            @Override
-            public void windowClosed(String actionId) {
-                if (COMMIT_ACTION_ID.equals(actionId)) {
-                    procModelsDs.refresh();
-                    _openModeler((ProcModel) editor.getItem());
-                }
+        editor.addCloseListener(actionId -> {
+            if (COMMIT_ACTION_ID.equals(actionId)) {
+                procModelsDs.refresh();
+                _openModeler((ProcModel) editor.getItem());
             }
         });
     }

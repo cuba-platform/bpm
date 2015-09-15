@@ -44,17 +44,14 @@ public class CancelProcessAction extends ProcAction {
         Map<String, Object> params = new HashMap<>();
         params.put("formDefinition", cancelForm);
         final Window window = target.getFrame().openWindow(cancelForm.getName(), WindowManager.OpenType.DIALOG, params);
-        window.addListener(new Window.CloseListener() {
-            @Override
-            public void windowClosed(String actionId) {
-                if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                    String comment = null;
-                    if (window instanceof ProcForm) {
-                        comment = ((ProcForm) window).getComment();
-                    }
-                    processRuntimeService.cancelProcess(procInstance, comment);
-                    fireAfterActionListeners();
+        window.addCloseListener(actionId -> {
+            if (Window.COMMIT_ACTION_ID.equals(actionId)) {
+                String comment = null;
+                if (window instanceof ProcForm) {
+                    comment = ((ProcForm) window).getComment();
                 }
+                processRuntimeService.cancelProcess(procInstance, comment);
+                fireAfterActionListeners();
             }
         });
     }

@@ -65,11 +65,8 @@ public class ProcAttachmentsFrame extends AbstractFrame {
             @Override
             public void actionPerform(Component component) {
                 final Window.Editor editor = openEditor("bpm$ProcAttachment.edit", procAttachmentsDs.getItem(), WindowManager.OpenType.DIALOG, procAttachmentsDs);
-                editor.addListener(new Window.CloseListener() {
-                    @Override
-                    public void windowClosed(String actionId) {
-                        procAttachmentsDs.updateItem((ProcAttachment) editor.getItem());
-                    }
+                editor.addCloseListener(actionId -> {
+                    procAttachmentsDs.updateItem((ProcAttachment) editor.getItem());
                 });
             }
         });

@@ -103,19 +103,16 @@ public class ProcDefinitionBrowse extends AbstractLookup {
                     Map<String, Object> params = new HashMap<>();
                     params.put("selectedProcDefinition", procDefinitionsWithTheSameName.get(0));
                     final ProcDefinitionDeployWindow deployWindow = (ProcDefinitionDeployWindow) openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
-                    deployWindow.addListener(new CloseListener() {
-                        @Override
-                        public void windowClosed(String actionId) {
-                            if (COMMIT_ACTION_ID.equals(actionId)) {
-                                if (ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING == deployWindow.getDecision()) {
-                                    ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml, deployWindow.getProcDefinition(), null);
-                                    procDefinitionsDs.updateItem(procDefinition);
-                                    showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
-                                } else {
-                                    ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml, null, null);
-                                    procDefinitionsDs.addItem(procDefinition);
-                                    showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
-                                }
+                    deployWindow.addCloseListener(actionId -> {
+                        if (COMMIT_ACTION_ID.equals(actionId)) {
+                            if (ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING == deployWindow.getDecision()) {
+                                ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml, deployWindow.getProcDefinition(), null);
+                                procDefinitionsDs.updateItem(procDefinition);
+                                showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
+                            } else {
+                                ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml, null, null);
+                                procDefinitionsDs.addItem(procDefinition);
+                                showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
                             }
                         }
                     });

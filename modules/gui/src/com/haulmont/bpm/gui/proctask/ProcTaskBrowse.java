@@ -6,7 +6,6 @@
 package com.haulmont.bpm.gui.proctask;
 
 import com.haulmont.bpm.entity.ProcTask;
-import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.service.ProcessMessagesService;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
@@ -14,7 +13,8 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author gorbunkov
@@ -49,15 +49,11 @@ public class ProcTaskBrowse extends AbstractLookup {
         procTasksTable.setItemClickAction(procTasksTable.getAction("openProcInstance"));
     }
 
-
     public void openProcInstance() {
         Window window = openEditor("bpm$ProcInstance.edit", procTasksDs.getItem().getProcInstance(), WindowManager.OpenType.THIS_TAB);
-        window.addListener(new CloseListener() {
-            @Override
-            public void windowClosed(String actionId) {
-                if (COMMIT_ACTION_ID.equals(actionId)) {
-                    procTasksDs.refresh();
-                }
+        window.addCloseListener(actionId -> {
+            if (COMMIT_ACTION_ID.equals(actionId)) {
+                procTasksDs.refresh();
             }
         });
     }

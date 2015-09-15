@@ -62,23 +62,20 @@ public class CompleteProcTaskAction extends ProcAction {
             formParams.put("procInstance", procTask.getProcInstance());
 
             final Window procForm = target.getFrame().openWindow(formDefinition.getName(), WindowManager.OpenType.DIALOG, formParams);
-            procForm.addListener(new Window.CloseListener() {
-                @Override
-                public void windowClosed(String actionId) {
-                    if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                        String comment = null;
-                        Map<String, Object> formResult = null;
-                        if (procForm instanceof ProcForm) {
-                            comment = ((ProcForm) procForm).getComment();
-                            formResult = ((ProcForm) procForm).getFormResult();
-                        }
-                        processRuntimeService.completeProcTask(procTask, outcome, comment, formResult);
-                        fireAfterActionListeners();
+            procForm.addCloseListener(actionId -> {
+                if (Window.COMMIT_ACTION_ID.equals(actionId)) {
+                    String comment = null;
+                    Map<String, Object> formResult = null;
+                    if (procForm instanceof ProcForm) {
+                        comment = ((ProcForm) procForm).getComment();
+                        formResult = ((ProcForm) procForm).getFormResult();
                     }
+                    processRuntimeService.completeProcTask(procTask, outcome, comment, formResult);
+                    fireAfterActionListeners();
                 }
             });
         } else {
-            processRuntimeService.completeProcTask(procTask, outcome, null, new HashMap<String, Object>());
+            processRuntimeService.completeProcTask(procTask, outcome, null, new HashMap<>());
             fireAfterActionListeners();
         }
     }

@@ -46,22 +46,19 @@ public class StartProcessAction extends ProcAction {
             formParams.put("procInstance", procInstance);
             formParams.put("formDefinition", startForm);
             final Window window = target.getFrame().openWindow(startForm.getName(), WindowManager.OpenType.DIALOG, formParams);
-            window.addListener(new Window.CloseListener() {
-                @Override
-                public void windowClosed(String actionId) {
-                    if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                        String comment = null;
-                        Map<String, Object> formResult = null;
-                        if (window instanceof ProcForm) {
-                            comment = ((ProcForm) window).getComment();
-                            formResult = ((ProcForm) window).getFormResult();
-                        }
-                        _startProcess(comment, formResult);
+            window.addCloseListener(actionId -> {
+                if (Window.COMMIT_ACTION_ID.equals(actionId)) {
+                    String comment = null;
+                    Map<String, Object> formResult = null;
+                    if (window instanceof ProcForm) {
+                        comment = ((ProcForm) window).getComment();
+                        formResult = ((ProcForm) window).getFormResult();
                     }
+                    _startProcess(comment, formResult);
                 }
             });
         } else {
-            _startProcess(null, new HashMap<String, Object>());
+            _startProcess(null, new HashMap<>());
         }
     }
 
