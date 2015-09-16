@@ -39,6 +39,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -196,11 +197,7 @@ public class ProcModelBrowse extends AbstractLookup {
                 throw new IllegalArgumentException("Null process model passed");
 
             RestModel restModel = modelService.getModelJson(procModel.getActModelId());
-            try {
-                inputStream = new ByteArrayInputStream(restModel.getModelJson().getBytes("utf-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new BpmException("Unable to export process model", e);
-            }
+            inputStream = new ByteArrayInputStream(restModel.getModelJson().getBytes(StandardCharsets.UTF_8));
 
             return inputStream;
         }

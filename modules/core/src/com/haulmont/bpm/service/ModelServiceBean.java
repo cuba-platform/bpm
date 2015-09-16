@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -76,9 +76,8 @@ public class ModelServiceBean implements ModelService {
         model.setName(modelName);
 
         repositoryService.saveModel(model);
-        try {
-            repositoryService.addModelEditorSource(model.getId(), modelJsonStr.getBytes("utf-8"));
-            //todo gorbunkov store svg
+        repositoryService.addModelEditorSource(model.getId(), modelJsonStr.getBytes(StandardCharsets.UTF_8));
+        //todo gorbunkov store svg
 //            InputStream svgStream = new ByteArrayInputStream(modelSvgStr.getBytes("utf-8"));
 //            TranscoderInput input = new TranscoderInput(svgStream);
 //
@@ -92,9 +91,6 @@ public class ModelServiceBean implements ModelService {
 //            final byte[] result = outStream.toByteArray();
 //            repositoryService.addModelEditorSourceExtra(model.getId(), result);
 //            outStream.close();
-        } catch (UnsupportedEncodingException e) {
-            throw new BpmException("Error when saving model", e);
-        }
 
         Transaction tx = persistence.getTransaction();
         try {
@@ -152,12 +148,8 @@ public class ModelServiceBean implements ModelService {
 
         editorNode.put("properties", propertiesNode);
 
-        try {
-            repositoryService.saveModel(model);
-            repositoryService.addModelEditorSource(model.getId(), editorNode.toString().getBytes("utf-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new BpmException("Error creating new model", e);
-        }
+        repositoryService.saveModel(model);
+        repositoryService.addModelEditorSource(model.getId(), editorNode.toString().getBytes(StandardCharsets.UTF_8));
 
         return model.getId();
     }
