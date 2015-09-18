@@ -18,7 +18,7 @@
     <context:component-scan base-package="com.haulmont.bpm"/>
 
     <bean id="processEngineConfiguration" class="com.haulmont.bpm.core.engine.cfg.ExtSpringProcessEngineConfiguration">
-        <property name="dataSource" ref="dataSource"/>
+        <property name="dataSource" ref="cubaDataSource"/>
         <property name="transactionManager" ref="transactionManager"/>
         <property name="scriptingEngines" ref="scriptingEngines"/>
 
