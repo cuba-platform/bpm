@@ -34,8 +34,8 @@ apply from: "$rootProject.projectDir/lib.gradle"
 cuba {
     artifact {
         group = 'com.haulmont.bpm'
-        version = cubaVersion.replace('-SNAPSHOT', '')
-        isSnapshot = cubaVersion.endsWith('-SNAPSHOT')
+        version = project.cubaVersion.replace('-SNAPSHOT', '')
+        isSnapshot = project.cubaVersion.endsWith('-SNAPSHOT')
     }
 
     ide {
