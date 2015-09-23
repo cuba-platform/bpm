@@ -7,7 +7,6 @@ package com.haulmont.bpm.gui.proctask;
 
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
-import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 
@@ -36,5 +35,4 @@ public class ProcTasksFrame extends AbstractFrame {
             params.put("procInstance", procInstance);
         procTasksDs.refresh(params);
     }
-
 }

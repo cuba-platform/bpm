@@ -102,7 +102,7 @@ public class ProcActionsFrame extends AbstractFrame {
             initTaskInfoGrid();
         noActionsAvailableLbl.setVisible(false);
         Button claimTaskBtn = componentsFactory.createComponent(Button.class);
-        claimTaskBtn.setWidth(buttonWidth);;
+        claimTaskBtn.setWidth(buttonWidth);
         ClaimProcTaskAction claimProcTaskAction = new ClaimProcTaskAction(procTask, claimTaskBtn);
         claimProcTaskAction.addBeforeActionPredicate(beforeClaimTaskPredicate);
         claimProcTaskAction.addAfterActionListener(afterClaimTaskListener);

@@ -12,13 +12,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.rest.RestModel;
 import com.haulmont.bpm.service.ModelService;
-import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.core.sys.AppContext;
-import com.haulmont.cuba.core.sys.SecurityContext;
-import com.haulmont.cuba.security.global.UserSession;
-import com.haulmont.cuba.web.controllers.ControllerUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -30,11 +25,11 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Controller is used by modeler for manipulating with models
+ * Controller is used by modeler for manipulating with models.
+ *
  * @author gorbunkov
  * @version $Id$
  */
-
 @Controller
 @RequestMapping("/modeler/model")
 public class ModelController {
