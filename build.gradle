@@ -83,7 +83,6 @@ configure(globalModule) {
 }
 
 configure(coreModule) {
-
     configurations {
         jdbc
         dbscripts
@@ -116,9 +115,7 @@ configure(coreModule) {
 
         compile(activitiJsonConverter)
 
-        testCompile("com.haulmont.cuba:cuba-core:$cubaVersion:tests")
-        testCompile("com.haulmont.cuba:cuba-shared-lib:$cubaVersion")
-        testCompile('org.apache.commons:commons-dbcp2:2.1.1')
+        testCompile("com.haulmont.cuba:cuba-core-tests:$cubaVersion")
         dbscripts("com.haulmont.cuba:cuba-core:$cubaVersion:db@zip")
     }
 
