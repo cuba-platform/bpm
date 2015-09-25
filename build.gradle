@@ -76,10 +76,7 @@ configure(globalModule) {
 
     }
 
-    task enhance(type: CubaEnhancing) {
-        persistenceConfig = 'cuba-persistence.xml bpm-persistence.xml'
-        metadataXml = "$globalModule.projectDir/src/bpm-metadata.xml"
-    }
+    task enhance(type: CubaEnhancing)
 }
 
 configure(coreModule) {
