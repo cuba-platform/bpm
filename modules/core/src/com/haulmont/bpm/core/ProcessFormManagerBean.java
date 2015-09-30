@@ -15,7 +15,7 @@ import org.activiti.bpmn.model.ExtensionElement;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.task.Task;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
@@ -24,7 +24,7 @@ import java.util.*;
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean(ProcessFormManager.NAME)
+@Component(ProcessFormManager.NAME)
 public class ProcessFormManagerBean implements ProcessFormManager {
 
     @Inject

@@ -10,7 +10,7 @@ import org.activiti.bpmn.model.*;
 import org.activiti.bpmn.model.Process;
 import org.activiti.engine.RepositoryService;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean(ExtensionElementsManager.NAME)
+@Component(ExtensionElementsManager.NAME)
 public class ExtensionElementsManagerBean implements ExtensionElementsManager {
 
     @Inject

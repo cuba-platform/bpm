@@ -7,14 +7,14 @@ package com.haulmont.bpm.core.jmx;
 
 import com.haulmont.bpm.core.ProcessMessagesManager;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
 /**
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean("bpm_MessagesCacheMBean")
+@Component("bpm_MessagesCacheMBean")
 public class MessagesCache implements MessagesCacheMBean {
 
     @Inject

@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +32,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean
+@Component
 public class ProcessFormRepository {
 
     @Inject

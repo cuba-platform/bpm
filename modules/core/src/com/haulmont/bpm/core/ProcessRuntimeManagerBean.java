@@ -26,7 +26,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
@@ -35,7 +35,7 @@ import java.util.*;
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean(ProcessRuntimeManager.NAME)
+@Component(ProcessRuntimeManager.NAME)
 public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
 
     @Inject

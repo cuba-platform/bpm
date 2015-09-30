@@ -26,7 +26,7 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.io.IOUtils;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import java.util.Map;
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean(ProcessRepositoryManager.NAME)
+@Component(ProcessRepositoryManager.NAME)
 public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
 
     @Inject

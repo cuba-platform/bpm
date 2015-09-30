@@ -10,7 +10,7 @@ import com.haulmont.cuba.core.global.MessageTools;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import org.activiti.bpmn.model.ExtensionElement;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean(ProcessMessagesManager.NAME)
+@Component(ProcessMessagesManager.NAME)
 public class ProcessMessagesManagerBean implements ProcessMessagesManager{
 
     public static final String MARK = "msg://";

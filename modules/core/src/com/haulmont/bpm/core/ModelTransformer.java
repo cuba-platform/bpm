@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.haulmont.bpm.exception.BpmException;
 import org.activiti.engine.RepositoryService;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.util.Map;
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean
+@Component
 public class ModelTransformer {
 
     @Inject

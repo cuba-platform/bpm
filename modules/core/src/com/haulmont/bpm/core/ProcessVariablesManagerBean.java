@@ -9,7 +9,7 @@ import com.haulmont.bpm.entity.ProcInstance;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.runtime.Execution;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.Map;
 
@@ -17,7 +17,7 @@ import java.util.Map;
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean(ProcessVariablesManager.NAME)
+@Component(ProcessVariablesManager.NAME)
 public class ProcessVariablesManagerBean implements ProcessVariablesManager{
 
     @Inject

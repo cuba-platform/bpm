@@ -19,7 +19,7 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.List;
 
@@ -27,7 +27,7 @@ import java.util.List;
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean(ProcessMigrator.NAME)
+@Component(ProcessMigrator.NAME)
 public class ProcessMigratorBean implements ProcessMigrator {
 
     protected static final Log log = LogFactory.getLog(ProcessMigratorBean.class);
