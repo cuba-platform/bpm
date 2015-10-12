@@ -6,9 +6,9 @@
 <Context>
     <!-- Database connection -->
     <Resource driverClassName="org.postgresql.Driver"
-              maxActive="20"
+              maxTotal="20"
               maxIdle="2"
-              maxWait="5000"
+              maxWaitMillis="5000"
               name="jdbc/CubaDS"
               password="root"
               type="javax.sql.DataSource"
