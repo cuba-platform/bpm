@@ -12,6 +12,7 @@ import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.bpm.exception.BpmException;
+import com.haulmont.bpm.exception.EmptyModelException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
@@ -190,6 +191,9 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             editorNode = new ObjectMapper().readTree(modifiedModelJson);
             BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
             BpmnModel model = jsonConverter.convertToBpmnModel(editorNode);
+            if (model.getMainProcess() == null) {
+                throw new EmptyModelException();
+            }
             byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(model);
             return new String(bpmnBytes, "utf-8");
         } catch (IOException e) {
