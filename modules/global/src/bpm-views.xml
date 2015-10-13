@@ -47,6 +47,7 @@
     </view>
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           name="procDefinition-browse">
+        <property name="actId"/>
         <property name="name"/>
         <property name="active"/>
         <property name="code"/>
