@@ -15,8 +15,10 @@
                               class="com.haulmont.bpm.entity.ProcTask"
                               view="procTask-browse">
             <query>
-                <![CDATA[select pt from bpm$ProcTask pt left join pt.candidateUsers cu
-                where (pt.procActor.user.id = :session$userId or (pt.procActor is null and cu.id = :session$userId)) and pt.endDate is null]]>
+                <![CDATA[select pt from bpm$ProcTask pt left join pt.procActor pa left join pa.user pau
+                where ((pau.id = :session$userId or
+				(pa is null and exists(select pt2 from bpm$ProcTask pt2 join pt2.candidateUsers cu where pt2.id = pt.id and cu.id = :session$userId)))
+				and pt.endDate is null)]]>
             </query>
         </collectionDatasource>
     </dsContext>

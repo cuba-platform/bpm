@@ -178,8 +178,9 @@ public class ProcActionsFrame extends AbstractFrame {
 
     protected ProcTask findCurrentUserProcTask() {
         LoadContext ctx = new LoadContext(ProcTask.class);
-        ctx.setQueryString("select pt from bpm$ProcTask pt left join pt.candidateUsers cu " +
-                "where pt.procInstance.id = :procInstance and (pt.procActor.user.id = :userId or (pt.procActor is null and cu.id = :userId)) " +
+        ctx.setQueryString("select pt from bpm$ProcTask pt left join pt.procActor pa left join pa.user pau " +
+                "where pt.procInstance.id = :procInstance and (pau.id = :userId or " +
+                "(pa is null and exists(select pt2 from bpm$ProcTask pt2 join pt2.candidateUsers cu where pt2.id = pt.id and cu.id = :userId))) " +
                 "and pt.endDate is null")
                 .setParameter("procInstance", procInstance)
                 .setParameter("userId", userSession.getCurrentOrSubstitutedUser());
