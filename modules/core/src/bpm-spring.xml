@@ -22,7 +22,7 @@
         <property name="transactionManager" ref="transactionManager"/>
         <property name="scriptingEngines" ref="scriptingEngines"/>
 
-        <property name="asyncExecutorEnabled" value="${bpm.activiti.asyncExecutorEnabled?:false}" />
+        <property name="asyncExecutorEnabled" value="${bpm.activiti.asyncJobExecutorEnabled?:false}" />
         <property name="asyncExecutorActivate" value="true" />
         <property name="preBpmnParseHandlers">
             <list>
