@@ -10,15 +10,15 @@ import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.Frame;
 import com.haulmont.cuba.gui.exception.AbstractGenericExceptionHandler;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.ManagedBean;
 import javax.inject.Inject;
 
 /**
  * @author gorbunkov
  * @version $Id$
  */
-@ManagedBean("bpm_EmptyModelExceptionHandler")
+@Component("bpm_EmptyModelExceptionHandler")
 public class EmptyModelExceptionHandler extends AbstractGenericExceptionHandler {
 
     @Inject
