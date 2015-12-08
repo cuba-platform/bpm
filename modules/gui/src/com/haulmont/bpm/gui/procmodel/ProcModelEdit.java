@@ -13,6 +13,7 @@ import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.bpm.entity.ProcModel;
 
 import javax.inject.Inject;
+import java.util.Map;
 
 /**
  * Model editor is also used for copying a model. In this case a {@code srcModel} window parameter
@@ -26,6 +27,12 @@ public class ProcModelEdit extends AbstractEditor<ProcModel> {
 
     @WindowParam(name = "srcModel")
     protected ProcModel srcModel;
+
+    @Override
+    public void init(Map<String, Object> params) {
+        super.init(params);
+        getDialogParams().setWidthAuto();
+    }
 
     @Override
     protected boolean preCommit() {
