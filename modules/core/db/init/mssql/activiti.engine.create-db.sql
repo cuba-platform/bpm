@@ -84,7 +84,7 @@ create table ACT_RU_JOB (
     RETRIES_ int,
     EXCEPTION_STACK_ID_ nvarchar(64),
     EXCEPTION_MSG_ nvarchar(4000),
-    DUEDATE_ datetime NULL,
+    DUEDATE_ datetime,
     REPEAT_ nvarchar(255),
     HANDLER_TYPE_ nvarchar(255),
     HANDLER_CFG_ nvarchar(4000),
@@ -187,7 +187,7 @@ create table ACT_EVT_LOG (
     USER_ID_ nvarchar(255),
     DATA_ varbinary(max),
     LOCK_OWNER_ nvarchar(255),
-    LOCK_TIME_ datetime null,
+    LOCK_TIME_ datetime,
     IS_PROCESSED_ tinyint default 0,
     primary key (LOG_NR_)
 )^

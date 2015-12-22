@@ -1,12 +1,12 @@
 -- begin BPM_PROC_DEFINITION
 create table BPM_PROC_DEFINITION (
     ID varchar(36),
-    CREATE_TS datetime null,
+    CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
-    UPDATE_TS datetime null,
+    UPDATE_TS datetime,
     UPDATED_BY varchar(50),
-    DELETE_TS datetime null,
+    DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
     NAME varchar(255),
@@ -20,12 +20,12 @@ create table BPM_PROC_DEFINITION (
 -- begin BPM_PROC_ROLE
 create table BPM_PROC_ROLE (
     ID varchar(36),
-    CREATE_TS datetime null,
+    CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
-    UPDATE_TS datetime null,
+    UPDATE_TS datetime,
     UPDATED_BY varchar(50),
-    DELETE_TS datetime null,
+    DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
     NAME varchar(255) not null,
@@ -39,12 +39,12 @@ create table BPM_PROC_ROLE (
 -- begin BPM_PROC_INSTANCE
 create table BPM_PROC_INSTANCE (
     ID varchar(36),
-    CREATE_TS datetime null,
+    CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
-    UPDATE_TS datetime null,
+    UPDATE_TS datetime,
     UPDATED_BY varchar(50),
-    DELETE_TS datetime null,
+    DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
     ENTITY_NAME varchar(255),
@@ -52,8 +52,8 @@ create table BPM_PROC_INSTANCE (
     ACTIVE boolean,
     CANCELLED boolean,
     ACT_PROCESS_INSTANCE_ID varchar(255),
-    START_DATE datetime null,
-    END_DATE datetime null,
+    START_DATE datetime,
+    END_DATE datetime,
     PROC_DEFINITION_ID varchar(36) not null,
     STARTED_BY_ID varchar(36),
     START_COMMENT text,
@@ -66,12 +66,12 @@ create table BPM_PROC_INSTANCE (
 -- begin BPM_PROC_ACTOR
 create table BPM_PROC_ACTOR (
     ID varchar(36),
-    CREATE_TS datetime null,
+    CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
-    UPDATE_TS datetime null,
+    UPDATE_TS datetime,
     UPDATED_BY varchar(50),
-    DELETE_TS datetime null,
+    DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
     USER_ID varchar(36),
@@ -86,12 +86,12 @@ create table BPM_PROC_ACTOR (
 -- begin BPM_PROC_ATTACHMENT_TYPE
 create table BPM_PROC_ATTACHMENT_TYPE (
     ID varchar(36),
-    CREATE_TS datetime null,
+    CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
-    UPDATE_TS datetime null,
+    UPDATE_TS datetime,
     UPDATED_BY varchar(50),
-    DELETE_TS datetime null,
+    DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
     NAME varchar(255) not null,
@@ -103,12 +103,12 @@ create table BPM_PROC_ATTACHMENT_TYPE (
 -- begin BPM_PROC_ATTACHMENT
 create table BPM_PROC_ATTACHMENT (
     ID varchar(36),
-    CREATE_TS datetime null,
+    CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
-    UPDATE_TS datetime null,
+    UPDATE_TS datetime,
     UPDATED_BY varchar(50),
-    DELETE_TS datetime null,
+    DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
     FILE_ID varchar(36),
@@ -124,17 +124,17 @@ create table BPM_PROC_ATTACHMENT (
 -- begin BPM_PROC_TASK
 create table BPM_PROC_TASK (
     ID varchar(36),
-    CREATE_TS datetime null,
+    CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
-    UPDATE_TS datetime null,
+    UPDATE_TS datetime,
     UPDATED_BY varchar(50),
-    DELETE_TS datetime null,
+    DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
     PROC_INSTANCE_ID varchar(36) not null,
-    START_DATE datetime null,
-    END_DATE datetime null,
+    START_DATE datetime,
+    END_DATE datetime,
     OUTCOME varchar(255),
     PROC_ACTOR_ID varchar(36),
     ACT_EXECUTION_ID varchar(255) not null,
@@ -142,7 +142,7 @@ create table BPM_PROC_TASK (
     ACT_TASK_ID varchar(255),
     COMMENT_ text,
     CANCELLED boolean,
-    CLAIM_DATE datetime null,
+    CLAIM_DATE datetime,
     ACT_PROCESS_DEFINITION_ID varchar(255),
     ACT_TASK_DEFINITION_KEY varchar(255),
     --
@@ -158,12 +158,12 @@ create table BPM_PROC_TASK_USER_LINK (
 -- begin BPM_PROC_MODEL
 create table BPM_PROC_MODEL (
     ID varchar(36),
-    CREATE_TS datetime null,
+    CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
-    UPDATE_TS datetime null,
+    UPDATE_TS datetime,
     UPDATED_BY varchar(50),
-    DELETE_TS datetime null,
+    DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
     NAME varchar(255) not null,
