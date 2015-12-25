@@ -1,6 +1,6 @@
 -- begin BPM_PROC_DEFINITION
 create table BPM_PROC_DEFINITION (
-    ID varchar(36),
+    ID varchar(32),
     CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
@@ -13,13 +13,13 @@ create table BPM_PROC_DEFINITION (
     CODE varchar(255),
     ACT_ID varchar(255),
     ACTIVE boolean,
-    MODEL_ID varchar(36),
+    MODEL_ID varchar(32),
     --
     primary key (ID)
 )^-- end BPM_PROC_DEFINITION
 -- begin BPM_PROC_ROLE
 create table BPM_PROC_ROLE (
-    ID varchar(36),
+    ID varchar(32),
     CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
@@ -30,7 +30,7 @@ create table BPM_PROC_ROLE (
     --
     NAME varchar(255) not null,
     CODE varchar(255) not null,
-    PROC_DEFINITION_ID varchar(36) not null,
+    PROC_DEFINITION_ID varchar(32) not null,
     ORDER_ integer,
     --
     primary key (ID)
@@ -38,7 +38,7 @@ create table BPM_PROC_ROLE (
 
 -- begin BPM_PROC_INSTANCE
 create table BPM_PROC_INSTANCE (
-    ID varchar(36),
+    ID varchar(32),
     CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
@@ -48,14 +48,14 @@ create table BPM_PROC_INSTANCE (
     DELETED_BY varchar(50),
     --
     ENTITY_NAME varchar(255),
-    ENTITY_ID varchar(36),
+    ENTITY_ID varchar(32),
     ACTIVE boolean,
     CANCELLED boolean,
     ACT_PROCESS_INSTANCE_ID varchar(255),
     START_DATE datetime,
     END_DATE datetime,
-    PROC_DEFINITION_ID varchar(36) not null,
-    STARTED_BY_ID varchar(36),
+    PROC_DEFINITION_ID varchar(32) not null,
+    STARTED_BY_ID varchar(32),
     START_COMMENT text,
     CANCEL_COMMENT text,
     ENTITY_EDITOR_NAME varchar(255),
@@ -65,7 +65,7 @@ create table BPM_PROC_INSTANCE (
 )^-- end BPM_PROC_INSTANCE
 -- begin BPM_PROC_ACTOR
 create table BPM_PROC_ACTOR (
-    ID varchar(36),
+    ID varchar(32),
     CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
@@ -74,9 +74,9 @@ create table BPM_PROC_ACTOR (
     DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
-    USER_ID varchar(36),
-    PROC_INSTANCE_ID varchar(36) not null,
-    PROC_ROLE_ID varchar(36) not null,
+    USER_ID varchar(32),
+    PROC_INSTANCE_ID varchar(32) not null,
+    PROC_ROLE_ID varchar(32) not null,
     ORDER_ integer,
     --
     primary key (ID)
@@ -85,7 +85,7 @@ create table BPM_PROC_ACTOR (
 
 -- begin BPM_PROC_ATTACHMENT_TYPE
 create table BPM_PROC_ATTACHMENT_TYPE (
-    ID varchar(36),
+    ID varchar(32),
     CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
@@ -102,7 +102,7 @@ create table BPM_PROC_ATTACHMENT_TYPE (
 -- end BPM_PROC_ATTACHMENT_TYPE
 -- begin BPM_PROC_ATTACHMENT
 create table BPM_PROC_ATTACHMENT (
-    ID varchar(36),
+    ID varchar(32),
     CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
@@ -111,19 +111,19 @@ create table BPM_PROC_ATTACHMENT (
     DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
-    FILE_ID varchar(36),
-    TYPE_ID varchar(36),
+    FILE_ID varchar(32),
+    TYPE_ID varchar(32),
     COMMENT_ text,
-    PROC_INSTANCE_ID varchar(36),
-    PROC_TASK_ID varchar(36),
-    AUTHOR_ID varchar(36),
+    PROC_INSTANCE_ID varchar(32),
+    PROC_TASK_ID varchar(32),
+    AUTHOR_ID varchar(32),
     --
     primary key (ID)
 )^
 -- end BPM_PROC_ATTACHMENT
 -- begin BPM_PROC_TASK
 create table BPM_PROC_TASK (
-    ID varchar(36),
+    ID varchar(32),
     CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
@@ -132,11 +132,11 @@ create table BPM_PROC_TASK (
     DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
-    PROC_INSTANCE_ID varchar(36) not null,
+    PROC_INSTANCE_ID varchar(32) not null,
     START_DATE datetime,
     END_DATE datetime,
     OUTCOME varchar(255),
-    PROC_ACTOR_ID varchar(36),
+    PROC_ACTOR_ID varchar(32),
     ACT_EXECUTION_ID varchar(255) not null,
     NAME varchar(255),
     ACT_TASK_ID varchar(255),
@@ -150,14 +150,14 @@ create table BPM_PROC_TASK (
 )^-- end BPM_PROC_TASK
 -- begin BPM_PROC_TASK_USER_LINK
 create table BPM_PROC_TASK_USER_LINK (
-    PROC_TASK_ID varchar(36),
-    USER_ID varchar(36),
+    PROC_TASK_ID varchar(32),
+    USER_ID varchar(32),
     primary key (PROC_TASK_ID, USER_ID)
 )^
 -- end BPM_PROC_TASK_USER_LINK
 -- begin BPM_PROC_MODEL
 create table BPM_PROC_MODEL (
-    ID varchar(36),
+    ID varchar(32),
     CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
