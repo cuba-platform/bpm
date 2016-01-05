@@ -39,7 +39,7 @@ cuba {
     }
 
     ide {
-        vcs = 'svn'
+        vcs = 'Git'
     }
 }
 
