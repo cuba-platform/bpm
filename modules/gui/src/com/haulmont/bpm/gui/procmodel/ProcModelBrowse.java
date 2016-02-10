@@ -7,6 +7,7 @@ package com.haulmont.bpm.gui.procmodel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.haulmont.bali.util.Preconditions;
 import com.haulmont.bpm.config.BpmConfig;
 import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcModel;
@@ -26,10 +27,8 @@ import com.haulmont.cuba.gui.components.Action.Status;
 import com.haulmont.cuba.gui.components.DialogAction.Type;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.export.ClosedDataProviderException;
 import com.haulmont.cuba.gui.export.ExportDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
-import com.haulmont.cuba.gui.export.ResourceException;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import com.haulmont.cuba.security.global.UserSession;
 import org.apache.commons.logging.Log;
@@ -38,7 +37,9 @@ import org.apache.commons.logging.LogFactory;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -180,40 +181,18 @@ public class ProcModelBrowse extends AbstractLookup {
 
         protected ProcModel procModel;
 
-        protected InputStream inputStream;
-
-        protected boolean closed;
-
         public ModelDataProvider(ProcModel procModel) {
             this.procModel = procModel;
+
+            Preconditions.checkNotNullArgument(procModel, "Null process model passed");
         }
 
         @Override
-        public InputStream provide() throws ResourceException, ClosedDataProviderException {
-            if (closed)
-                throw new ClosedDataProviderException();
-
-            if (procModel == null)
-                throw new IllegalArgumentException("Null process model passed");
-
+        public InputStream provide() {
             RestModel restModel = modelService.getModelJson(procModel.getActModelId());
-            inputStream = new ByteArrayInputStream(restModel.getModelJson().getBytes(StandardCharsets.UTF_8));
+            InputStream inputStream = new ByteArrayInputStream(restModel.getModelJson().getBytes(StandardCharsets.UTF_8));
 
             return inputStream;
-        }
-
-        @Override
-        public void close() {
-            if (inputStream != null) {
-                closed = true;
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    log.warn("Error while closing file data provider", e);
-                } finally {
-                    inputStream = null;
-                }
-            }
         }
     }
 
