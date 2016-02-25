@@ -71,7 +71,8 @@ public class ProcRole extends StandardEntity {
 
     @MetaProperty
     public String getLocName() {
-        if (PersistenceHelper.isLoaded(this, "procDefinition") && procDefinition != null && PersistenceHelper.isLoaded(this, "actId") && !Strings.isNullOrEmpty(procDefinition.getActId())) {
+        if (PersistenceHelper.isLoaded(this, "procDefinition") && procDefinition != null
+                && PersistenceHelper.isLoaded(procDefinition, "actId") && !Strings.isNullOrEmpty(procDefinition.getActId())) {
             ProcessMessagesService processMessagesService = AppBeans.get(ProcessMessagesService.class);
             String locName = processMessagesService.findMessage(procDefinition.getActId(), code);
             if (locName != null) return locName;
