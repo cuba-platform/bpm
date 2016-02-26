@@ -183,7 +183,7 @@ configure(webModule) {
         compile(globalModule)
         compile(guiModule)
         compile("com.haulmont.cuba:cuba-web:$cubaVersion")
-
+        webcontent("com.haulmont.cuba:cuba-web:$cubaVersion:web@zip")
         webcontent("com.haulmont.cuba:cuba-web-toolkit:$cubaVersion:web@zip")
 
         modeler(activitiModeler)
@@ -201,7 +201,14 @@ configure(webModule) {
         }
     }
 
-    jar.dependsOn repackWebcontent
+    task webArchive(dependsOn: repackWebcontent, type: Zip) {
+        from file("$webModule.buildDir/web")
+        classifier = 'web'
+    }
+
+    artifacts {
+        archives webArchive
+    }
 
     task deployConf(type: Copy) {
         from file('src')
@@ -213,7 +220,7 @@ configure(webModule) {
         appName = 'bpm'
     }
     deployConf.dependsOn clearMessagesCache
-    
+
     task cleanConf(description: 'Cleans up conf directory') << {
         def dir = new File(cuba.tomcat.dir, '/conf/bpm')
         if (dir.isDirectory()) {
