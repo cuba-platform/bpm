@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ Copyright (c) 2008-2016 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+  -->
+
+<definitions id="definitions"
+             targetNamespace="http://activiti.org/bpmn20"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:cuba="http://schemas.haulmont.com/bpm/5.5/bpm.xsd">
+
+    <process id="miParallelTest" name="Multi instance parallel">
+
+        <extensionElements>
+            <activiti:eventListener class="com.haulmont.bpm.core.engine.listener.BpmActivitiListener"/>
+            <cuba:procRoles>
+                <cuba:procRole name="Manager" code="manager"/>
+            </cuba:procRoles>
+        </extensionElements>
+
+        <startEvent id="start"/>
+
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="task1" />
+
+        <userTask id="task1" name="Task 1">
+            <extensionElements>
+                <cuba:procRole>manager</cuba:procRole>
+            </extensionElements>
+        </userTask>
+
+        <userTask id="task2" name="Task 2">
+            <extensionElements>
+                <cuba:procRole>manager</cuba:procRole>
+            </extensionElements>
+        </userTask>
+
+
+        <sequenceFlow id="flow2" sourceRef="task1" targetRef="decisionModule" />
+
+        <exclusiveGateway id="decisionModule" name="Scanning approved?" />
+
+        <sequenceFlow id="flow3" sourceRef="decisionModule" targetRef="task2">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[
+                ${task1_result.count('back') > 0}
+                ]]>
+            </conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow id="flow4" sourceRef="decisionModule" targetRef="theEnd">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[
+                 ${task1_result.count('forward') > 0}
+                 ]]>
+            </conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow id="flow5" sourceRef="task2" targetRef="task1" />
+
+        <endEvent id="theEnd" />
+
+    </process>
+
+</definitions>

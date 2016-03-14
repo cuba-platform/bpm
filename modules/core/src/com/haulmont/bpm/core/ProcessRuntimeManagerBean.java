@@ -197,7 +197,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             runtimeService.setVariableLocal(procTask.getActExecutionId(), "outcome", outcome);
 
             //execution variable '<taskName>_result' can be used after multi-instance tasks. It holds outcomes for all task actors
-            String variableName = createResultVariableName(procTask);
+            String variableName = createResultVariableName(procTask.getActTaskDefinitionKey());
             ProcTaskResult taskResult = (ProcTaskResult) runtimeService.getVariable(procTask.getActExecutionId(), variableName);
             if (taskResult == null)
                 taskResult = new ProcTaskResult();
@@ -211,8 +211,8 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         }
     }
 
-    protected String createResultVariableName(ProcTask procTask) {
-        return procTask.getActTaskDefinitionKey().replace("-", "") + "_result";
+    protected String createResultVariableName(String actTaskDefinitionKey) {
+        return actTaskDefinitionKey.replace("-", "") + "_result";
     }
 
     @Override
@@ -313,6 +313,11 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         procTask.setActProcessDefinitionId(actTask.getProcessDefinitionId());
         em.persist(procTask);
 
+        //reset variable '<taskName>_result'
+        String variableName = createResultVariableName(actTask.getTaskDefinitionKey());
+        ProcTaskResult taskResult = new ProcTaskResult();
+        runtimeService.setVariable(procTask.getActExecutionId(), variableName, taskResult);
+
         return procTask;
     }
 
@@ -375,6 +380,11 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         procTask.setStartDate(AppBeans.get(TimeSource.class).currentTimestamp());
         procTask.setCandidateUsers(candidateUsers);
         em.persist(procTask);
+
+        //reset variable '<taskName>_result'
+        String variableName = createResultVariableName(actTask.getTaskDefinitionKey());
+        ProcTaskResult taskResult = new ProcTaskResult();
+        runtimeService.setVariable(procTask.getActExecutionId(), variableName, taskResult);
 
         return procTask;
     }

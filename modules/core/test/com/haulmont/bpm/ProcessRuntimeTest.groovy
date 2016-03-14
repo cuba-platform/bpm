@@ -16,7 +16,6 @@ import com.haulmont.bpm.testsupport.ObjectGraphBuilderProvider
 import com.haulmont.cuba.core.Transaction
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.security.entity.User
-import org.activiti.engine.runtime.Execution
 
 /**
  *
@@ -31,7 +30,7 @@ class ProcessRuntimeTest extends BpmTestCase {
     static final String CLAIM_TASK_PROCESS_PATH = "com/haulmont/bpm/process/testClaimTask.bpmn20.xml";
     static final String SCRIPT_TASK_PROCESS_PATH = "com/haulmont/bpm/process/testScriptTask.bpmn20.xml";
     static final String VARIABLES_API_PROCESS_PATH = "com/haulmont/bpm/process/testVariablesApi.bpmn20.xml";
-
+    static final String MULTIPLE_ENTER_TO_TASK_PROCESS_PATH = "com/haulmont/bpm/process/testMutipleEnterToTask.bpmn20.xml";
 
     void testBasic() {
         ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(BASIC_PROCESS_PATH, null, null)
@@ -425,5 +424,78 @@ class ProcessRuntimeTest extends BpmTestCase {
         runtimeService.signal(execution.id)
         def variable = variablesManager.getVariable(procInstance, 'b')
         assertEquals(8, variable)
+    }
+
+    void testMultipleEnterToTask() {
+        ProcDefinition procDefinition = processRepositoryManager.deployProcessFromPath(MULTIPLE_ENTER_TO_TASK_PROCESS_PATH, null, null)
+        ProcInstance newProcessInstance
+
+        User johnDoeUser
+
+        ProcRole managerProcRole = procDefinition.procRoles.find {it.code == 'manager'}
+
+        //create test users and proc actors
+        persistence.createTransaction().execute( { em ->
+            johnDoeUser = metadata.create(User.class)
+            johnDoeUser.login = 'johndoe'
+            em.persist(johnDoeUser)
+
+            def builder = ObjectGraphBuilderProvider.createBuilder(em)
+            newProcessInstance = builder.procInstance(testId: 'procInstance1', procDefinition: procDefinition) {
+                procActor(user: johnDoeUser, procRole: managerProcRole, order: 0) {
+                    procInstance(refId: 'procInstance1')
+                }
+            }
+        } as Transaction.Runnable)
+
+        newProcessInstance = processRuntimeManager.startProcess(newProcessInstance, '', [:])
+
+        ProcTask johnDoeProcTask
+
+        //check that process task for manager created
+        persistence.createTransaction().execute( { em ->
+            def query = em.createQuery('select a from bpm$ProcTask a where a.procInstance.id = :procInstance and a.endDate is null', ProcTask.class)
+            query.setParameter('procInstance', newProcessInstance)
+            def procTasks = query.getResultList()
+            assertEquals(1, procTasks.size())
+            johnDoeProcTask = procTasks.find { it.procActor.user.id == johnDoeUser.id }
+            assertEquals('task1', johnDoeProcTask.actTaskDefinitionKey)
+        } as Transaction.Runnable)
+
+        processRuntimeManager.completeProcTask(johnDoeProcTask, 'back', '', null)
+
+        ProcTask johnDoeProcTask2
+
+        //check that process task1 is created again
+        persistence.createTransaction().execute( { em ->
+            def query = em.createQuery('select a from bpm$ProcTask a where a.procInstance.id = :procInstance and a.endDate is null', ProcTask.class)
+            query.setParameter('procInstance', newProcessInstance)
+            def procTasks = query.getResultList()
+            assertEquals(1, procTasks.size())
+            johnDoeProcTask2 = procTasks.find { it.procActor.user.id == johnDoeUser.id }
+            assertEquals('task2', johnDoeProcTask2.actTaskDefinitionKey)
+        } as Transaction.Runnable)
+
+        processRuntimeManager.completeProcTask(johnDoeProcTask2, 'do', '', null)
+
+        ProcTask johnDoeProcTask1_2
+
+        //check that process task1 is created again
+        persistence.createTransaction().execute( { em ->
+            def query = em.createQuery('select a from bpm$ProcTask a where a.procInstance.id = :procInstance and a.endDate is null', ProcTask.class)
+            query.setParameter('procInstance', newProcessInstance)
+            def procTasks = query.getResultList()
+            assertEquals(1, procTasks.size())
+            johnDoeProcTask1_2 = procTasks.find { it.procActor.user.id == johnDoeUser.id }
+            assertEquals('task1', johnDoeProcTask1_2.actTaskDefinitionKey)
+        } as Transaction.Runnable)
+
+        processRuntimeManager.completeProcTask(johnDoeProcTask1_2, 'forward', '', null)
+
+        //check that process went on correct execution flow and finished
+        persistence.createTransaction().execute( { em ->
+            newProcessInstance = em.reload(newProcessInstance)
+            assertFalse(newProcessInstance.active)
+        } as Transaction.Runnable)
     }
 }
