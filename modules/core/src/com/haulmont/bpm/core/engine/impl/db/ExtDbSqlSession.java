@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2008-2015 Haulmont. All rights reserved.
- * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ * Copyright (c) 2008-2016 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
 package com.haulmont.bpm.core.engine.impl.db;
@@ -18,8 +18,6 @@ import java.sql.Connection;
  * module for the first time. {@code performSchemaOperationsProcessEngineBuild()} queries the database, but the DbUpdater
  * hasn't created activiti tables by that time.
  * </p>
- * @author gorbunkov
- * @version $Id$
  */
 public class ExtDbSqlSession extends DbSqlSession {
     public ExtDbSqlSession(DbSqlSessionFactory dbSqlSessionFactory) {

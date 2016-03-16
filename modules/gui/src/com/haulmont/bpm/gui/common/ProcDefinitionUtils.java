@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2008-2015 Haulmont. All rights reserved.
- * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ * Copyright (c) 2008-2016 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
 package com.haulmont.bpm.gui.common;
@@ -11,8 +11,6 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 /**
- * @author gorbunkov
- * @version $Id$
  */
 public class ProcDefinitionUtils {
     public static String getProcessKeyFromXml(String xml) {

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2008-2015 Haulmont. All rights reserved.
- * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ * Copyright (c) 2008-2016 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
 package com.haulmont.bpm.core;
@@ -11,8 +11,6 @@ import java.util.*;
 /**
  * Class is used for storing a result of process user task. It stores a number of decisions
  * made during the task execution
- * @author gorbunkov
- * @version $Id$
  */
 public class ProcTaskResult implements Serializable {
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2008-2015 Haulmont. All rights reserved.
- * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ * Copyright (c) 2008-2016 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
 package com.haulmont.bpm.entity;
@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
 import com.haulmont.cuba.security.entity.User;
 
 /**
- * @author gorbunkov
  */
 @Table(name = "BPM_PROC_ATTACHMENT")
 @Entity(name = "bpm$ProcAttachment")

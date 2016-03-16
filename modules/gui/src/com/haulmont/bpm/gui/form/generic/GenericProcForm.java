@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2008-2015 Haulmont. All rights reserved.
- * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ * Copyright (c) 2008-2016 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
 package com.haulmont.bpm.gui.form.generic;
@@ -31,8 +31,6 @@ import java.util.Map;
 /**
  * Form that dynamically generates components for editing parameters that are defined
  * in form description in BPMN process xml.
- * @author gorbunkov
- * @version $Id$
  */
 public class GenericProcForm extends AbstractProcForm {
 

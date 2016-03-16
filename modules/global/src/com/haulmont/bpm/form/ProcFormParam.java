@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2008-2015 Haulmont. All rights reserved.
- * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ * Copyright (c) 2008-2016 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
 package com.haulmont.bpm.form;
@@ -15,8 +15,6 @@ import java.util.Map;
 
 /**
  * POJO representation of form parameter from BPMN process xml
- * @author gorbunkov
- * @version $Id$
  */
 public class ProcFormParam implements Serializable {
 

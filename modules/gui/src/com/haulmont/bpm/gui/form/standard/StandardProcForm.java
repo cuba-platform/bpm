@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2008-2015 Haulmont. All rights reserved.
- * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ * Copyright (c) 2008-2016 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
 package com.haulmont.bpm.gui.form.standard;
@@ -29,7 +29,6 @@ import java.util.Map;
  * </ol>
  * Visibility of components (comment field, frames for attachments and actors) are defined by
  * parameters of {@code formDefinition}
- * @author gorbunkov
  */
 public class StandardProcForm extends AbstractProcForm {
 

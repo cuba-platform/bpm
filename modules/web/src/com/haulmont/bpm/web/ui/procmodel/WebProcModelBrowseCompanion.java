@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2008-2015 Haulmont. All rights reserved.
- * Use is subject to license terms, see http://www.cuba-platform.com/license for details.
+ * Copyright (c) 2008-2016 Haulmont. All rights reserved.
+ * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
 package com.haulmont.bpm.web.ui.procmodel;
@@ -12,8 +12,6 @@ import com.haulmont.cuba.web.controllers.ControllerUtils;
 import java.util.Collections;
 
 /**
- * @author gorbunkov
- * @version $Id$
  */
 public class WebProcModelBrowseCompanion implements ProcModelBrowse.Companion {
 
