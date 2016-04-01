@@ -32,7 +32,6 @@
                width="100%">
             <actions>
                 <action id="openProcInstance" caption="msg://openProcInstance" trackSelection="true" invoke="openProcInstance"/>
-                <action id="refresh"/>
             </actions>
             <columns>
                 <column id="procInstance.procDefinition"
@@ -43,7 +42,6 @@
             </columns>
             <buttonsPanel>
                 <button action="procTasksTable.openProcInstance"/>
-                <button action="procTasksTable.refresh"/>
             </buttonsPanel>
             <rows datasource="procTasksDs"/>
             <rowsCount/>
