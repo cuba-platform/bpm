@@ -35,8 +35,8 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
     protected ProcDefinition selectedProcDefinition;
 
     public enum Decision {
-        UPDATE_EXISTING,
         CREATE_NEW,
+        UPDATE_EXISTING,
     }
 
     @Override
