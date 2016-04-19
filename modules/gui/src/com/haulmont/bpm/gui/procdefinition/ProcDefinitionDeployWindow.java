@@ -15,7 +15,7 @@ import com.haulmont.cuba.gui.components.OptionsGroup;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
 
 import javax.inject.Inject;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -45,7 +45,7 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
 
         initWindowActions();
 
-        Map<String, Object> optionsMap = new HashMap<>();
+        Map<String, Object> optionsMap = new LinkedHashMap<>();
         for (Decision decision : Decision.values()) {
             optionsMap.put(getMessage(decision.name()), decision);
         }
