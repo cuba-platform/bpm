@@ -10,20 +10,33 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.haulmont.bpm.core.ModelTransformer
 import com.haulmont.bpm.service.ModelService
-import com.haulmont.bpm.testsupport.BpmTestCase
+import com.haulmont.bpm.testsupport.BpmTestContainer
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.Resources
+import org.junit.After
+import org.junit.Before
+import org.junit.ClassRule
 import org.junit.Test
+
+import static org.junit.Assert.assertEquals
 
 /**
  *
  */
-class ModelTransformationTest extends BpmTestCase {
+class ModelTransformationTest {
 
     ModelService modelService
 
+    @ClassRule
+    public static BpmTestContainer cont = new BpmTestContainer();
+
+    @After
+    public void after() {
+        cont.cleanUpDatabase();
+    }
+
+    @Before
     void setUp() {
-        super.setUp()
         modelService = AppBeans.get(ModelService.class)
     }
 
@@ -33,7 +46,7 @@ class ModelTransformationTest extends BpmTestCase {
         def mainModelActId = uploadModel("mainModel", ["{SUB_MODEL_ACT_ID}": subModelActId])
         def modelTransformer = AppBeans.get(ModelTransformer.class)
 
-        def bytes = repositoryService.getModelEditorSource(mainModelActId)
+        def bytes = cont.repositoryService.getModelEditorSource(mainModelActId)
         def transformedJson = modelTransformer.transformModel(bytes)
         def objectMapper = new ObjectMapper()
         def objectNode = objectMapper.readTree(transformedJson)

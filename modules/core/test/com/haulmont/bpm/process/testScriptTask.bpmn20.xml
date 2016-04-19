@@ -36,8 +36,10 @@
                 def tx = persistence.createTransaction()
                 try {
                     def em = persistence.getEntityManager();
+                    def group = em.createQuery('select g from sec$Group g').getFirstResult()
                     def user = metadata.create(com.haulmont.cuba.security.entity.User.class)
                     user.setLogin(userName)
+                    user.setGroup(group)
                     em.persist(user)
                     tx.commit()
                 } finally {
