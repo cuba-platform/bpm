@@ -31,6 +31,7 @@ import com.haulmont.cuba.gui.export.ExportDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import com.haulmont.cuba.security.global.UserSession;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -107,6 +108,7 @@ public class ProcModelBrowse extends AbstractLookup {
         });
         procModelsTable.setItemClickAction(procModelsTableOpenModeler);
         modelUpload.addFileUploadSucceedListener(new ModelUploadListener());
+        modelUpload.setCaption(StringUtils.EMPTY);
     }
 
     public void openModeler() {

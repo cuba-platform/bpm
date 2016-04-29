@@ -45,9 +45,8 @@
                         icon="icons/copy.png"
                         trackSelection="true"/>
                 <action id="export"
-                        caption="msg://exportModel"
                         invoke="exportModel"
-                        icon="icons/reports-template-download.png"
+                        icon="icons/download.png"
                         trackSelection="true"/>
                 <action id="deploy"
                         caption="msg://deploy"
@@ -72,9 +71,11 @@
                 <button id="copyBtn"
                         action="procModelsTable.copy"/>
                 <upload id="modelUpload"
-                        caption="msg://importModel"/>
+                        icon="icons/upload.png"
+                        description="msg://importModel"/>
                 <button id="exportBtn"
-                        action="procModelsTable.export"/>
+                        action="procModelsTable.export"
+                        description="msg://exportModel"/>
                 <button id="deployBtn"
                         action="procModelsTable.deploy"/>
             </buttonsPanel>
