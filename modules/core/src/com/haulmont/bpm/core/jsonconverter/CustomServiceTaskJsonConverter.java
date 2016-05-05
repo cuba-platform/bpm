@@ -86,7 +86,8 @@ public class CustomServiceTaskJsonConverter extends ServiceTaskJsonConverter {
             String type = BpmnJsonConverterUtil.getValueAsString("type", paramNode);
             String propertyPackageId = propertyPackageName.substring(0, propertyPackageName.lastIndexOf("package"));
             String paramValue = BpmnJsonConverterUtil.getPropertyValueAsString(propertyPackageId, elementNode);
-            if (ServiceTaskStencilMethodArgType.STRING.customObjectType().equals(type)) paramValue = "'" + paramValue + "'";
+            if (ServiceTaskStencilMethodArgType.STRING.customObjectType().equals(type) ||
+                    ServiceTaskStencilMethodArgType.TEXT.customObjectType().equals(type)) paramValue = "'" + paramValue + "'";
             paramValies.add(paramValue);
         }
 

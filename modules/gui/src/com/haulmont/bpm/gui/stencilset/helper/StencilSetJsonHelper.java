@@ -202,6 +202,7 @@ public class StencilSetJsonHelper {
                 .collect(Collectors.toList());
         propertyPackagesNames.addAll(propertyPackagesNamesFromMethodArgs);
         gsonStencil.setPropertyPackages(propertyPackagesNames);
+        gsonStencil.setMainPropertyPackages(propertyPackagesNamesFromMethodArgs);
 
         gsonStencil.setRoles(Arrays.asList(SERVICE_TASK_STENCIL_ROLES));
         GsonStencil.Custom custom = new GsonStencil.Custom();

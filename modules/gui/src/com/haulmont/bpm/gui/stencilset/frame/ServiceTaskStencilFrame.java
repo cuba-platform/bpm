@@ -7,6 +7,7 @@ package com.haulmont.bpm.gui.stencilset.frame;
 
 import com.haulmont.bpm.entity.stencil.ServiceTaskStencil;
 import com.haulmont.bpm.entity.stencil.ServiceTaskStencilMethodArg;
+import com.haulmont.bpm.entity.stencil.Stencil;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.FileStorageException;
@@ -45,6 +46,10 @@ public class ServiceTaskStencilFrame extends AbstractStencilFrame<ServiceTaskSte
 
     @Inject
     private ExportDisplay exportDisplay;
+
+    @Inject
+    private CollectionDatasource<Stencil, UUID> stencilsDs;
+
     private LinkButton downloadIconBtn;
 
     @Override
@@ -83,6 +88,13 @@ public class ServiceTaskStencilFrame extends AbstractStencilFrame<ServiceTaskSte
             hbox.add(downloadIconBtn);
             hbox.add(uploadField);
             return hbox;
+        });
+
+        fieldGroup.addValidator("stencilId", value -> {
+            if (value == null) return;
+            boolean stencilIdUniquenessViolated = stencilsDs.getItems().stream()
+                    .anyMatch(stencil -> stencil != stencilDs.getItem() && value.equals(stencil.getStencilId()));
+            if (stencilIdUniquenessViolated) throw new ValidationException(formatMessage("stencilWithIdExists", value));
         });
     }
 

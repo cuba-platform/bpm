@@ -28,7 +28,8 @@
                   margin="false,true,false,false"
                   spacing="true">
                 <treeTable id="stencilsTable"
-                           width="100%">
+                           width="100%"
+                           sortable="false">
                     <actions>
                         <action id="createStencil" invoke="createServiceTaskStencil" caption="msg://addStencil"
                                 icon="font-icon:PLUS"/>

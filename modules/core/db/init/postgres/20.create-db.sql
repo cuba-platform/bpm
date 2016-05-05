@@ -48,5 +48,4 @@ create unique index IDX_BPM_PROC_MODEL_UNIQ_NAME on BPM_PROC_MODEL (NAME) where 
 -- end BPM_PROC_MODEL
 -- begin BPM_STENCIL_SET
 create unique index IDX_BPM_BPM_STENCIL_SET_UNIQ_NAME on BPM_STENCIL_SET (NAME) where DELETE_TS is null ^
-create unique index IDX_BPM_BPM_STENCIL_SET_UNIQ_JSON_DATA on BPM_STENCIL_SET (JSON_DATA) where DELETE_TS is null ^
 -- end BPM_STENCIL_SET
