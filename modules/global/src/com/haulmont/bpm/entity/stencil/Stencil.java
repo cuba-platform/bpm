@@ -25,6 +25,9 @@ public class Stencil extends AbstractNotPersistentEntity {
     @MetaProperty
     protected Boolean editable = false;
 
+    @MetaProperty
+    protected Integer orderNo;
+
     @MetaProperty(mandatory = true)
     @ManyToOne
     protected GroupStencil parentGroup;
@@ -59,5 +62,13 @@ public class Stencil extends AbstractNotPersistentEntity {
 
     public void setParentGroup(GroupStencil parentGroup) {
         this.parentGroup = parentGroup;
+    }
+
+    public Integer getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(Integer orderNo) {
+        this.orderNo = orderNo;
     }
 }

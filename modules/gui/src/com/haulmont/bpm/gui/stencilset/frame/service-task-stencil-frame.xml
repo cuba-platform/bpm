@@ -29,6 +29,7 @@
         <label value="msg://methodArgs"/>
         <table id="stencilParamsTable" editable="true" width="100%">
             <actions>
+                <action id="addMethodArg" invoke="addMethodArg" caption="msg://addMethodArg" icon="icons/add.png"/>
                 <action id="remove"/>
             </actions>
             <columns>
@@ -41,8 +42,7 @@
             <buttonsPanel id="stencilParamsTableButtonsPanel"
                           alwaysVisible="true">
                 <button id="addMethodArgBtn"
-                        invoke="addMethodArg"
-                        caption="msg://addMethodArg"/>
+                        action="stencilParamsTable.addMethodArg"/>
                 <button id="removeMethodArgBtn"
                         action="stencilParamsTable.remove"/>
             </buttonsPanel>

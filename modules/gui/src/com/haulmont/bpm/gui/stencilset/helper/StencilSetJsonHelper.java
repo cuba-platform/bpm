@@ -40,6 +40,7 @@ public class StencilSetJsonHelper {
     public static List<Stencil> parseStencilSetJson(String stencilSetJson) {
         List<Stencil> allStencils  = new ArrayList<>();
         Map<String, GroupStencil> groupStencilsMap = new HashMap<>();
+        Map<String, Integer> groupQtyMap = new HashMap<>();
 
         JsonParser jsonParser = new JsonParser();
         JsonElement rootElement = jsonParser.parse(stencilSetJson);
@@ -71,10 +72,13 @@ public class StencilSetJsonHelper {
                 groupStencil = new GroupStencil();
                 groupStencil.setTitle(groupName);
                 groupStencilsMap.put(groupName, groupStencil);
+                groupQtyMap.put(groupName, 0);
                 allStencils.add(groupStencil);
             }
 
             stencil.setParentGroup(groupStencil);
+            groupQtyMap.put(groupName, groupQtyMap.get(groupName) + 1);
+            stencil.setOrderNo(groupQtyMap.get(groupName));
             allStencils.add(stencil);
         }
         return allStencils;

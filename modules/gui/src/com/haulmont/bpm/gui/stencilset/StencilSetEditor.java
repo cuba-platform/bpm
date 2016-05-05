@@ -16,6 +16,7 @@ import com.haulmont.bpm.service.StencilSetService;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.ComponentsHelper;
 import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
@@ -53,6 +54,12 @@ public class StencilSetEditor extends AbstractWindow {
 
     @Inject
     protected StencilSetService stencilSetService;
+
+    @Inject
+    protected Button upBtn;
+
+    @Inject
+    protected Button downBtn;
 
     protected AbstractStencilFrame activeStencilFrame;
 
@@ -97,6 +104,14 @@ public class StencilSetEditor extends AbstractWindow {
         });
 
         stencilsTableRemove.setAutocommit(false);
+
+        MoveStencilUpAction moveStencilUpAction = new MoveStencilUpAction();
+        upBtn.setAction(moveStencilUpAction);
+        stencilsTable.addAction(moveStencilUpAction);
+
+        MoveStencilDownAction moveStencilDownAction = new MoveStencilDownAction();
+        downBtn.setAction(moveStencilDownAction);
+        stencilsTable.addAction(moveStencilDownAction);
     }
 
     protected void initData() {
@@ -131,7 +146,21 @@ public class StencilSetEditor extends AbstractWindow {
                 group = currentlySelected.getParentGroup();
             }
         }
+
+        if (group == null) {
+            showNotification(getMessage("selectGroup"), NotificationType.WARNING);
+            return;
+        }
+
         ServiceTaskStencil stencilEntity = metadata.create(ServiceTaskStencil.class);
+        stencilEntity.setOrderNo(0);
+
+        GroupStencil finalGroup = group;
+        stencilsDs.getItems().stream()
+                .filter(stencil -> finalGroup.equals(stencil.getParentGroup()))
+                .max((o1, o2) -> o1.getOrderNo() - o2.getOrderNo())
+                .ifPresent(stencilWithMaxOrderNo -> stencilEntity.setOrderNo(stencilWithMaxOrderNo.getOrderNo() + 1));
+
         stencilEntity.setParentGroup(group);
         stencilsDs.addItem(stencilEntity);
         stencilsTable.setSelected(stencilEntity);
@@ -156,7 +185,7 @@ public class StencilSetEditor extends AbstractWindow {
         showOptionDialog(getMessage("resetStencilSetDlg.caption"),
                 getMessage("resetStencilSetDlg.message"),
                 MessageType.CONFIRMATION,
-                new Action[] {
+                new Action[]{
                         new DialogAction(DialogAction.Type.YES) {
                             @Override
                             public void actionPerform(Component component) {
@@ -168,7 +197,8 @@ public class StencilSetEditor extends AbstractWindow {
                         },
                         new DialogAction(DialogAction.Type.NO) {
                             @Override
-                            public void actionPerform(Component component) {}
+                            public void actionPerform(Component component) {
+                            }
                         }
                 });
     }
@@ -185,5 +215,113 @@ public class StencilSetEditor extends AbstractWindow {
             return validate(validatables);
         }
         return true;
+    }
+
+    protected void refreshDs() {
+        Collection<Stencil> items = new ArrayList<>(stencilsDs.getItems());
+        stencilsDs.clear();
+
+        Map<Stencil, List<Stencil>> groupMap = new LinkedHashMap<>();
+        items.stream().filter(stencil -> stencil instanceof GroupStencil)
+                .forEach(groupStencil -> groupMap.put(groupStencil, new ArrayList<>()));
+
+        items.stream().filter(stencil -> !(stencil instanceof GroupStencil))
+                .forEach(stencil -> groupMap.get(stencil.getParentGroup()).add(stencil));
+
+        groupMap.values().stream().forEach(stencilsList -> stencilsList.sort((o1, o2) -> o1.getOrderNo() - o2.getOrderNo()));
+
+        for (Map.Entry<Stencil, List<Stencil>> entry : groupMap.entrySet()) {
+            Stencil groupStencil = entry.getKey();
+            List<Stencil> stencilsInsideGroup = entry.getValue();
+            stencilsDs.addItem(groupStencil);
+            stencilsInsideGroup.stream().forEach(stencilsDs::addItem);
+        }
+    }
+
+    protected class MoveStencilUpAction extends BaseAction {
+
+        protected MoveStencilUpAction() {
+            super("moveUp");
+        }
+
+        @Override
+        public void actionPerform(Component component) {
+            Stencil selectedStencil = stencilsDs.getItem();
+            Integer currentOrderNo = selectedStencil.getOrderNo();
+            stencilsDs.getItems().stream()
+                    .filter(stencil -> stencil.getParentGroup() != null &&
+                            stencil.getParentGroup().equals(selectedStencil.getParentGroup())
+                            && stencil.getOrderNo() < currentOrderNo)
+                    .max((o1, o2) -> o1.getOrderNo() - o2.getOrderNo())
+                    .ifPresent(prevStencil -> {
+                        selectedStencil.setOrderNo(prevStencil.getOrderNo());
+                        prevStencil.setOrderNo(currentOrderNo);
+                        refreshDs();
+                        stencilsTable.setSelected(selectedStencil);
+                    });
+        }
+
+        @Override
+        protected boolean isApplicable() {
+            Stencil selectedItem = stencilsDs.getItem();
+            if (selectedItem != null && selectedItem instanceof ServiceTaskStencil) {
+                for (Stencil stencil : stencilsDs.getItems()) {
+                    if (selectedItem.getParentGroup().equals(stencil.getParentGroup())
+                            && stencil.getOrderNo() < selectedItem.getOrderNo()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public String getCaption() {
+            return "";
+        }
+    }
+
+    protected class MoveStencilDownAction extends BaseAction {
+
+        protected MoveStencilDownAction() {
+            super("moveDown");
+        }
+
+        @Override
+        public void actionPerform(Component component) {
+            Stencil selectedStencil = stencilsDs.getItem();
+            Integer currentOrderNo = selectedStencil.getOrderNo();
+            stencilsDs.getItems().stream()
+                    .filter(stencil -> stencil.getParentGroup() != null &&
+                            stencil.getParentGroup().equals(selectedStencil.getParentGroup())
+                            && stencil.getOrderNo() > currentOrderNo)
+                    .min((o1, o2) -> o1.getOrderNo() - o2.getOrderNo())
+                    .ifPresent(nextStencil -> {
+                        selectedStencil.setOrderNo(nextStencil.getOrderNo());
+                        nextStencil.setOrderNo(currentOrderNo);
+                        refreshDs();
+                        stencilsTable.setSelected(selectedStencil);
+                    });
+        }
+
+        @Override
+        protected boolean isApplicable() {
+            Stencil selectedItem = stencilsDs.getItem();
+            if (selectedItem != null && selectedItem instanceof ServiceTaskStencil) {
+                for (Stencil stencil : stencilsDs.getItems()) {
+                    if (selectedItem.getParentGroup().equals(stencil.getParentGroup())
+                            && stencil.getOrderNo() > selectedItem.getOrderNo()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+
+        @Override
+        public String getCaption() {
+            return "";
+        }
     }
 }
