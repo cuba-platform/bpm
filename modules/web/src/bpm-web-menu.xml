@@ -15,5 +15,6 @@
         <item id="bpm$ProcInstance.lookup"/>
         <item id="bpm$ProcTask.lookup"/>
         <item id="bpm$ProcAttachmentType.lookup"/>
+        <item id="stencilSetEditor"/>
     </menu>
 </menu-config>

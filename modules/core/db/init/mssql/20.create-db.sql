@@ -55,3 +55,7 @@ create clustered index IDX_BPM_PROC_MODEL_CREATE_TS on BPM_PROC_MODEL (CREATE_TS
 alter table BPM_PROC_TASK_USER_LINK add constraint FK_BPTUL_PROC_TASK foreign key (PROC_TASK_ID) references BPM_PROC_TASK (ID)^
 alter table BPM_PROC_TASK_USER_LINK add constraint FK_BPTUL_USER foreign key (USER_ID) references SEC_USER (ID)^
 -- end BPM_PROC_TASK_USER_LINK
+-- begin BPM_STENCIL_SET
+create unique index IDX_BPM_BPM_STENCIL_SET_UNIQ_NAME on BPM_STENCIL_SET (NAME, DELETE_TS) ^
+create unique index IDX_BPM_BPM_STENCIL_SET_UNIQ_JSON_DATA on BPM_STENCIL_SET (JSON_DATA, DELETE_TS) ^
+-- end BPM_STENCIL_SET

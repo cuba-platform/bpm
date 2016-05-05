@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2016 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        class="com.haulmont.bpm.gui.stencilset.frame.GroupStencilFrame"
+        focusComponent="fieldGroup"
+        messagesPack="com.haulmont.bpm.gui.stencilset">
+    <dsContext>
+        <datasource id="stencilDs"
+                    class="com.haulmont.bpm.entity.stencil.GroupStencil">
+        </datasource>
+    </dsContext>
+    <layout expand="fieldGroup" spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="stencilDs"
+                    editable="false">
+            <column width="200px">
+                <field id="title"/>
+            </column>
+        </fieldGroup>
+    </layout>
+</window>

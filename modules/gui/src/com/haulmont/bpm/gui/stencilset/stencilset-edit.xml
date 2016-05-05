@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2016 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.haulmont.bpm.gui.stencilset.StencilSetEditor"
+        focusComponent="stencilsTable"
+        lookupComponent="stencilsTable"
+        messagesPack="com.haulmont.bpm.gui.stencilset">
+    <dsContext>
+        <hierarchicalDatasource id="stencilsDs"
+                                class="com.haulmont.bpm.entity.stencil.Stencil"
+                                hierarchyProperty="parentGroup"
+                                refreshMode="NEVER">
+        </hierarchicalDatasource>
+        <collectionDatasource id="groupsDs" class="com.haulmont.bpm.entity.stencil.GroupStencil" refreshMode="NEVER"/>
+    </dsContext>
+    <layout expand="split" spacing="true">
+        <split id="split"
+               orientation="horizontal"
+               width="100%">
+            <vbox id="stencilSetBox"
+                  expand="stencilsTable"
+                  height="100%"
+                  margin="false,true,false,false"
+                  spacing="true">
+                <treeTable id="stencilsTable"
+                           width="100%">
+                    <actions>
+                        <action id="createStencil" invoke="createServiceTaskStencil" caption="msg://addStencil"
+                                icon="font-icon:PLUS"/>
+                        <action id="createGroup" invoke="createGroupStencil" caption="msg://addGroup"
+                                icon="font-icon:FOLDER_OPEN_O"/>
+                        <action id="remove"/>
+                        <action id="reset" invoke="resetStencilSet" caption="msg://resetStencilSet"
+                                icon="font-icon:UNDO"/>
+                    </actions>
+                    <columns>
+                        <column id="title"/>
+                    </columns>
+                    <rows datasource="stencilsDs"/>
+                    <buttonsPanel id="buttonsPanel"
+                                  alwaysVisible="true">
+                        <button id="createStencilBtn"
+                                action="stencilsTable.createStencil"/>
+                        <button id="createGroupBtn"
+                                action="stencilsTable.createGroup"/>
+                        <button id="removeBtn"
+                                action="stencilsTable.remove"/>
+                        <button id="resetBtn"
+                                action="stencilsTable.reset"/>
+                        <button id="upBtn" icon="icons/up.png"/>
+                        <button id="downBtn" icon="icons/down.png"/>
+                    </buttonsPanel>
+                </treeTable>
+            </vbox>
+            <vbox id="stencilEditBox" height="100%" spacing="true" margin="false;false;false;true">
+                <frame id="serviceTaskStencilFrame" screen="serviceTaskStencilFrame" visible="false" height="100%"/>
+                <frame id="standardStencilFrame" screen="standardStencilFrame" visible="false"/>
+                <frame id="groupStencilFrame" screen="groupStencilFrame" visible="false"/>
+            </vbox>
+        </split>
+        <hbox id="actionsPane"
+              spacing="true">
+            <button id="saveBtn"
+                    caption="mainMsg://actions.OkClose"
+                    icon="icons/ok.png"
+                    invoke="saveStencilSet"/>
+            <button id="closeBtn"
+                    caption="mainMsg://actions.Close"
+                    icon="icons/close.png"
+                    invoke="cancel"/>
+        </hbox>
+    </layout>
+</window>

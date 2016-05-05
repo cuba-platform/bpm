@@ -6,6 +6,12 @@
 
 <metadata xmlns="http://schemas.haulmont.com/cuba/metadata.xsd">
 
-    <metadata-model root-package="com.haulmont.bpm" namespace="bpm"/>
+    <metadata-model root-package="com.haulmont.bpm" namespace="bpm">
+        <class>com.haulmont.bpm.entity.stencil.Stencil</class>
+        <class>com.haulmont.bpm.entity.stencil.StandardStencil</class>
+        <class>com.haulmont.bpm.entity.stencil.GroupStencil</class>
+        <class>com.haulmont.bpm.entity.stencil.ServiceTaskStencil</class>
+        <class>com.haulmont.bpm.entity.stencil.ServiceTaskStencilMethodArg</class>
+    </metadata-model>
 
 </metadata>

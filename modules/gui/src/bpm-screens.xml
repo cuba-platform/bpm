@@ -43,4 +43,13 @@
             template="com/haulmont/bpm/gui/procmodel/proc-model-edit.xml"/>
     <screen id="procTasksFrame"
             template="com/haulmont/bpm/gui/proctask/proc-tasks-frame.xml"/>
+    <screen id="stencilSetEditor"
+            template="com/haulmont/bpm/gui/stencilset/stencilset-edit.xml"/>
+    <screen id="serviceTaskStencilFrame"
+            template="/com/haulmont/bpm/gui/stencilset/frame/service-task-stencil-frame.xml"/>
+    <screen id="standardStencilFrame"
+            template="/com/haulmont/bpm/gui/stencilset/frame/standard-stencil-frame.xml"/>
+    <screen id="groupStencilFrame"
+            template="/com/haulmont/bpm/gui/stencilset/frame/group-stencil-frame.xml"/>
+
 </screen-config>

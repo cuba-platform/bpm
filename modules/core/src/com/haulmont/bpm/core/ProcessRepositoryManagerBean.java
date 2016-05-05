@@ -8,6 +8,7 @@ package com.haulmont.bpm.core;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import com.haulmont.bpm.core.jsonconverter.CubaBpmnJsonConverter;
 import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.entity.ProcRole;
@@ -26,8 +27,8 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.io.IOUtils;
-
 import org.springframework.stereotype.Component;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.IOException;
@@ -187,7 +188,7 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             byte[] modelEditorSource = repositoryService.getModelEditorSource(actModelId);
             String modifiedModelJson = modelTransformer.transformModel(modelEditorSource);
             editorNode = new ObjectMapper().readTree(modifiedModelJson);
-            BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
+            BpmnJsonConverter jsonConverter = new CubaBpmnJsonConverter();
             BpmnModel model = jsonConverter.convertToBpmnModel(editorNode);
             if (model.getMainProcess() == null) {
                 throw new EmptyModelException();

@@ -31,7 +31,6 @@ def webModule = project(':bpm-web')
 def postgres = 'org.postgresql:postgresql:9.4-1201-jdbc41'
 def servletApi = 'org.apache.tomcat:tomcat-servlet-api:8.0.26'
 
-
 apply(plugin: 'idea')
 apply(plugin: 'cuba')
 apply from: "$rootProject.projectDir/lib.gradle"
@@ -100,7 +99,7 @@ configure(coreModule) {
 
         compile("com.haulmont.cuba:cuba-core:$cubaVersion")
 
-        compile('org.activiti:activiti-engine:5.17.0') {
+        compile("org.activiti:activiti-engine:${activitiVersion}") {
             exclude group: 'org.springframework', module: 'spring-beans'
             exclude group: 'org.springframework', module: 'spring-core'
             exclude group: 'org.springframework', module: 'spring-context'
@@ -108,7 +107,7 @@ configure(coreModule) {
             exclude group: 'org.springframework', module: 'spring-tx'
         }
 
-        compile('org.activiti:activiti-spring:5.17.0') {
+        compile("org.activiti:activiti-spring:${activitiVersion}") {
             exclude group: 'org.springframework', module: 'spring-beans'
             exclude group: 'org.springframework', module: 'spring-core'
             exclude group: 'org.springframework', module: 'spring-context'

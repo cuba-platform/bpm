@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2016 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        class="com.haulmont.bpm.gui.stencilset.frame.ServiceTaskStencilFrame"
+        focusComponent="fieldGroup"
+        messagesPack="com.haulmont.bpm.gui.stencilset">
+    <dsContext>
+        <datasource id="stencilDs"
+                    class="com.haulmont.bpm.entity.stencil.ServiceTaskStencil">
+            <collectionDatasource id="methodArgsDs" property="methodArgs"/>
+        </datasource>
+    </dsContext>
+    <layout expand="stencilParamsTable" spacing="true">
+            <fieldGroup id="fieldGroup"
+                        datasource="stencilDs">
+                <column width="300px">
+                    <field id="title"/>
+                    <field id="stencilId"/>
+                    <field id="parentGroup" optionsDatasource="groupsDs"/>
+                    <field id="icon"  custom="true" caption="msg://icon"/>
+                    <field id="beanName"/>
+                    <field id="methodName"/>
+                </column>
+            </fieldGroup>
+        <label value="msg://methodArgs"/>
+        <table id="stencilParamsTable" editable="true" width="100%">
+            <actions>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="propertyPackageTitle" editable="true"/>
+                <column id="type" editable="true"/>
+                <column id="defaultValue" editable="true"/>
+                <!--<column id="visible" editable="true"/>-->
+            </columns>
+            <rows datasource="methodArgsDs"/>
+            <buttonsPanel id="stencilParamsTableButtonsPanel"
+                          alwaysVisible="true">
+                <button id="addMethodArgBtn"
+                        invoke="addMethodArg"
+                        caption="msg://addMethodArg"/>
+                <button id="removeMethodArgBtn"
+                        action="stencilParamsTable.remove"/>
+            </buttonsPanel>
+
+        </table>
+    </layout>
+</window>

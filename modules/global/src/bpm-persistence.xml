@@ -16,5 +16,6 @@
         <class>com.haulmont.bpm.entity.ProcAttachmentType</class>
         <class>com.haulmont.bpm.entity.ProcAttachment</class>
         <class>com.haulmont.bpm.entity.ProcModel</class>
+        <class>com.haulmont.bpm.entity.StencilSet</class>
     </persistence-unit>
 </persistence>

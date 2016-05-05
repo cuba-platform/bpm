@@ -99,7 +99,6 @@ public class ExtSpringProcessEngineConfiguration extends SpringProcessEngineConf
         sessionFactory.setTablePrefixIsSchema(tablePrefixIsSchema);
         sessionFactory.setDatabaseCatalog(databaseCatalog);
         sessionFactory.setDatabaseSchema(databaseSchema);
-        sessionFactory.setOptimizeDeleteOperationsEnabled(isOptimizeDeleteOperationsEnabled);
         addSessionFactory(sessionFactory);
     }
 }

@@ -1,4 +1,5 @@
--- begin BPM_PROC_DEFINITIONcreate table BPM_PROC_DEFINITION (
+-- begin BPM_PROC_DEFINITION
+create table BPM_PROC_DEFINITION (
     ID uuid,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -35,7 +36,8 @@ create table BPM_PROC_ROLE (
     primary key (ID)
 )^-- end BPM_PROC_ROLE
 
--- begin BPM_PROC_INSTANCEcreate table BPM_PROC_INSTANCE (
+-- begin BPM_PROC_INSTANCE
+create table BPM_PROC_INSTANCE (
     ID uuid,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -119,7 +121,8 @@ create table BPM_PROC_ATTACHMENT (
     primary key (ID)
 )^
 -- end BPM_PROC_ATTACHMENT
--- begin BPM_PROC_TASKcreate table BPM_PROC_TASK (
+-- begin BPM_PROC_TASK
+create table BPM_PROC_TASK (
     ID uuid,
     CREATE_TS timestamp,
     CREATED_BY varchar(50),
@@ -170,3 +173,20 @@ create table BPM_PROC_MODEL (
     primary key (ID)
 )^
 -- end BPM_PROC_MODEL
+-- begin BPM_STENCIL_SET
+create table BPM_STENCIL_SET (
+    ID uuid,
+    CREATE_TS timestamp,
+    CREATED_BY varchar(50),
+    VERSION integer,
+    UPDATE_TS timestamp,
+    UPDATED_BY varchar(50),
+    DELETE_TS timestamp,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255) not null,
+    JSON_DATA text not null,
+    --
+    primary key (ID)
+)^
+-- end BPM_STENCIL_SET
