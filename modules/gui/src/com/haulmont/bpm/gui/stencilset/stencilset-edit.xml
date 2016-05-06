@@ -67,13 +67,20 @@
         <hbox id="actionsPane"
               spacing="true">
             <button id="saveBtn"
-                    caption="mainMsg://actions.OkClose"
-                    icon="icons/ok.png"
+                    caption="mainMsg://actions.Save"
+                    icon="icons/save.png"
                     invoke="saveStencilSet"/>
             <button id="closeBtn"
                     caption="mainMsg://actions.Close"
                     icon="icons/close.png"
-                    invoke="cancel"/>
+                    invoke="close"/>
+            <button id="exportBtn"
+                    caption="mainMsg://actions.Export"
+                    icon="font-icon:DOWNLOAD"
+                    invoke="exportStencilSet"/>
+            <upload id="importUpload"
+                    icon="font-icon:UPLOAD"
+                    caption="mainMsg://actions.Import"/>
         </hbox>
     </layout>
 </window>

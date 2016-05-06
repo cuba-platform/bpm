@@ -20,6 +20,7 @@
                 <column width="300px">
                     <field id="title"/>
                     <field id="stencilId"/>
+                    <field id="description" rows="2"/>
                     <field id="parentGroup" optionsDatasource="groupsDs"/>
                     <field id="icon"  custom="true" caption="msg://icon"/>
                     <field id="beanName"/>

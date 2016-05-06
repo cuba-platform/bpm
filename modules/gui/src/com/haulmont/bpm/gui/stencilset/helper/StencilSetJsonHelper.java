@@ -188,7 +188,7 @@ public class StencilSetJsonHelper {
         gsonStencil.setType("node");
         gsonStencil.setId(serviceTaskStencil.getStencilId());
         gsonStencil.setTitle(serviceTaskStencil.getTitle());
-        gsonStencil.setDescription("");
+        gsonStencil.setDescription(serviceTaskStencil.getDescription());
         UUID iconFileId;
         iconFileId = serviceTaskStencil.getIconFileId();
         if (iconFileId != null) {

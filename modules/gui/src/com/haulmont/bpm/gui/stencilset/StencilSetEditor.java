@@ -9,10 +9,12 @@ import com.haulmont.bpm.entity.stencil.GroupStencil;
 import com.haulmont.bpm.entity.stencil.ServiceTaskStencil;
 import com.haulmont.bpm.entity.stencil.StandardStencil;
 import com.haulmont.bpm.entity.stencil.Stencil;
+import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.bpm.gui.stencilset.frame.AbstractStencilFrame;
 import com.haulmont.bpm.gui.stencilset.frame.ServiceTaskStencilFrame;
 import com.haulmont.bpm.gui.stencilset.helper.StencilSetJsonHelper;
 import com.haulmont.bpm.service.StencilSetService;
+import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.ComponentsHelper;
 import com.haulmont.cuba.gui.components.*;
@@ -20,10 +22,15 @@ import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
+import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
+import com.haulmont.cuba.gui.export.ExportDisplay;
+import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 
 public class StencilSetEditor extends AbstractWindow {
@@ -60,6 +67,15 @@ public class StencilSetEditor extends AbstractWindow {
 
     @Inject
     protected Button downBtn;
+
+    @Inject
+    protected ExportDisplay exportDisplay;
+
+    @Inject
+    protected FileUploadField importUpload;
+
+    @Inject
+    protected FileUploadingAPI fileUploadingAPI;
 
     protected AbstractStencilFrame activeStencilFrame;
 
@@ -112,6 +128,24 @@ public class StencilSetEditor extends AbstractWindow {
         MoveStencilDownAction moveStencilDownAction = new MoveStencilDownAction();
         downBtn.setAction(moveStencilDownAction);
         stencilsTable.addAction(moveStencilDownAction);
+
+        initImportUpload();
+    }
+
+    protected void initImportUpload() {
+        importUpload.addFileUploadSucceedListener(e -> {
+            File file = fileUploadingAPI.getFile(importUpload.getFileId());
+            String customStencilsetJson = null;
+            try {
+                customStencilsetJson = new String(Files.readAllBytes(file.toPath()), "utf-8");
+            } catch (IOException e1) {
+                throw new BpmException(e1);
+            }
+            _resetStencilSet();
+            stencilSetService.setStencilSet(customStencilsetJson);
+            showNotification(getMessage("importSuccessful"), NotificationType.HUMANIZED);
+            initData();
+        });
     }
 
     protected void initData() {
@@ -168,17 +202,23 @@ public class StencilSetEditor extends AbstractWindow {
         stencilsTable.expand(group.getId());
     }
 
-    public void saveStencilSet() throws IOException {
+    public String saveStencilSet() throws IOException {
         String modifiedStencilSetJson = StencilSetJsonHelper.generateCustomStencilSet(stencilsDs.getItems());
         stencilSetService.setStencilSet(modifiedStencilSetJson);
         stencilsDs.getItems().stream()
                 .filter(stencil -> stencil instanceof ServiceTaskStencil)
                 .forEach(stencil -> stencilSetService.registerServiceTaskStencilBpmnJsonConverter(stencil.getStencilId()));
-        close(COMMIT_ACTION_ID, true);
+        showNotification(getMessage("saved"), NotificationType.HUMANIZED);
+        return modifiedStencilSetJson;
     }
 
-    public void cancel() {
+    public void close() {
         close(CLOSE_ACTION_ID, true);
+    }
+
+    public void exportStencilSet() throws IOException {
+        String stencilSet = saveStencilSet();
+        exportDisplay.show(new ByteArrayDataProvider(stencilSet.getBytes()), "stencilset.json");
     }
 
     public void resetStencilSet() {
@@ -189,9 +229,7 @@ public class StencilSetEditor extends AbstractWindow {
                         new DialogAction(DialogAction.Type.YES) {
                             @Override
                             public void actionPerform(Component component) {
-                                groupsDs.clear();
-                                stencilsDs.clear();
-                                stencilSetService.resetStencilSet();
+                                _resetStencilSet();
                                 initData();
                             }
                         },
@@ -201,6 +239,12 @@ public class StencilSetEditor extends AbstractWindow {
                             }
                         }
                 });
+    }
+
+    protected void _resetStencilSet() {
+        groupsDs.clear();
+        stencilsDs.clear();
+        stencilSetService.resetStencilSet();
     }
 
     protected boolean validateActiveStencilFrame() {
@@ -317,7 +361,6 @@ public class StencilSetEditor extends AbstractWindow {
             }
             return false;
         }
-
 
         @Override
         public String getCaption() {

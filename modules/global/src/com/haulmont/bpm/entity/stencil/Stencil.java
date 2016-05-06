@@ -23,6 +23,9 @@ public class Stencil extends AbstractNotPersistentEntity {
     protected String title;
 
     @MetaProperty
+    protected String description;
+
+    @MetaProperty
     protected Boolean editable = false;
 
     @MetaProperty
@@ -70,5 +73,13 @@ public class Stencil extends AbstractNotPersistentEntity {
 
     public void setOrderNo(Integer orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
