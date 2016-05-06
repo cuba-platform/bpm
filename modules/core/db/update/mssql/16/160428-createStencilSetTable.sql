@@ -4,9 +4,9 @@ create table BPM_STENCIL_SET (
     CREATE_TS datetime,
     CREATED_BY varchar(50),
     VERSION integer,
-    UPDATE_TS datetime(3),
+    UPDATE_TS datetime,
     UPDATED_BY varchar(50),
-    DELETE_TS datetime(3),
+    DELETE_TS datetime,
     DELETED_BY varchar(50),
     --
     NAME varchar(255) not null,

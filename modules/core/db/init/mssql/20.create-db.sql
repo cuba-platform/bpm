@@ -56,5 +56,5 @@ alter table BPM_PROC_TASK_USER_LINK add constraint FK_BPTUL_PROC_TASK foreign ke
 alter table BPM_PROC_TASK_USER_LINK add constraint FK_BPTUL_USER foreign key (USER_ID) references SEC_USER (ID)^
 -- end BPM_PROC_TASK_USER_LINK
 -- begin BPM_STENCIL_SET
-create unique index IDX_BPM_BPM_STENCIL_SET_UNIQ_NAME on BPM_STENCIL_SET (NAME, DELETE_TS) ^
+create unique index IDX_BPM_STENCIL_SET_UNIQ_NAME on BPM_STENCIL_SET (NAME, DELETE_TS) ^
 -- end BPM_STENCIL_SET
