@@ -15,6 +15,8 @@ import com.haulmont.bpm.gui.stencilset.frame.ServiceTaskStencilFrame;
 import com.haulmont.bpm.gui.stencilset.helper.StencilSetJsonHelper;
 import com.haulmont.bpm.service.StencilSetService;
 import com.haulmont.cuba.core.entity.FileDescriptor;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.ComponentsHelper;
 import com.haulmont.cuba.gui.components.*;
@@ -32,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class StencilSetEditor extends AbstractWindow {
 
@@ -76,6 +79,9 @@ public class StencilSetEditor extends AbstractWindow {
 
     @Inject
     protected FileUploadingAPI fileUploadingAPI;
+
+    @Inject
+    protected DataManager dataManager;
 
     protected AbstractStencilFrame activeStencilFrame;
 
@@ -135,20 +141,22 @@ public class StencilSetEditor extends AbstractWindow {
     protected void initImportUpload() {
         importUpload.addFileUploadSucceedListener(e -> {
             File file = fileUploadingAPI.getFile(importUpload.getFileId());
-            String customStencilsetJson = null;
+            if (file == null) {
+                throw new BpmException("Error on stencil set import. File is null.");
+            }
             try {
-                customStencilsetJson = new String(Files.readAllBytes(file.toPath()), "utf-8");
+                stencilSetService.importStencilSet(Files.readAllBytes(file.toPath()));
+                initData();
+                showNotification(getMessage("importSuccessful"), NotificationType.HUMANIZED);
             } catch (IOException e1) {
                 throw new BpmException(e1);
             }
-            _resetStencilSet();
-            stencilSetService.setStencilSet(customStencilsetJson);
-            showNotification(getMessage("importSuccessful"), NotificationType.HUMANIZED);
-            initData();
         });
     }
 
     protected void initData() {
+        groupsDs.clear();
+        stencilsDs.clear();
         String srcStencilSetJson = stencilSetService.getStencilSet();
         List<Stencil> stencils = StencilSetJsonHelper.parseStencilSetJson(srcStencilSetJson);
         for (Stencil stencil : stencils) {
@@ -217,8 +225,21 @@ public class StencilSetEditor extends AbstractWindow {
     }
 
     public void exportStencilSet() throws IOException {
-        String stencilSet = saveStencilSet();
-        exportDisplay.show(new ByteArrayDataProvider(stencilSet.getBytes()), "stencilset.json");
+        String customStencilSetJson = StencilSetJsonHelper.generateCustomStencilSet(stencilsDs.getItems());
+        List<FileDescriptor> icons = stencilsDs.getItems().stream()
+                .filter(stencil -> stencil instanceof ServiceTaskStencil
+                        && ((ServiceTaskStencil) stencil).getIconFileId() != null)
+                .map(stencil -> {
+                    if (((ServiceTaskStencil)stencil).getIconFile() != null) {
+                        return ((ServiceTaskStencil)stencil).getIconFile();
+                    } else {
+                        LoadContext<FileDescriptor> ctx = new LoadContext<>(FileDescriptor.class).setId(((ServiceTaskStencil) stencil).getIconFileId());
+                        return dataManager.load(ctx);
+                    }
+                })
+                .collect(Collectors.toList());
+        byte[] bytes = stencilSetService.exportStencilSet(customStencilSetJson, icons);
+        exportDisplay.show(new ByteArrayDataProvider(bytes), "stencilset.zip");
     }
 
     public void resetStencilSet() {

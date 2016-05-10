@@ -6,14 +6,11 @@
 package com.haulmont.bpm.service;
 
 import com.haulmont.bpm.core.StencilSetManager;
-import com.haulmont.cuba.core.global.Configuration;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.Metadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.haulmont.cuba.core.entity.FileDescriptor;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @Service(StencilSetService.NAME)
 public class StencilSetServiceBean implements StencilSetService {
@@ -39,5 +36,15 @@ public class StencilSetServiceBean implements StencilSetService {
     @Override
     public void resetStencilSet() {
         stencilSetManager.resetStencilSet();
+    }
+
+    @Override
+    public byte[] exportStencilSet(String stencilsJson, List<FileDescriptor> iconFiles) {
+        return stencilSetManager.exportStencilSet(stencilsJson, iconFiles);
+    }
+
+    @Override
+    public void importStencilSet(byte[] zipBytes) {
+        stencilSetManager.importStencilSet(zipBytes);
     }
 }

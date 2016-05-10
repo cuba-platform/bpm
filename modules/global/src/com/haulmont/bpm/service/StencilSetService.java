@@ -5,6 +5,10 @@
 
 package com.haulmont.bpm.service;
 
+import com.haulmont.cuba.core.entity.FileDescriptor;
+
+import java.util.List;
+
 /**
  * Class that is used for storing and retrieving stencilSet json
  * see StencilSetManager class documentation for more details
@@ -20,4 +24,8 @@ public interface StencilSetService {
     void registerServiceTaskStencilBpmnJsonConverter(String stencilId);
 
     void resetStencilSet();
+
+    byte[] exportStencilSet(String stencilsJson, List<FileDescriptor> iconFiles);
+
+    void importStencilSet(byte[] zipBytes);
 }
