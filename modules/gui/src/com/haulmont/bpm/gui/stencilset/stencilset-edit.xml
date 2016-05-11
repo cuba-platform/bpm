@@ -36,8 +36,6 @@
                         <action id="createGroup" invoke="createGroupStencil" caption="msg://addGroup"
                                 icon="font-icon:FOLDER_OPEN_O"/>
                         <action id="remove"/>
-                        <action id="reset" invoke="resetStencilSet" caption="msg://resetStencilSet"
-                                icon="font-icon:UNDO"/>
                     </actions>
                     <columns>
                         <column id="title"/>
@@ -51,8 +49,6 @@
                                 action="stencilsTable.createGroup"/>
                         <button id="removeBtn"
                                 action="stencilsTable.remove"/>
-                        <button id="resetBtn"
-                                action="stencilsTable.reset"/>
                         <button id="upBtn" icon="icons/up.png"/>
                         <button id="downBtn" icon="icons/down.png"/>
                     </buttonsPanel>
@@ -81,6 +77,10 @@
             <upload id="importUpload"
                     icon="font-icon:UPLOAD"
                     caption="mainMsg://actions.Import"/>
+            <button id="resetBtn"
+                    invoke="resetStencilSet"
+                    caption="msg://resetStencilSet"
+                    icon="font-icon:UNDO"/>
         </hbox>
     </layout>
 </window>
