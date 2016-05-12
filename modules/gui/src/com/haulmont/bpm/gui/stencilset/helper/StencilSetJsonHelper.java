@@ -81,6 +81,14 @@ public class StencilSetJsonHelper {
             stencil.setOrderNo(groupQtyMap.get(groupName));
             allStencils.add(stencil);
         }
+
+        for (GroupStencil groupStencil : groupStencilsMap.values()) {
+            boolean allStencilsInGroupAreCustom = allStencils.stream()
+                    .filter(stencil -> groupStencil.equals(stencil.getParentGroup()))
+                    .allMatch(stencil -> stencil instanceof ServiceTaskStencil);
+            if (allStencilsInGroupAreCustom) groupStencil.setEditable(true);
+        }
+
         return allStencils;
     }
 
