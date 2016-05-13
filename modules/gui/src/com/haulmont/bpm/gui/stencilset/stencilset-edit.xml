@@ -35,7 +35,7 @@
                                 icon="font-icon:PLUS"/>
                         <action id="createGroup" invoke="createGroupStencil" caption="msg://addGroup"
                                 icon="font-icon:FOLDER_OPEN_O"/>
-                        <action id="remove"/>
+                        <!--<action id="remove"/>-->
                     </actions>
                     <columns>
                         <column id="title"/>
@@ -47,8 +47,7 @@
                                 action="stencilsTable.createStencil"/>
                         <button id="createGroupBtn"
                                 action="stencilsTable.createGroup"/>
-                        <button id="removeBtn"
-                                action="stencilsTable.remove"/>
+                        <button id="removeBtn"/>
                         <button id="upBtn" icon="icons/up.png"/>
                         <button id="downBtn" icon="icons/down.png"/>
                     </buttonsPanel>

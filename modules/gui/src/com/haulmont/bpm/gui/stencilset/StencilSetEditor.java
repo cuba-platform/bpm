@@ -14,6 +14,7 @@ import com.haulmont.bpm.gui.stencilset.frame.AbstractStencilFrame;
 import com.haulmont.bpm.gui.stencilset.frame.ServiceTaskStencilFrame;
 import com.haulmont.bpm.gui.stencilset.helper.StencilSetJsonHelper;
 import com.haulmont.bpm.service.StencilSetService;
+import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
@@ -59,9 +60,6 @@ public class StencilSetEditor extends AbstractWindow {
     @Inject
     protected Metadata metadata;
 
-    @Named("stencilsTable.remove")
-    protected RemoveAction stencilsTableRemove;
-
     @Inject
     protected StencilSetService stencilSetService;
 
@@ -82,6 +80,9 @@ public class StencilSetEditor extends AbstractWindow {
 
     @Inject
     protected DataManager dataManager;
+
+    @Inject
+    protected Button removeBtn;
 
     protected AbstractStencilFrame activeStencilFrame;
 
@@ -125,7 +126,19 @@ public class StencilSetEditor extends AbstractWindow {
             }
         });
 
-        stencilsTableRemove.setAutocommit(false);
+        RemoveAction stencilsTableRemoveAction = new RemoveAction(stencilsTable) {
+            @Override
+            protected boolean isApplicable() {
+                Stencil selected = (Stencil) target.getSingleSelected();
+                boolean isGroupAndHasChildren = (selected instanceof GroupStencil) && !stencilsDs.getChildren(selected.getId()).isEmpty();
+                return super.isApplicable()
+                        && selected.getEditable()
+                        && !isGroupAndHasChildren;
+            }
+        };
+        stencilsTableRemoveAction.setAutocommit(false);
+        stencilsTable.addAction(stencilsTableRemoveAction);
+        removeBtn.setAction(stencilsTableRemoveAction);
 
         MoveStencilUpAction moveStencilUpAction = new MoveStencilUpAction();
         upBtn.setAction(moveStencilUpAction);
