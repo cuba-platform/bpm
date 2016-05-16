@@ -17,7 +17,7 @@ import java.util.Map;
  * Class is used for access to process forms
  */
 public interface ProcessFormManager {
-    String NAME = "npm_ProcessFormManager";
+    String NAME = "bpm_ProcessFormManager";
 
     /**
      * Returns a map of process task outcomes. A key is an outcome name, a value is a form definition

@@ -57,6 +57,8 @@ public class ServiceTaskStencilFrame extends AbstractStencilFrame<ServiceTaskSte
 
     protected LinkButton downloadIconBtn;
 
+    protected boolean initialValueSet = false;
+
     @Inject
     protected StencilSetService stencilSetService;
     private LookupField methodNameField;
@@ -132,6 +134,7 @@ public class ServiceTaskStencilFrame extends AbstractStencilFrame<ServiceTaskSte
             methodNameField.setRequired(true);
             methodNameField.setRequiredMessage(getMessage("modelNameRequired"));
             methodNameField.addValueChangeListener(e -> {
+                if (initialValueSet) return;
                 methodArgsDs.clear();
                 MethodInfo methodInfo = (MethodInfo) e.getValue();
                 if (methodInfo != null) {
@@ -158,6 +161,7 @@ public class ServiceTaskStencilFrame extends AbstractStencilFrame<ServiceTaskSte
 
     @Override
     public void setStencil(ServiceTaskStencil stencil) {
+        initialValueSet = true;
         super.setStencil(stencil);
         if (stencil.getIconFileId() != null && stencil.getIconFile() == null) {
             LoadContext<FileDescriptor> ctx = new LoadContext<>(FileDescriptor.class).setId(stencil.getIconFileId());
@@ -171,6 +175,7 @@ public class ServiceTaskStencilFrame extends AbstractStencilFrame<ServiceTaskSte
 
         String downloadIconBtnCaption = stencil.getIconFile() != null ? stencil.getIconFile().getName() : getMessage("notUploaded");
         downloadIconBtn.setCaption(downloadIconBtnCaption);
+        initialValueSet = false;
     }
 
     /**

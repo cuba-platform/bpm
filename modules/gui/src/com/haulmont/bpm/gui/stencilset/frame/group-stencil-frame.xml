@@ -17,7 +17,7 @@
         <fieldGroup id="fieldGroup"
                     datasource="stencilDs"
                     editable="false">
-            <column width="200px">
+            <column width="400px">
                 <field id="title"/>
             </column>
         </fieldGroup>
