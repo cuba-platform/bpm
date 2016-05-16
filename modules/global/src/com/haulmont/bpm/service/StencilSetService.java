@@ -5,9 +5,11 @@
 
 package com.haulmont.bpm.service;
 
+import com.haulmont.cuba.core.app.scheduled.MethodInfo;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class that is used for storing and retrieving stencilSet json
@@ -28,4 +30,6 @@ public interface StencilSetService {
     byte[] exportStencilSet(String stencilsJson, List<FileDescriptor> iconFiles);
 
     void importStencilSet(byte[] zipBytes);
+
+    Map<String, List<MethodInfo>> getAvailableBeans();
 }

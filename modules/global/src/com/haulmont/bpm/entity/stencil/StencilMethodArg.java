@@ -5,26 +5,21 @@
 
 package com.haulmont.bpm.entity.stencil;
 
+import com.haulmont.bali.util.ReflectionHelper;
 import com.haulmont.chile.core.annotations.MetaClass;
 import com.haulmont.chile.core.annotations.MetaProperty;
 import com.haulmont.cuba.core.entity.AbstractNotPersistentEntity;
 
 import javax.persistence.ManyToOne;
 
-@MetaClass(name = "bpm$ServiceTaskStencilMethodArg")
-public class ServiceTaskStencilMethodArg extends AbstractNotPersistentEntity {
-
-    @MetaProperty
-    protected String propertyPackageName;
+@MetaClass(name = "bpm$StencilMethodArg")
+public class StencilMethodArg extends AbstractNotPersistentEntity {
 
     @MetaProperty
     protected String propertyPackageTitle;
 
     @MetaProperty
-    protected ServiceTaskStencilMethodArgType type;
-
-    @MetaProperty
-    protected Boolean visible = true;
+    protected String type;
 
     @MetaProperty
     protected String defaultValue;
@@ -33,28 +28,12 @@ public class ServiceTaskStencilMethodArg extends AbstractNotPersistentEntity {
     @ManyToOne
     protected ServiceTaskStencil stencil;
 
-    public String getPropertyPackageName() {
-        return propertyPackageName;
-    }
-
-    public void setPropertyPackageName(String propertyPackageName) {
-        this.propertyPackageName = propertyPackageName;
-    }
-
-    public ServiceTaskStencilMethodArgType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(ServiceTaskStencilMethodArgType type) {
+    public void setType(String type) {
         this.type = type;
-    }
-
-    public Boolean getVisible() {
-        return visible;
-    }
-
-    public void setVisible(Boolean visible) {
-        this.visible = visible;
     }
 
     public String getDefaultValue() {
@@ -79,6 +58,25 @@ public class ServiceTaskStencilMethodArg extends AbstractNotPersistentEntity {
 
     public void setPropertyPackageTitle(String propertyPackageTitle) {
         this.propertyPackageTitle = propertyPackageTitle;
+    }
+
+    @MetaProperty
+    public String getSimpleTypeName() {
+        return type.substring(type.lastIndexOf(".") + 1);
+    }
+
+    public String getPropertyPackageType() {
+        Class clazz;
+        try {
+            clazz = ReflectionHelper.loadClass(type);
+        } catch (ClassNotFoundException e) {
+            return "String";
+        }
+
+        if (Boolean.class.isAssignableFrom(clazz) || boolean.class.isAssignableFrom(clazz))
+            return "Boolean";
+
+        return "String";
     }
 
 }

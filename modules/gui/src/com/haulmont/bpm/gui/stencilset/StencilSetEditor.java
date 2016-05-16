@@ -88,6 +88,8 @@ public class StencilSetEditor extends AbstractWindow {
 
     protected boolean treeItemChangeListenerEnabled = true;
 
+    protected boolean removingStencil = false;
+
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
@@ -99,7 +101,7 @@ public class StencilSetEditor extends AbstractWindow {
 
             Stencil item = e.getItem();
 
-            if (activeStencilFrame != null) {
+            if (activeStencilFrame != null && !removingStencil) {
                 if (!validateActiveStencilFrame()) {
                     treeItemChangeListenerEnabled = false;
                     stencilsTable.setSelected(e.getPrevItem());
@@ -127,6 +129,14 @@ public class StencilSetEditor extends AbstractWindow {
         });
 
         RemoveAction stencilsTableRemoveAction = new RemoveAction(stencilsTable) {
+
+            @Override
+            protected void doRemove(Set selected, boolean autocommit) {
+                removingStencil = true;
+                super.doRemove(selected, autocommit);
+                removingStencil = false;
+            }
+
             @Override
             protected boolean isApplicable() {
                 Stencil selected = (Stencil) target.getSingleSelected();
@@ -223,14 +233,14 @@ public class StencilSetEditor extends AbstractWindow {
         stencilsTable.expand(group.getId());
     }
 
-    public String saveStencilSet() throws IOException {
+    public void saveStencilSet() throws IOException {
+        if (!validateActiveStencilFrame()) return;
         String modifiedStencilSetJson = StencilSetJsonHelper.generateCustomStencilSet(stencilsDs.getItems());
         stencilSetService.setStencilSet(modifiedStencilSetJson);
         stencilsDs.getItems().stream()
                 .filter(stencil -> stencil instanceof ServiceTaskStencil)
                 .forEach(stencil -> stencilSetService.registerServiceTaskStencilBpmnJsonConverter(stencil.getStencilId()));
         showNotification(getMessage("saved"), NotificationType.HUMANIZED);
-        return modifiedStencilSetJson;
     }
 
     public void close() {

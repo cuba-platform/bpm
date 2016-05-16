@@ -6,17 +6,23 @@
 package com.haulmont.bpm.service;
 
 import com.haulmont.bpm.core.StencilSetManager;
+import com.haulmont.bpm.core.StencilsBeansMetadata;
+import com.haulmont.cuba.core.app.scheduled.MethodInfo;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 
 @Service(StencilSetService.NAME)
 public class StencilSetServiceBean implements StencilSetService {
 
     @Inject
     protected StencilSetManager stencilSetManager;
+
+    @Inject
+    protected StencilsBeansMetadata stencilsBeansMetadata;
 
     @Override
     public String getStencilSet() {
@@ -46,5 +52,10 @@ public class StencilSetServiceBean implements StencilSetService {
     @Override
     public void importStencilSet(byte[] zipBytes) {
         stencilSetManager.importStencilSet(zipBytes);
+    }
+
+    @Override
+    public Map<String, List<MethodInfo>> getAvailableBeans() {
+        return stencilsBeansMetadata.getAvailableBeans();
     }
 }

@@ -7,14 +7,11 @@ package com.haulmont.bpm.core.jsonconverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Joiner;
-import com.haulmont.bpm.entity.stencil.ServiceTaskStencilMethodArgType;
-import org.activiti.bpmn.model.FieldExtension;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.ImplementationType;
 import org.activiti.bpmn.model.ServiceTask;
 import org.activiti.editor.language.json.converter.BpmnJsonConverterUtil;
 import org.activiti.editor.language.json.converter.ServiceTaskJsonConverter;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -79,19 +76,19 @@ public class CustomServiceTaskJsonConverter extends ServiceTaskJsonConverter {
                 .append("(");
 
         Iterator<JsonNode> iterator = methodArgs.iterator();
-        List<String> paramValies = new ArrayList<>();
+        List<String> paramValues = new ArrayList<>();
         while (iterator.hasNext()) {
             JsonNode paramNode = iterator.next();
             String propertyPackageName = BpmnJsonConverterUtil.getValueAsString("propertyPackageName", paramNode);
             String type = BpmnJsonConverterUtil.getValueAsString("type", paramNode);
             String propertyPackageId = propertyPackageName.substring(0, propertyPackageName.lastIndexOf("package"));
             String paramValue = BpmnJsonConverterUtil.getPropertyValueAsString(propertyPackageId, elementNode);
-            if (ServiceTaskStencilMethodArgType.STRING.customObjectType().equals(type) ||
-                    ServiceTaskStencilMethodArgType.TEXT.customObjectType().equals(type)) paramValue = "'" + paramValue + "'";
-            paramValies.add(paramValue);
+            if ("java.lang.String".equals(type))
+                paramValue = "'" + paramValue + "'";
+            paramValues.add(paramValue);
         }
 
-        sb.append(Joiner.on(",").join(paramValies))
+        sb.append(Joiner.on(",").join(paramValues))
                 .append(")").append("}");
         return sb.toString();
     }

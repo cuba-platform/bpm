@@ -32,7 +32,7 @@ public class ServiceTaskStencil extends Stencil {
 
     @MetaProperty
     @OneToMany(mappedBy = "stencil")
-    protected List<ServiceTaskStencilMethodArg> methodArgs = new ArrayList<>();
+    protected List<StencilMethodArg> methodArgs = new ArrayList<>();
 
     @PostConstruct
     public void postConstruct() {
@@ -55,11 +55,11 @@ public class ServiceTaskStencil extends Stencil {
         this.methodName = methodName;
     }
 
-    public List<ServiceTaskStencilMethodArg> getMethodArgs() {
+    public List<StencilMethodArg> getMethodArgs() {
         return methodArgs;
     }
 
-    public void setMethodArgs(List<ServiceTaskStencilMethodArg> methodArgs) {
+    public void setMethodArgs(List<StencilMethodArg> methodArgs) {
         this.methodArgs = methodArgs;
     }
 

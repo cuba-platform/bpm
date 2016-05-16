@@ -9,13 +9,21 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.sys.AppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
+/**
+ * Finds all serviceTask custom stencils in the stencilset JSON and registers them at the CubaBpmnJsonConverter
+ */
 @Component("bpm_BpmAppContextListener")
 public class BpmAppContextListener implements AppContext.Listener {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Inject
     protected StencilSetManager stencilSetManager;
@@ -26,16 +34,17 @@ public class BpmAppContextListener implements AppContext.Listener {
 
     @Override
     public void applicationStarted() {
-        registerCustomStencils();
+        try {
+            registerCustomStencils();
+        } catch (Exception e) {
+            log.error("Exception on initialing BPM app context", e);
+        }
     }
 
     @Override
     public void applicationStopped() {
     }
 
-    /**
-     * Finds all serviceTask custom stencils in the stencilset JSON and registers them at the CubaBpmnJsonConverter
-     */
     protected void registerCustomStencils() {
         String stencilSet = stencilSetManager.getStencilSet();
         JsonParser jsonParser = new JsonParser();

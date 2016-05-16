@@ -11,7 +11,7 @@
         <class>com.haulmont.bpm.entity.stencil.StandardStencil</class>
         <class>com.haulmont.bpm.entity.stencil.GroupStencil</class>
         <class>com.haulmont.bpm.entity.stencil.ServiceTaskStencil</class>
-        <class>com.haulmont.bpm.entity.stencil.ServiceTaskStencilMethodArg</class>
+        <class>com.haulmont.bpm.entity.stencil.StencilMethodArg</class>
     </metadata-model>
 
 </metadata>

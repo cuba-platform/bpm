@@ -113,21 +113,20 @@ public class StencilSetJsonHelper {
             stencil.setIconFileId(UUID.fromString(gsonStencil.getCustomIconId()));
         }
         stencil.setEditable(true);
-        List<ServiceTaskStencilMethodArg> args = new ArrayList<>();
+        List<StencilMethodArg> args = new ArrayList<>();
         for (GsonStencil.MethodArg methodArg : custom.getMethodArgs()) {
             //todo MG what if propertyPackage doesn't exist
             gsonPropertyPackages.stream()
                     .filter(gsonPropertyPackage -> gsonPropertyPackage.getName().equals(methodArg.getPropertyPackageName()))
                     .findFirst()
                     .ifPresent(gsonPropertyPackage -> {
-                        ServiceTaskStencilMethodArg serviceTaskStencilMethodArg = metadata.create(ServiceTaskStencilMethodArg.class);
-                        serviceTaskStencilMethodArg.setStencil(stencil);
-                        serviceTaskStencilMethodArg.setPropertyPackageName(methodArg.getPropertyPackageName());
+                        StencilMethodArg stencilMethodArg = metadata.create(StencilMethodArg.class);
+                        stencilMethodArg.setStencil(stencil);
                         GsonPropertyPackage.Property property = gsonPropertyPackage.getProperties().get(0);
-                        serviceTaskStencilMethodArg.setPropertyPackageTitle(property.getTitle());
-                        serviceTaskStencilMethodArg.setDefaultValue(property.getValue());
-                        serviceTaskStencilMethodArg.setType(ServiceTaskStencilMethodArgType.fromCustomObjectType(methodArg.getType()));
-                        args.add(serviceTaskStencilMethodArg);
+                        stencilMethodArg.setPropertyPackageTitle(property.getTitle());
+                        stencilMethodArg.setDefaultValue(property.getValue());
+                        stencilMethodArg.setType(methodArg.getType());
+                        args.add(stencilMethodArg);
                     });
         }
         stencil.setMethodArgs(args);
@@ -157,7 +156,7 @@ public class StencilSetJsonHelper {
                     gsonProperty.setId(createPropertyPackageIdFromMethodArg(methodArg));
                     gsonProperty.setTitle(methodArg.getPropertyPackageTitle());
                     gsonProperty.setValue(methodArg.getDefaultValue());
-                    gsonProperty.setType(methodArg.getType().propertyPackageType());
+                    gsonProperty.setType(methodArg.getPropertyPackageType());
                     gsonProperty.setPopular(true);
 
                     gsonPropertyPackage.setProperties(Collections.singletonList(gsonProperty));
@@ -222,10 +221,10 @@ public class StencilSetJsonHelper {
         custom.setBeanName(serviceTaskStencil.getBeanName());
         custom.setMethodName(serviceTaskStencil.getMethodName());
         gsonStencil.setCustom(custom);
-        for (ServiceTaskStencilMethodArg methodArg : serviceTaskStencil.getMethodArgs()) {
+        for (StencilMethodArg methodArg : serviceTaskStencil.getMethodArgs()) {
             GsonStencil.MethodArg gsonMethodArg = new GsonStencil.MethodArg();
             gsonMethodArg.setPropertyPackageName(createPropertyPackageNameFromMethodArg(methodArg));
-            gsonMethodArg.setType(methodArg.getType().customObjectType());
+            gsonMethodArg.setType(methodArg.getType());
             custom.getMethodArgs().add(gsonMethodArg);
         }
 
@@ -241,11 +240,11 @@ public class StencilSetJsonHelper {
         return SERVICE_TASK_STENCIL_VIEW.replace("${imageTag}", imageTag);
     }
 
-    protected static String createPropertyPackageNameFromMethodArg(ServiceTaskStencilMethodArg methodArg) {
+    protected static String createPropertyPackageNameFromMethodArg(StencilMethodArg methodArg) {
         return methodArg.getStencil().getStencilId().toLowerCase() + "-" + methodArg.getPropertyPackageTitle().toLowerCase() + "package";
     }
 
-    protected static String createPropertyPackageIdFromMethodArg(ServiceTaskStencilMethodArg methodArg) {
+    protected static String createPropertyPackageIdFromMethodArg(StencilMethodArg methodArg) {
         return methodArg.getStencil().getStencilId().toLowerCase() + "-" + methodArg.getPropertyPackageTitle().toLowerCase();
     }
 }
