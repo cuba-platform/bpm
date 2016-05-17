@@ -14,9 +14,10 @@
         <hierarchicalDatasource id="stencilsDs"
                                 class="com.haulmont.bpm.entity.stencil.Stencil"
                                 hierarchyProperty="parentGroup"
+                                allowCommit="false"
                                 refreshMode="NEVER">
         </hierarchicalDatasource>
-        <collectionDatasource id="groupsDs" class="com.haulmont.bpm.entity.stencil.GroupStencil" refreshMode="NEVER"/>
+        <collectionDatasource id="groupsDs" class="com.haulmont.bpm.entity.stencil.GroupStencil" refreshMode="NEVER" allowCommit="false"/>
     </dsContext>
     <layout expand="split" spacing="true">
         <split id="split"

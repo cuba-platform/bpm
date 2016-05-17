@@ -10,8 +10,9 @@
         messagesPack="com.haulmont.bpm.gui.stencilset">
     <dsContext>
         <datasource id="stencilDs"
-                    class="com.haulmont.bpm.entity.stencil.ServiceTaskStencil">
-            <collectionDatasource id="methodArgsDs" property="methodArgs"/>
+                    class="com.haulmont.bpm.entity.stencil.ServiceTaskStencil"
+                    allowCommit="false">
+            <collectionDatasource id="methodArgsDs" property="methodArgs" allowCommit="false"/>
         </datasource>
     </dsContext>
     <layout expand="stencilParamsTable" spacing="true">

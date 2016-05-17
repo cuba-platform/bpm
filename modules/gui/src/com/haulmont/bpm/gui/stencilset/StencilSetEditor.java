@@ -14,7 +14,6 @@ import com.haulmont.bpm.gui.stencilset.frame.AbstractStencilFrame;
 import com.haulmont.bpm.gui.stencilset.frame.ServiceTaskStencilFrame;
 import com.haulmont.bpm.gui.stencilset.helper.StencilSetJsonHelper;
 import com.haulmont.bpm.service.StencilSetService;
-import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
@@ -30,7 +29,6 @@ import com.haulmont.cuba.gui.export.ExportDisplay;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
