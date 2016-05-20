@@ -37,7 +37,7 @@
             <columns>
                 <column id="procInstance.procDefinition"
                         caption="msg://process"/>
-                <column id="locName"/>
+                <column id="locName" caption="msg://taskName"/>
                 <column id="startDate"/>
                 <column id="assigned" caption="msg://assigned"/>
             </columns>

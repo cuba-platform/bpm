@@ -17,6 +17,7 @@ import com.haulmont.bpm.exception.EmptyModelException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
+import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Resources;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -85,7 +86,8 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
                     .singleResult();
             if (procDefinition == null) {
                 procDefinition = metadata.create(ProcDefinition.class);
-                procDefinition.setCode(activitiProcessDefinition.getId());
+                String code = evaluateProcDefinitionCode(activitiProcessDefinition.getKey());
+                procDefinition.setCode(code);
             } else {
                 procDefinition = em.reload(procDefinition);
                 if (procDefinition == null)
@@ -106,6 +108,30 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             return procDefinition;
         } finally {
             tx.end();
+        }
+    }
+
+    protected String evaluateProcDefinitionCode(String codeSuggestion) {
+        if (findProcDefinitionByCode(codeSuggestion) == null) return codeSuggestion;
+        int index = 1;
+        while (index < 1000) {
+            String nextCode = codeSuggestion + "-" + index;
+            ProcDefinition procDefinition = findProcDefinitionByCode(nextCode);
+            if (procDefinition == null) return nextCode;
+            index++;
+        }
+        throw new BpmException("Cannot evaluate process definition code");
+    }
+
+    @Nullable
+    protected ProcDefinition findProcDefinitionByCode(String code) {
+        try (Transaction tx = persistence.getTransaction()) {
+            EntityManager em = persistence.getEntityManager();
+            TypedQuery<ProcDefinition> query = em.createQuery("select pd from bpm$ProcDefinition pd where pd.code = :code", ProcDefinition.class)
+                    .setParameter("code", code);
+            ProcDefinition result = query.getFirstResult();
+            tx.commit();
+            return result;
         }
     }
 
