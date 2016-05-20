@@ -32,6 +32,7 @@
                width="100%">
             <actions>
                 <action id="openProcInstance" caption="msg://openProcInstance" trackSelection="true" invoke="openProcInstance"/>
+                <!--<action id="openEntityEditor" caption="msg://openEntityEditor" trackSelection="true" invoke="openEntityEditor"/>-->
             </actions>
             <columns>
                 <column id="procInstance.procDefinition"
@@ -41,6 +42,7 @@
                 <column id="assigned" caption="msg://assigned"/>
             </columns>
             <buttonsPanel>
+                <button id="openEntityEditorBtn"/>
                 <button action="procTasksTable.openProcInstance"/>
             </buttonsPanel>
             <rows datasource="procTasksDs"/>
