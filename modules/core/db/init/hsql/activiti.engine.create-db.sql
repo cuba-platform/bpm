@@ -6,10 +6,10 @@ create table ACT_GE_PROPERTY (
 )^
 
 insert into ACT_GE_PROPERTY
-values ('schema.version', '5.17.0.2', 1)^
+values ('schema.version', '5.20.0.2', 1)^
 
 insert into ACT_GE_PROPERTY
-values ('schema.history', 'create(5.17.0.2)', 1)^
+values ('schema.history', 'create(5.20.0.2)', 1)^
 
 insert into ACT_GE_PROPERTY
 values ('next.dbid', '1', 1)^
@@ -191,6 +191,14 @@ create table ACT_EVT_LOG (
     IS_PROCESSED_ bit default 0
 )^
 
+create table ACT_PROCDEF_INFO (
+	ID_ varchar(64) not null,
+    PROC_DEF_ID_ varchar(64) not null,
+    REV_ integer,
+    INFO_JSON_ID_ varchar(64),
+    primary key (ID_)
+)^
+
 create index ACT_IDX_EXEC_BUSKEY on ACT_RU_EXECUTION(BUSINESS_KEY_)^
 create index ACT_IDX_TASK_CREATE on ACT_RU_TASK(CREATE_TIME_)^
 create index ACT_IDX_IDENT_LNK_USER on ACT_RU_IDENTITYLINK(USER_ID_)^
@@ -198,6 +206,7 @@ create index ACT_IDX_IDENT_LNK_GROUP on ACT_RU_IDENTITYLINK(GROUP_ID_)^
 create index ACT_IDX_EVENT_SUBSCR_CONFIG_ on ACT_RU_EVENT_SUBSCR(CONFIGURATION_)^
 create index ACT_IDX_VARIABLE_TASK_ID on ACT_RU_VARIABLE(TASK_ID_)^
 create index ACT_IDX_ATHRZ_PROCEDEF on ACT_RU_IDENTITYLINK(PROC_DEF_ID_)^
+create index ACT_IDX_INFO_PROCDEF on ACT_PROCDEF_INFO(PROC_DEF_ID_)^
 
 alter table ACT_GE_BYTEARRAY
     add constraint ACT_FK_BYTEARR_DEPL
@@ -207,7 +216,7 @@ alter table ACT_GE_BYTEARRAY
 alter table ACT_RE_PROCDEF
     add constraint ACT_UNIQ_PROCDEF
     unique (KEY_,VERSION_, TENANT_ID_)^
-    
+
 alter table ACT_RU_EXECUTION
     add constraint ACT_FK_EXE_PROCINST
     foreign key (PROC_INST_ID_)
@@ -217,17 +226,17 @@ alter table ACT_RU_EXECUTION
     add constraint ACT_FK_EXE_PARENT
     foreign key (PARENT_ID_)
     references ACT_RU_EXECUTION^
-    
+
 alter table ACT_RU_EXECUTION
-    add constraint ACT_FK_EXE_SUPER 
-    foreign key (SUPER_EXEC_) 
+    add constraint ACT_FK_EXE_SUPER
+    foreign key (SUPER_EXEC_)
     references ACT_RU_EXECUTION^
-    
+
 alter table ACT_RU_EXECUTION
-    add constraint ACT_FK_EXE_PROCDEF 
-    foreign key (PROC_DEF_ID_) 
-    references ACT_RE_PROCDEF (ID_)^    
-    
+    add constraint ACT_FK_EXE_PROCDEF
+    foreign key (PROC_DEF_ID_)
+    references ACT_RE_PROCDEF (ID_)^
+
 alter table ACT_RU_IDENTITYLINK
     add constraint ACT_FK_TSKASS_TASK
     foreign key (TASK_ID_)
@@ -237,11 +246,11 @@ alter table ACT_RU_IDENTITYLINK
     add constraint ACT_FK_ATHRZ_PROCEDEF
     foreign key (PROC_DEF_ID_)
     references ACT_RE_PROCDEF^
-    
+
 alter table ACT_RU_IDENTITYLINK
     add constraint ACT_FK_IDL_PROCINST
-    foreign key (PROC_INST_ID_) 
-    references ACT_RU_EXECUTION (ID_)^       
+    foreign key (PROC_INST_ID_)
+    references ACT_RU_EXECUTION (ID_)^
 
 alter table ACT_RU_TASK
     add constraint ACT_FK_TASK_EXE
@@ -283,17 +292,31 @@ alter table ACT_RU_EVENT_SUBSCR
     foreign key (EXECUTION_ID_)
     references ACT_RU_EXECUTION^
 
-alter table ACT_RE_MODEL 
-    add constraint ACT_FK_MODEL_SOURCE 
-    foreign key (EDITOR_SOURCE_VALUE_ID_) 
+alter table ACT_RE_MODEL
+    add constraint ACT_FK_MODEL_SOURCE
+    foreign key (EDITOR_SOURCE_VALUE_ID_)
     references ACT_GE_BYTEARRAY (ID_)^
 
-alter table ACT_RE_MODEL 
-    add constraint ACT_FK_MODEL_SOURCE_EXTRA 
-    foreign key (EDITOR_SOURCE_EXTRA_VALUE_ID_) 
+alter table ACT_RE_MODEL
+    add constraint ACT_FK_MODEL_SOURCE_EXTRA
+    foreign key (EDITOR_SOURCE_EXTRA_VALUE_ID_)
     references ACT_GE_BYTEARRAY (ID_)^
-    
-alter table ACT_RE_MODEL 
-    add constraint ACT_FK_MODEL_DEPLOYMENT 
-    foreign key (DEPLOYMENT_ID_) 
-    references ACT_RE_DEPLOYMENT (ID_)^        
+
+alter table ACT_RE_MODEL
+    add constraint ACT_FK_MODEL_DEPLOYMENT
+    foreign key (DEPLOYMENT_ID_)
+    references ACT_RE_DEPLOYMENT (ID_)^
+
+alter table ACT_PROCDEF_INFO
+    add constraint ACT_FK_INFO_JSON_BA
+    foreign key (INFO_JSON_ID_)
+    references ACT_GE_BYTEARRAY (ID_)^
+
+alter table ACT_PROCDEF_INFO
+    add constraint ACT_FK_INFO_PROCDEF
+    foreign key (PROC_DEF_ID_)
+    references ACT_RE_PROCDEF (ID_)^
+
+alter table ACT_PROCDEF_INFO
+    add constraint ACT_UNIQ_INFO_PROCDEF
+    unique (PROC_DEF_ID_)^

@@ -42,5 +42,5 @@ alter table ACT_ID_MEMBERSHIP
 
 alter table ACT_ID_MEMBERSHIP
     add constraint ACT_FK_MEMB_USER
-    foreign key (USER_ID_) 
+    foreign key (USER_ID_)
     references ACT_ID_USER (ID_)^

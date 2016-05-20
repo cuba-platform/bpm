@@ -3,7 +3,7 @@
  * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
-project.ext.activitiVersion = '5.19.0.2'
-project.ext.modelerVersion = '5.19.0.2.cuba.15'
+project.ext.activitiVersion = '5.20.0'
+project.ext.modelerVersion = '5.20.0.cuba.16'
 project.ext.activitiJsonConverter = "org.activiti:activiti-json-converter:$modelerVersion";
 project.ext.activitiModeler = "com.haulmont.bpm:cuba-modeler:$modelerVersion:web@zip";
