@@ -119,6 +119,9 @@
                 <property name="name"/>
                 <property name="actId"/>
             </property>
+            <property name="entityId"/>
+            <property name="entityName"/>
+            <property name="entityEditorName"/>
         </property>
     </view>
     <view entity="bpm$ProcActor"

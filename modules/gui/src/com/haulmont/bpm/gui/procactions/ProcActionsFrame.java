@@ -6,21 +6,40 @@
 package com.haulmont.bpm.gui.procactions;
 
 import com.haulmont.bpm.BpmConstants;
+import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.form.ProcFormDefinition;
 import com.haulmont.bpm.gui.action.*;
 import com.haulmont.bpm.service.ProcessFormService;
+import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.cuba.security.global.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
+ * <p>This frame is used for displaying process actions available for the current user.
+ * Depending of the process instance associated with the frame, the frame may display buttons
+ * that start the process, complete process actions or claim the process task.</p>
+ *
+ * <p>There are two ways to init the frame:
+ * <ul>
+ *     <li>With the {@link ProcInstance} object</li>
+ *     <li>With the code of {@link ProcDefinition} and entity identifier</li>
+ * </ul>
+ * See the {@link #init(String, Entity)} and {@link #init(ProcInstance)} methods for details</p>
  */
 public class ProcActionsFrame extends AbstractFrame {
 
@@ -51,6 +70,11 @@ public class ProcActionsFrame extends AbstractFrame {
     @Inject
     protected BoxLayout actionsBox;
 
+    @Inject
+    protected Metadata metadata;
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
+
     protected ProcTask procTask;
     protected ProcInstance procInstance;
     protected String buttonWidth = "150px";
@@ -71,6 +95,41 @@ public class ProcActionsFrame extends AbstractFrame {
     protected boolean claimTaskEnabled = true;
     protected boolean taskInfoEnabled = true;
 
+    protected StartProcessAction startProcessAction;
+    protected CancelProcessAction cancelProcessAction;
+    protected ClaimProcTaskAction claimProcTaskAction;
+    protected List<CompleteProcTaskAction> completeProcTaskActions = new ArrayList<>();
+
+    /**
+     * The method tries to find the process instance by the specified process code and the entity.
+     * If the process instance is not found then a new instance is created.
+     * Then the UI with available actions for the current user and the process instance is initialized .
+     * @param procCode process definition code
+     * @param entity an entity
+     */
+    public void init(String procCode, Entity entity) {
+        ProcDefinition procDefinition = findProcDefinition(procCode);
+        if (procDefinition == null) {
+            log.debug("Process definition with code{} not found", procCode);
+            return;
+        }
+        procInstance = findProcInstance(procDefinition, entity);
+        if (procInstance == null) {
+            procInstance = metadata.create(ProcInstance.class);
+            procInstance.setProcDefinition(procDefinition);
+            procInstance.setEntityId(entity.getUuid());
+            procInstance.setEntityName(entity.getMetaClass().getName());
+            getDsContext().addBeforeCommitListener(context -> context.getCommitInstances().add(procInstance));
+        }
+
+        init(procInstance);
+    }
+
+    /**
+     * Method creates and displays buttons with the actions available for the current user with the
+     * specified process instance
+     * @param procInstance a process instance
+     */
     public void init(ProcInstance procInstance) {
         this.procInstance = procInstance;
         resetUI();
@@ -90,6 +149,10 @@ public class ProcActionsFrame extends AbstractFrame {
     }
 
     protected void resetUI() {
+        startProcessAction = null;
+        cancelProcessAction = null;
+        claimProcTaskAction = null;
+        completeProcTaskActions.clear();
         actionsBox.removeAll();
         noActionsAvailableLbl.setVisible(true);
         taskInfoGrid.setVisible(false);
@@ -101,7 +164,7 @@ public class ProcActionsFrame extends AbstractFrame {
         noActionsAvailableLbl.setVisible(false);
         Button claimTaskBtn = componentsFactory.createComponent(Button.class);
         claimTaskBtn.setWidth(buttonWidth);
-        ClaimProcTaskAction claimProcTaskAction = new ClaimProcTaskAction(procTask, claimTaskBtn);
+        claimProcTaskAction = new ClaimProcTaskAction(procTask, claimTaskBtn);
         claimProcTaskAction.addBeforeActionPredicate(beforeClaimTaskPredicate);
         claimProcTaskAction.addAfterActionListener(afterClaimTaskListener);
         claimTaskBtn.setAction(claimProcTaskAction);
@@ -122,6 +185,7 @@ public class ProcActionsFrame extends AbstractFrame {
                 action.addAfterActionListener(afterCompleteTaskListener);
                 actionBtn.setAction(action);
                 actionsBox.add(actionBtn);
+                completeProcTaskActions.add(action);
             }
         } else {
             Button actionBtn = componentsFactory.createComponent(Button.class);
@@ -133,6 +197,7 @@ public class ProcActionsFrame extends AbstractFrame {
             actionBtn.setAction(action);
             actionBtn.setCaption(getMessage("completeTask"));
             actionsBox.add(actionBtn);
+            completeProcTaskActions.add(action);
         }
     }
 
@@ -141,7 +206,7 @@ public class ProcActionsFrame extends AbstractFrame {
         noActionsAvailableLbl.setVisible(false);
         Button startProcessBtn = componentsFactory.createComponent(Button.class);
         startProcessBtn.setWidth(buttonWidth);
-        StartProcessAction startProcessAction = new StartProcessAction(procInstance, startProcessBtn);
+        startProcessAction = new StartProcessAction(procInstance, startProcessBtn);
         startProcessAction.addBeforeActionPredicate(beforeStartProcessPredicate);
         startProcessAction.addAfterActionListener(afterStartProcessListener);
         startProcessBtn.setAction(startProcessAction);
@@ -151,7 +216,7 @@ public class ProcActionsFrame extends AbstractFrame {
     protected void initCancelAction() {
         Button cancelBtn = componentsFactory.createComponent(Button.class);
         cancelBtn.setWidth(buttonWidth);
-        CancelProcessAction cancelProcessAction = new CancelProcessAction(procInstance, cancelBtn);
+        cancelProcessAction = new CancelProcessAction(procInstance, cancelBtn);
         cancelProcessAction.addBeforeActionPredicate(beforeCancelProcessPredicate);
         cancelProcessAction.addAfterActionListener(afterCancelProcessListener);
         cancelBtn.setAction(cancelProcessAction);
@@ -186,68 +251,99 @@ public class ProcActionsFrame extends AbstractFrame {
         return dataManager.<ProcTask>load(ctx);
     }
 
+    @Nullable
+    protected ProcDefinition findProcDefinition(String processCode) {
+        LoadContext ctx = LoadContext.create(ProcDefinition.class);
+        ctx.setQueryString("select pd from bpm$ProcDefinition pd where pd.code = :code")
+                .setParameter("code", processCode);
+        return (ProcDefinition) dataManager.load(ctx);
+    }
+
+    @Nullable
+    protected ProcInstance findProcInstance(ProcDefinition procDefinition, Entity entity) {
+        LoadContext ctx = LoadContext.create(ProcInstance.class).setView("procInstance-start");
+        ctx.setQueryString("select pi from bpm$ProcInstance pi where pi.procDefinition.id = :procDefinition and pi.entityId = :entityId")
+                .setParameter("procDefinition", procDefinition)
+                .setParameter("entityId", entity);
+        return (ProcInstance) dataManager.load(ctx);
+    }
+
     public ProcAction.AfterActionListener getAfterStartProcessListener() {
         return afterStartProcessListener;
     }
 
-    public void setAfterStartProcessListener(ProcAction.AfterActionListener afterStartProcessListener) {
-        this.afterStartProcessListener = afterStartProcessListener;
+    public void setAfterStartProcessListener(ProcAction.AfterActionListener listener) {
+        this.afterStartProcessListener = listener;
+        if (startProcessAction != null) startProcessAction.addAfterActionListener(listener);
     }
 
     public ProcAction.AfterActionListener getAfterCompleteTaskListener() {
         return afterCompleteTaskListener;
     }
 
-    public void setAfterCompleteTaskListener(ProcAction.AfterActionListener afterCompleteTaskListener) {
-        this.afterCompleteTaskListener = afterCompleteTaskListener;
+    public void setAfterCompleteTaskListener(ProcAction.AfterActionListener listener) {
+        this.afterCompleteTaskListener = listener;
+        completeProcTaskActions.stream().forEach(action ->
+                action.addAfterActionListener(listener));
     }
 
     public ProcAction.BeforeActionPredicate getBeforeStartProcessPredicate() {
         return beforeStartProcessPredicate;
     }
 
-    public void setBeforeStartProcessPredicate(ProcAction.BeforeActionPredicate beforeStartProcessPredicate) {
-        this.beforeStartProcessPredicate = beforeStartProcessPredicate;
+    public void setBeforeStartProcessPredicate(ProcAction.BeforeActionPredicate predicate) {
+        this.beforeStartProcessPredicate = predicate;
+        if (startProcessAction != null)
+            startProcessAction.addBeforeActionPredicate(predicate);
     }
 
     public ProcAction.AfterActionListener getAfterClaimTaskListener() {
         return afterClaimTaskListener;
     }
 
-    public void setAfterClaimTaskListener(ProcAction.AfterActionListener afterClaimTaskListener) {
-        this.afterClaimTaskListener = afterClaimTaskListener;
+    public void setAfterClaimTaskListener(ProcAction.AfterActionListener listener) {
+        this.afterClaimTaskListener = listener;
+        if (claimProcTaskAction != null)
+            claimProcTaskAction.addAfterActionListener(listener);
     }
 
     public ProcAction.AfterActionListener getAfterCancelProcessListener() {
         return afterCancelProcessListener;
     }
 
-    public void setAfterCancelProcessListener(ProcAction.AfterActionListener afterCancelProcessListener) {
-        this.afterCancelProcessListener = afterCancelProcessListener;
+    public void setAfterCancelProcessListener(ProcAction.AfterActionListener listener) {
+        this.afterCancelProcessListener = listener;
+        if (cancelProcessAction != null)
+            cancelProcessAction.addAfterActionListener(listener);
     }
 
     public ProcAction.BeforeActionPredicate getBeforeCompleteTaskPredicate() {
         return beforeCompleteTaskPredicate;
     }
 
-    public void setBeforeCompleteTaskPredicate(ProcAction.BeforeActionPredicate beforeCompleteTaskPredicate) {
-        this.beforeCompleteTaskPredicate = beforeCompleteTaskPredicate;
+    public void setBeforeCompleteTaskPredicate(ProcAction.BeforeActionPredicate predicate) {
+        this.beforeCompleteTaskPredicate = predicate;
+        completeProcTaskActions.stream().forEach(action -> action.addBeforeActionPredicate(predicate));
     }
 
     public ProcAction.BeforeActionPredicate getBeforeClaimTaskPredicate() {
         return beforeClaimTaskPredicate;
     }
 
-    public void setBeforeClaimTaskPredicate(ProcAction.BeforeActionPredicate beforeClaimTaskPredicate) {
-        this.beforeClaimTaskPredicate = beforeClaimTaskPredicate;
+    public void setBeforeClaimTaskPredicate(ProcAction.BeforeActionPredicate predicate) {
+        this.beforeClaimTaskPredicate = predicate;
+        if (claimProcTaskAction != null)
+            claimProcTaskAction.addBeforeActionPredicate(predicate);
     }
 
     public ProcAction.BeforeActionPredicate getBeforeCancelProcessPredicate() {
         return beforeCancelProcessPredicate;
     }
 
-    public void setBeforeCancelProcessPredicate(ProcAction.BeforeActionPredicate beforeCancelProcessPredicate) {
-        this.beforeCancelProcessPredicate = beforeCancelProcessPredicate;
+    public void setBeforeCancelProcessPredicate(ProcAction.BeforeActionPredicate predicate) {
+        this.beforeCancelProcessPredicate = predicate;
+        if (cancelProcessAction != null)
+            cancelProcessAction.addBeforeActionPredicate(predicate);
     }
 
     public boolean isStartProcessEnabled() {

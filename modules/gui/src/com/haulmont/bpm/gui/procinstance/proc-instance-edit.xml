@@ -67,7 +67,7 @@
                 <groupBox id="procTaskActionsGroupBox"
                           caption="msg://processActions"
                           width="100%">
-                    <iframe id="procActionsFrame"
+                    <frame id="procActionsFrame"
                             screen="procActionsFrame"/>
                 </groupBox>
             </hbox>
@@ -78,7 +78,7 @@
                           caption="msg://com.haulmont.bpm.entity/ProcInstance.procAttachments"
                           height="100%"
                           width="100%">
-                    <iframe id="procAttachmentsFrame"
+                    <frame id="procAttachmentsFrame"
                             height="100%"
                             screen="procAttachmentsFrame"/>
                 </groupBox>
@@ -86,7 +86,7 @@
                           caption="msg://com.haulmont.bpm.entity/ProcInstance.procActors"
                           height="100%"
                           width="100%">
-                    <iframe id="procActorsFrame"
+                    <frame id="procActorsFrame"
                             height="100%"
                             screen="procActorsFrame"/>
                 </groupBox>
@@ -96,11 +96,11 @@
                       height="100%"
                       width="100%"
                       collapsable="true">
-                <iframe id="procTasksFrame"
+                <frame id="procTasksFrame"
                         height="200px"
                         screen="procTasksFrame"/>
             </groupBox>
-            <iframe id="windowActions"
+            <frame id="windowActions"
                     screen="extendedEditWindowActions"/>
         </scrollBox>
     </layout>
