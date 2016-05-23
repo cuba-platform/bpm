@@ -293,7 +293,7 @@ public class ProcActionsFrame extends AbstractFrame {
         protected ProcAction.AfterActionListener afterCancelProcessListener;
 
         protected boolean startProcessEnabled = true;
-        protected boolean cancelProcessEnabled = true;
+        protected boolean cancelProcessEnabled = false;
         protected boolean completeTaskEnabled = true;
         protected boolean claimTaskEnabled = true;
         protected boolean taskInfoEnabled = true;
