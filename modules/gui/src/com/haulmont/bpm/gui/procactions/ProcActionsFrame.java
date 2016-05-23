@@ -27,19 +27,21 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * <p>This frame is used for displaying process actions available for the current user.
  * Depending of the process instance associated with the frame, the frame may display buttons
  * that start the process, complete process actions or claim the process task.</p>
  *
- * <p>There are two ways to init the frame:
+ * The frame must be initialized with the {@link Initializer} instance. Use the {@link #initializer()}
+ * method to get the instance of the initializer object. After setting all required listeners and predicates you can
+ * initialize the frame in two ways:
+ *
  * <ul>
- *     <li>With the {@link ProcInstance} object</li>
- *     <li>With the code of {@link ProcDefinition} and entity identifier</li>
+ *     <li>With the code of {@link ProcDefinition} and entity reference using the {@link Initializer#init(String, Entity)} method</li>
+ *     <li>With the {@link ProcInstance} object using the  {@link Initializer#init(ProcInstance)} method</li>
  * </ul>
- * See the {@link #init(String, Entity)} and {@link #init(ProcInstance)} methods for details</p>
+ * See the {@link Initializer#init(String, Entity)} and {@link Initializer#init(ProcInstance)} methods for details</p>
  */
 public class ProcActionsFrame extends AbstractFrame {
 
@@ -90,7 +92,7 @@ public class ProcActionsFrame extends AbstractFrame {
     protected ProcAction.AfterActionListener afterCancelProcessListener;
 
     protected boolean startProcessEnabled = true;
-    protected boolean cancelProcessEnabled = true;
+    protected boolean cancelProcessEnabled = false;
     protected boolean completeTaskEnabled = true;
     protected boolean claimTaskEnabled = true;
     protected boolean taskInfoEnabled = true;
@@ -100,14 +102,12 @@ public class ProcActionsFrame extends AbstractFrame {
     protected ClaimProcTaskAction claimProcTaskAction;
     protected List<CompleteProcTaskAction> completeProcTaskActions = new ArrayList<>();
 
+    protected Button cancelProcessBtn;
+
     /**
-     * The method tries to find the process instance by the specified process code and the entity.
-     * If the process instance is not found then a new instance is created.
-     * Then the UI with available actions for the current user and the process instance is initialized .
-     * @param procCode process definition code
-     * @param entity an entity
+     * @see Initializer#init(String, Entity)
      */
-    public void init(String procCode, Entity entity) {
+    protected void init(String procCode, Entity entity) {
         ProcDefinition procDefinition = findProcDefinition(procCode);
         if (procDefinition == null) {
             log.debug("Process definition with code{} not found", procCode);
@@ -126,13 +126,14 @@ public class ProcActionsFrame extends AbstractFrame {
     }
 
     /**
-     * Method creates and displays buttons with the actions available for the current user with the
-     * specified process instance
-     * @param procInstance a process instance
+     * @see Initializer#init(ProcInstance)
+     * @deprecated The method will be declared as protected in next platform releases. Use the {@link Initializer}
+     * to initialize the frame.
      */
+    @Deprecated
     public void init(ProcInstance procInstance) {
         this.procInstance = procInstance;
-        resetUI();
+        reset();
         procTask = findCurrentUserProcTask();
         if (procTask == null) {
             if (startProcessEnabled && startProcessAllowed())
@@ -148,7 +149,9 @@ public class ProcActionsFrame extends AbstractFrame {
             initCancelAction();
     }
 
-    protected void resetUI() {
+
+
+    protected void reset() {
         startProcessAction = null;
         cancelProcessAction = null;
         claimProcTaskAction = null;
@@ -214,13 +217,13 @@ public class ProcActionsFrame extends AbstractFrame {
     }
 
     protected void initCancelAction() {
-        Button cancelBtn = componentsFactory.createComponent(Button.class);
-        cancelBtn.setWidth(buttonWidth);
-        cancelProcessAction = new CancelProcessAction(procInstance, cancelBtn);
+        cancelProcessBtn = componentsFactory.createComponent(Button.class);
+        cancelProcessBtn.setWidth(buttonWidth);
+        cancelProcessAction = new CancelProcessAction(procInstance, cancelProcessBtn);
         cancelProcessAction.addBeforeActionPredicate(beforeCancelProcessPredicate);
         cancelProcessAction.addAfterActionListener(afterCancelProcessListener);
-        cancelBtn.setAction(cancelProcessAction);
-        actionsBox.add(cancelBtn);
+        cancelProcessBtn.setAction(cancelProcessAction);
+        actionsBox.add(cancelProcessBtn);
     }
 
     protected void initTaskInfoGrid() {
@@ -231,8 +234,7 @@ public class ProcActionsFrame extends AbstractFrame {
 
     protected boolean cancelProcessAllowed() {
         return procInstance.getStartDate() != null
-                && procInstance.getEndDate() == null
-                && userSession.getCurrentOrSubstitutedUser().equals(procInstance.getStartedBy());
+                && procInstance.getEndDate() == null;
     }
 
     protected boolean startProcessAllowed() {
@@ -268,128 +270,412 @@ public class ProcActionsFrame extends AbstractFrame {
         return (ProcInstance) dataManager.load(ctx);
     }
 
+    /**
+     * Returns a new instance of frame initializer
+     */
+    public Initializer initializer() {
+        return new Initializer();
+    }
+
+    /**
+     * Class is used to initialize the frame.
+     */
+    public class Initializer {
+
+        protected ProcAction.BeforeActionPredicate beforeStartProcessPredicate;
+        protected ProcAction.BeforeActionPredicate beforeCompleteTaskPredicate;
+        protected ProcAction.BeforeActionPredicate beforeClaimTaskPredicate;
+        protected ProcAction.BeforeActionPredicate beforeCancelProcessPredicate;
+
+        protected ProcAction.AfterActionListener afterStartProcessListener;
+        protected ProcAction.AfterActionListener afterCompleteTaskListener;
+        protected ProcAction.AfterActionListener afterClaimTaskListener;
+        protected ProcAction.AfterActionListener afterCancelProcessListener;
+
+        protected boolean startProcessEnabled = true;
+        protected boolean cancelProcessEnabled = true;
+        protected boolean completeTaskEnabled = true;
+        protected boolean claimTaskEnabled = true;
+        protected boolean taskInfoEnabled = true;
+
+        protected String buttonWidth = "150px";
+
+        private Initializer() {
+        }
+
+        public Initializer setBeforeStartProcessPredicate(ProcAction.BeforeActionPredicate predicate) {
+            this.beforeStartProcessPredicate = predicate;
+            return this;
+        }
+
+        public Initializer setBeforeCompleteTaskPredicate(ProcAction.BeforeActionPredicate beforeCompleteTaskPredicate) {
+            this.beforeCompleteTaskPredicate = beforeCompleteTaskPredicate;
+            return this;
+        }
+
+        public Initializer setBeforeClaimTaskPredicate(ProcAction.BeforeActionPredicate beforeClaimTaskPredicate) {
+            this.beforeClaimTaskPredicate = beforeClaimTaskPredicate;
+            return this;
+        }
+
+        public Initializer setBeforeCancelProcessPredicate(ProcAction.BeforeActionPredicate beforeCancelProcessPredicate) {
+            this.beforeCancelProcessPredicate = beforeCancelProcessPredicate;
+            return this;
+        }
+
+        public Initializer setAfterStartProcessListener(ProcAction.AfterActionListener afterStartProcessListener) {
+            this.afterStartProcessListener = afterStartProcessListener;
+            return this;
+        }
+
+        public Initializer setAfterCompleteTaskListener(ProcAction.AfterActionListener afterCompleteTaskListener) {
+            this.afterCompleteTaskListener = afterCompleteTaskListener;
+            return this;
+        }
+
+        public Initializer setAfterClaimTaskListener(ProcAction.AfterActionListener afterClaimTaskListener) {
+            this.afterClaimTaskListener = afterClaimTaskListener;
+            return this;
+        }
+
+        public Initializer setAfterCancelProcessListener(ProcAction.AfterActionListener afterCancelProcessListener) {
+            this.afterCancelProcessListener = afterCancelProcessListener;
+            return this;
+        }
+
+        public Initializer setStartProcessEnabled(boolean startProcessEnabled) {
+            this.startProcessEnabled = startProcessEnabled;
+            return this;
+        }
+
+        public Initializer setCancelProcessEnabled(boolean cancelProcessEnabled) {
+            this.cancelProcessEnabled = cancelProcessEnabled;
+            return this;
+        }
+
+        public Initializer setCompleteTaskEnabled(boolean completeTaskEnabled) {
+            this.completeTaskEnabled = completeTaskEnabled;
+            return this;
+        }
+
+        public Initializer setClaimTaskEnabled(boolean claimTaskEnabled) {
+            this.claimTaskEnabled = claimTaskEnabled;
+            return this;
+        }
+
+        public Initializer setTaskInfoEnabled(boolean taskInfoEnabled) {
+            this.taskInfoEnabled = taskInfoEnabled;
+            return this;
+        }
+
+        public Initializer setButtonWidth(String buttonWidth) {
+            this.buttonWidth = buttonWidth;
+            return this;
+        }
+
+        /**
+         * The method tries to find the process instance by the specified process code and the entity reference.
+         * If the process instance is not found then a new one is created.
+         * Then the UI for available actions for the current user and the process instance is initialized.
+         * @param processCode process definition code
+         * @param entity an entity
+         */
+
+        public void init(String processCode, Entity entity) {
+            copyFields();
+            ProcActionsFrame.this.init(processCode, entity);
+        }
+
+        /**
+         * Method initializes the UI for actions which are available for the current user with the
+         * specified process instance.
+         * @param procInstance a process instance
+         */
+        public void init(ProcInstance procInstance) {
+            copyFields();
+            ProcActionsFrame.this.init(procInstance);
+        }
+
+        protected void copyFields() {
+            ProcActionsFrame.this.beforeStartProcessPredicate = this.beforeStartProcessPredicate;
+            ProcActionsFrame.this.afterStartProcessListener = this.afterStartProcessListener;
+            ProcActionsFrame.this.beforeCompleteTaskPredicate = this.beforeCompleteTaskPredicate;
+            ProcActionsFrame.this.afterCompleteTaskListener = this.afterCompleteTaskListener;
+            ProcActionsFrame.this.beforeClaimTaskPredicate = this.beforeClaimTaskPredicate;
+            ProcActionsFrame.this.afterClaimTaskListener = this.afterClaimTaskListener;
+            ProcActionsFrame.this.beforeCancelProcessPredicate = this.beforeCancelProcessPredicate;
+            ProcActionsFrame.this.afterCancelProcessListener = this.afterCancelProcessListener;
+            ProcActionsFrame.this.startProcessEnabled = this.startProcessEnabled;
+            ProcActionsFrame.this.cancelProcessEnabled = this.cancelProcessEnabled;
+            ProcActionsFrame.this.completeTaskEnabled = this.completeTaskEnabled;
+            ProcActionsFrame.this.claimTaskEnabled = this.claimTaskEnabled;
+            ProcActionsFrame.this.taskInfoEnabled = this.taskInfoEnabled;
+            ProcActionsFrame.this.buttonWidth = this.buttonWidth;
+        }
+    }
+
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public ProcAction.AfterActionListener getAfterStartProcessListener() {
         return afterStartProcessListener;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setAfterStartProcessListener(ProcAction.AfterActionListener listener) {
         this.afterStartProcessListener = listener;
         if (startProcessAction != null) startProcessAction.addAfterActionListener(listener);
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public ProcAction.AfterActionListener getAfterCompleteTaskListener() {
         return afterCompleteTaskListener;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setAfterCompleteTaskListener(ProcAction.AfterActionListener listener) {
         this.afterCompleteTaskListener = listener;
         completeProcTaskActions.stream().forEach(action ->
                 action.addAfterActionListener(listener));
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public ProcAction.BeforeActionPredicate getBeforeStartProcessPredicate() {
         return beforeStartProcessPredicate;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setBeforeStartProcessPredicate(ProcAction.BeforeActionPredicate predicate) {
         this.beforeStartProcessPredicate = predicate;
         if (startProcessAction != null)
             startProcessAction.addBeforeActionPredicate(predicate);
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public ProcAction.AfterActionListener getAfterClaimTaskListener() {
         return afterClaimTaskListener;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setAfterClaimTaskListener(ProcAction.AfterActionListener listener) {
         this.afterClaimTaskListener = listener;
         if (claimProcTaskAction != null)
             claimProcTaskAction.addAfterActionListener(listener);
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public ProcAction.AfterActionListener getAfterCancelProcessListener() {
         return afterCancelProcessListener;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setAfterCancelProcessListener(ProcAction.AfterActionListener listener) {
         this.afterCancelProcessListener = listener;
         if (cancelProcessAction != null)
             cancelProcessAction.addAfterActionListener(listener);
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public ProcAction.BeforeActionPredicate getBeforeCompleteTaskPredicate() {
         return beforeCompleteTaskPredicate;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setBeforeCompleteTaskPredicate(ProcAction.BeforeActionPredicate predicate) {
         this.beforeCompleteTaskPredicate = predicate;
         completeProcTaskActions.stream().forEach(action -> action.addBeforeActionPredicate(predicate));
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public ProcAction.BeforeActionPredicate getBeforeClaimTaskPredicate() {
         return beforeClaimTaskPredicate;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setBeforeClaimTaskPredicate(ProcAction.BeforeActionPredicate predicate) {
         this.beforeClaimTaskPredicate = predicate;
         if (claimProcTaskAction != null)
             claimProcTaskAction.addBeforeActionPredicate(predicate);
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public ProcAction.BeforeActionPredicate getBeforeCancelProcessPredicate() {
         return beforeCancelProcessPredicate;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setBeforeCancelProcessPredicate(ProcAction.BeforeActionPredicate predicate) {
         this.beforeCancelProcessPredicate = predicate;
         if (cancelProcessAction != null)
             cancelProcessAction.addBeforeActionPredicate(predicate);
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public boolean isStartProcessEnabled() {
         return startProcessEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setStartProcessEnabled(boolean startProcessEnabled) {
         this.startProcessEnabled = startProcessEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public boolean isCancelProcessEnabled() {
         return cancelProcessEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setCancelProcessEnabled(boolean cancelProcessEnabled) {
         this.cancelProcessEnabled = cancelProcessEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public boolean isCompleteTaskEnabled() {
         return completeTaskEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setCompleteTaskEnabled(boolean completeTaskEnabled) {
         this.completeTaskEnabled = completeTaskEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public boolean isClaimTaskEnabled() {
         return claimTaskEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setClaimTaskEnabled(boolean claimTaskEnabled) {
         this.claimTaskEnabled = claimTaskEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public boolean isTaskInfoEnabled() {
         return taskInfoEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setTaskInfoEnabled(boolean taskInfoEnabled) {
         this.taskInfoEnabled = taskInfoEnabled;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public String getButtonWidth() {
         return buttonWidth;
     }
 
+    /**
+     * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
+     * method.
+     */
+    @Deprecated
     public void setButtonWidth(String buttonWidth) {
         this.buttonWidth = buttonWidth;
     }

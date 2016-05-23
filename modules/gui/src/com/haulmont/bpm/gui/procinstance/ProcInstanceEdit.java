@@ -147,27 +147,23 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     }
 
     protected void initProcTaskActionsFrame() {
-        procActionsFrame.setBeforeStartProcessPredicate(new ProcAction.BeforeActionPredicate() {
-            @Override
-            public boolean evaluate() {
-                if (PersistenceHelper.isNew(getItem())) {
-                    showNotification(getMessage("saveProcInstance"), NotificationType.WARNING);
-                    return false;
-                } else {
-                    return commit();
-                }
-            }
-        });
-        procActionsFrame.setAfterStartProcessListener(new MessageAndCloseAfterActionListener(getMessage("processStarted")));
-        procActionsFrame.setAfterCancelProcessListener(new MessageAndCloseAfterActionListener(getMessage("processCancelled")));
-        procActionsFrame.setAfterCompleteTaskListener(new MessageAndCloseAfterActionListener(getMessage("taskCompleted")));
-        procActionsFrame.setAfterClaimTaskListener(new MessageAndCloseAfterActionListener(getMessage("taskClaimed")));
-
-        procActionsFrame.setBeforeCompleteTaskPredicate(new CommitEditorBeforeActionPredicate());
-        procActionsFrame.setBeforeClaimTaskPredicate(new CommitEditorBeforeActionPredicate());
-        procActionsFrame.setBeforeCancelProcessPredicate(new CommitEditorBeforeActionPredicate());
-
-        procActionsFrame.init(getItem());
+        procActionsFrame.initializer()
+                .setBeforeStartProcessPredicate(() -> {
+                    if (PersistenceHelper.isNew(getItem())) {
+                        showNotification(getMessage("saveProcInstance"), NotificationType.WARNING);
+                        return false;
+                    } else {
+                        return commit();
+                    }
+                })
+                .setAfterStartProcessListener(new MessageAndCloseAfterActionListener(getMessage("processStarted")))
+                .setAfterCancelProcessListener(new MessageAndCloseAfterActionListener(getMessage("processCancelled")))
+                .setAfterCompleteTaskListener(new MessageAndCloseAfterActionListener(getMessage("taskCompleted")))
+                .setAfterClaimTaskListener(new MessageAndCloseAfterActionListener(getMessage("taskClaimed")))
+                .setBeforeCompleteTaskPredicate(new CommitEditorBeforeActionPredicate())
+                .setBeforeClaimTaskPredicate(new CommitEditorBeforeActionPredicate())
+                .setBeforeCancelProcessPredicate(new CommitEditorBeforeActionPredicate())
+                .init(getItem());
     }
 
     protected void addFieldGroupCustomFields() {
