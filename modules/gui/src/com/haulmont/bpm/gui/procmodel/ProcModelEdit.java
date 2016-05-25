@@ -30,7 +30,7 @@ public class ProcModelEdit extends AbstractEditor<ProcModel> {
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-        getDialogParams().setWidthAuto();
+        getDialogOptions().setWidthAuto();
     }
 
     @Override
