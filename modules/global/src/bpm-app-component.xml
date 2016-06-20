@@ -1,0 +1,43 @@
+<!--
+  ~ Copyright (c) 2008-2016 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
+  -->
+
+<app-component xmlns="http://schemas.haulmont.com/cuba/app-component.xsd"
+               id="bpm"
+               dependsOn="cuba">
+
+    <module name="global" blocks="*">
+        <artifact name="bpm-global" appJar="true"/>
+
+        <property name="cuba.persistenceConfig" value="bpm-persistence.xml"/>
+        <property name="cuba.metadataConfig" value="bpm-metadata.xml"/>
+        <property name="cuba.viewsConfig" value="bpm-views.xml"/>
+        <property name="cuba.creditsConfig" value="bpm-credits.xml"/>
+    </module>
+
+    <module name="core" dependsOn="global" blocks="core">
+        <artifact name="bpm-core" appJar="true"/>
+        <artifact name="bpm-core" classifier="db" ext="zip" configuration="dbscripts"/>
+
+        <property name="cuba.springContextConfig" value="bpm-spring.xml"/>
+        <property name="cuba.mainMessagePack" value="com.haulmont.bpm.core"/>
+    </module>
+
+    <module name="gui" dependsOn="global" blocks="web,desktop">
+        <artifact name="bpm-gui" appJar="true"/>
+    </module>
+
+    <module name="web" dependsOn="gui" blocks="web">
+        <artifact name="bpm-web" appJar="true"/>
+        <artifact name="bpm-web" classifier="web" ext="zip" configuration="webcontent"/>
+
+        <property name="cuba.springContextConfig" value="bpm-web-spring.xml"/>
+        <property name="cuba.mainMessagePack" value="com.haulmont.bpm.web"/>
+        <property name="cuba.dispatcherSpringContextConfig" value="bpm-dispatcher-spring.xml"/>
+        <property name="cuba.windowConfig" value="bpm-web-screens.xml"/>
+        <property name="cuba.menuConfig" value="bpm-web-menu.xml"/>
+        <property name="cuba.permissionConfig" value="bpm-web-permissions.xml"/>
+    </module>
+
+</app-component>
