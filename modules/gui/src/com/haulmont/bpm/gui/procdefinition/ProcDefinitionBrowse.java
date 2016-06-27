@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-/**
- */
 public class ProcDefinitionBrowse extends AbstractLookup {
 
     @Inject
@@ -125,7 +123,7 @@ public class ProcDefinitionBrowse extends AbstractLookup {
     protected class UploadErrorListener implements FileUploadField.FileUploadErrorListener {
 
         @Override
-        public void fileUploadError(UploadComponentSupport.FileUploadErrorEvent e) {
+        public void fileUploadError(UploadField.FileUploadErrorEvent e) {
             showNotification(getMessage("processUploadFailed"), NotificationType.ERROR);
         }
     }
