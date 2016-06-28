@@ -14,8 +14,6 @@ import com.haulmont.cuba.gui.components.DialogAction;
 import com.haulmont.cuba.gui.components.DialogAction.Type;
 import com.haulmont.cuba.gui.components.Frame;
 
-/**
- */
 public class ClaimProcTaskAction extends ProcAction {
 
     protected ProcTask procTask;

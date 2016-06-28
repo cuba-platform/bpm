@@ -13,8 +13,6 @@ import org.junit.Test
 
 import static org.junit.Assert.assertEquals
 
-/**
- */
 class ProcessDeploymentTest {
 
     static final String DEPLOYMENT_TEST_1_PATH = "com/haulmont/bpm/process/deploymentTest1.bpmn20.xml";

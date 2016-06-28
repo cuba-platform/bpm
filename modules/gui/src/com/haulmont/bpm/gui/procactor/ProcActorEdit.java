@@ -8,7 +8,5 @@ package com.haulmont.bpm.gui.procactor;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.bpm.entity.ProcActor;
 
-/**
- */
 public class ProcActorEdit extends AbstractEditor<ProcActor> {
 }

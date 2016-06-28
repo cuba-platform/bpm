@@ -11,8 +11,6 @@ import com.haulmont.chile.core.datatypes.impl.LongDatatype;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.TextField;
 
-/**
- */
 public class LongFieldGenerator extends AbstractFormFieldGenerator {
 
     @Override

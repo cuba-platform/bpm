@@ -16,11 +16,12 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import com.haulmont.cuba.security.entity.User;
 
-/**
- */
 @Table(name = "BPM_PROC_ATTACHMENT")
 @Entity(name = "bpm$ProcAttachment")
 public class ProcAttachment extends StandardEntity {
+
+    private static final long serialVersionUID = -3032930359790118895L;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FILE_ID")
     protected FileDescriptor file;
@@ -32,8 +33,6 @@ public class ProcAttachment extends StandardEntity {
     @Lob
     @Column(name = "COMMENT_")
     protected String comment;
-
-    private static final long serialVersionUID = -3032930359790118895L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PROC_INSTANCE_ID")
@@ -55,7 +54,6 @@ public class ProcAttachment extends StandardEntity {
         return author;
     }
 
-
     public void setProcTask(ProcTask procTask) {
         this.procTask = procTask;
     }
@@ -64,7 +62,6 @@ public class ProcAttachment extends StandardEntity {
         return procTask;
     }
 
-
     public void setProcInstance(ProcInstance procInstance) {
         this.procInstance = procInstance;
     }
@@ -72,7 +69,6 @@ public class ProcAttachment extends StandardEntity {
     public ProcInstance getProcInstance() {
         return procInstance;
     }
-
 
     public void setFile(FileDescriptor file) {
         this.file = file;
@@ -97,6 +93,4 @@ public class ProcAttachment extends StandardEntity {
     public String getComment() {
         return comment;
     }
-
-
 }

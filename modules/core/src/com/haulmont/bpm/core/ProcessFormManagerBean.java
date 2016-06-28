@@ -20,8 +20,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
 
-/**
- */
 @Component(ProcessFormManager.NAME)
 public class ProcessFormManagerBean implements ProcessFormManager {
 

@@ -26,8 +26,6 @@ import javax.inject.Inject;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- */
 public class ProcTaskBrowse extends AbstractLookup {
 
     @Inject

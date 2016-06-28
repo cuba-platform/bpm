@@ -14,8 +14,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-/**
- */
 @Component("bpm_EmptyModelExceptionHandler")
 public class EmptyModelExceptionHandler extends AbstractGenericExceptionHandler {
 

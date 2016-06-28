@@ -16,8 +16,6 @@ import java.util.List;
 import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.chile.core.annotations.NamePattern;
 
-/**
- */
 @NamePattern("%s|name")
 @Table(name = "BPM_PROC_DEFINITION")
 @Entity(name = "bpm$ProcDefinition")
@@ -55,7 +53,6 @@ public class ProcDefinition extends StandardEntity {
         return code;
     }
 
-
     public void setModel(ProcModel model) {
         this.model = model;
     }
@@ -63,7 +60,6 @@ public class ProcDefinition extends StandardEntity {
     public ProcModel getModel() {
         return model;
     }
-
 
     public void setActive(Boolean active) {
         this.active = active;
@@ -80,8 +76,6 @@ public class ProcDefinition extends StandardEntity {
     public List<ProcRole> getProcRoles() {
         return procRoles;
     }
-
-
 
     public void setName(String name) {
         this.name = name;

@@ -10,8 +10,6 @@ import com.haulmont.bpm.core.ProcessMessagesManager;
 import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
-/**
- */
 @Component("bpm_MessagesCacheMBean")
 public class MessagesCache implements MessagesCacheMBean {
 

@@ -10,9 +10,6 @@ import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.chile.core.datatypes.impl.IntegerDatatype;
 import com.haulmont.cuba.gui.components.TextField;
 
-/**
- */
-
 public class IntegerFieldGenerator extends AbstractFormFieldGenerator {
 
     @Override

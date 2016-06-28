@@ -11,8 +11,6 @@ import com.haulmont.cuba.core.config.Source;
 import com.haulmont.cuba.core.config.SourceType;
 import com.haulmont.cuba.core.config.defaults.Default;
 
-/**
- */
 @Source(type = SourceType.APP)
 public interface BpmConfig extends Config {
     @Property("bpm.modeler.url")

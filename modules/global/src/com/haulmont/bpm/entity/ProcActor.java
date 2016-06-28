@@ -15,8 +15,6 @@ import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
 import javax.persistence.Column;
 
-/**
- */
 @NamePattern("%s (%s)|user,procRole")
 @Table(name = "BPM_PROC_ACTOR")
 @Entity(name = "bpm$ProcActor")
@@ -46,7 +44,6 @@ public class ProcActor extends StandardEntity {
         return order;
     }
 
-
     public void setProcInstance(ProcInstance procInstance) {
         this.procInstance = procInstance;
     }
@@ -54,7 +51,6 @@ public class ProcActor extends StandardEntity {
     public ProcInstance getProcInstance() {
         return procInstance;
     }
-
 
     public void setUser(User user) {
         this.user = user;
@@ -71,6 +67,4 @@ public class ProcActor extends StandardEntity {
     public ProcRole getProcRole() {
         return procRole;
     }
-
-
 }

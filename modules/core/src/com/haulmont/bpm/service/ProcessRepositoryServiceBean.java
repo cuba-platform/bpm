@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-/**
- */
 @Service(ProcessRepositoryService.NAME)
 public class ProcessRepositoryServiceBean implements ProcessRepositoryService {
 

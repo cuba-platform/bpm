@@ -10,8 +10,6 @@ import com.haulmont.bpm.gui.procmodel.ProcModelBrowse;
 import com.haulmont.cuba.web.App;
 import com.haulmont.cuba.web.controllers.ControllerUtils;
 
-/**
- */
 public class WebProcModelBrowseCompanion implements ProcModelBrowse.Companion {
 
     @Override

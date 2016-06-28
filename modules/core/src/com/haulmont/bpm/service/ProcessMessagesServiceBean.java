@@ -12,8 +12,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.Locale;
 
-/**
- */
 @Service(ProcessMessagesService.NAME)
 public class ProcessMessagesServiceBean implements ProcessMessagesService {
     @Inject

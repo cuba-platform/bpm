@@ -9,10 +9,7 @@ import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcModel;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
-/**
- */
 public interface ProcessRepositoryManager {
 
     String NAME = "bpm_ProcessRepositoryManager";

@@ -11,8 +11,6 @@ import com.haulmont.chile.core.datatypes.impl.BigDecimalDatatype;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.TextField;
 
-/**
- */
 public class BigDecimalFieldGenerator extends AbstractFormFieldGenerator {
 
     @Override

@@ -16,8 +16,6 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
-/**
- */
 @Component(ExtensionElementsManager.NAME)
 public class ExtensionElementsManagerBean implements ExtensionElementsManager {
 

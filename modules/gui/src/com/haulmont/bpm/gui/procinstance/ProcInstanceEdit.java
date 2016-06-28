@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
-/**
- */
 public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
 
     @Inject

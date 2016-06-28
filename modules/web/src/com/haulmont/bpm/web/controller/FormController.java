@@ -18,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-/**
- */
 @Controller
 @RequestMapping("/modeler/form")
 public class FormController {

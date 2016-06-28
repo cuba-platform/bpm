@@ -17,8 +17,6 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- */
 @NamePattern("%s (%s)|procDefinition,id")
 @Table(name = "BPM_PROC_INSTANCE")
 @Entity(name = "bpm$ProcInstance")
@@ -96,7 +94,6 @@ public class ProcInstance extends StandardEntity {
         return description;
     }
 
-
     public void setEntityEditorName(String entityEditorName) {
         this.entityEditorName = entityEditorName;
     }
@@ -104,7 +101,6 @@ public class ProcInstance extends StandardEntity {
     public String getEntityEditorName() {
         return entityEditorName;
     }
-
 
     public void setProcAttachments(Set<ProcAttachment> procAttachments) {
         this.procAttachments = procAttachments;
@@ -114,7 +110,6 @@ public class ProcInstance extends StandardEntity {
         return procAttachments;
     }
 
-
     public void setStartComment(String startComment) {
         this.startComment = startComment;
     }
@@ -122,7 +117,6 @@ public class ProcInstance extends StandardEntity {
     public String getStartComment() {
         return startComment;
     }
-
 
     public void setCancelComment(String cancelComment) {
         this.cancelComment = cancelComment;
@@ -132,7 +126,6 @@ public class ProcInstance extends StandardEntity {
         return cancelComment;
     }
 
-
     public void setCancelled(Boolean cancelled) {
         this.cancelled = cancelled;
     }
@@ -140,7 +133,6 @@ public class ProcInstance extends StandardEntity {
     public Boolean getCancelled() {
         return cancelled;
     }
-
 
     public void setActProcessInstanceId(String actProcessInstanceId) {
         this.actProcessInstanceId = actProcessInstanceId;
@@ -150,7 +142,6 @@ public class ProcInstance extends StandardEntity {
         return actProcessInstanceId;
     }
 
-
     public void setProcTasks(Set<ProcTask> procTasks) {
         this.procTasks = procTasks;
     }
@@ -159,7 +150,6 @@ public class ProcInstance extends StandardEntity {
         return procTasks;
     }
 
-
     public void setProcActors(Set<ProcActor> procActors) {
         this.procActors = procActors;
     }
@@ -167,7 +157,6 @@ public class ProcInstance extends StandardEntity {
     public Set<ProcActor> getProcActors() {
         return procActors;
     }
-
 
     public void setEntityName(String entityName) {
         this.entityName = entityName;
@@ -224,6 +213,4 @@ public class ProcInstance extends StandardEntity {
     public User getStartedBy() {
         return startedBy;
     }
-
-
 }

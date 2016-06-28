@@ -31,8 +31,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
 
-/**
- */
 @Component(ProcessRuntimeManager.NAME)
 public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
 
@@ -431,5 +429,4 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         }
         return candidateUsers;
     }
-
 }

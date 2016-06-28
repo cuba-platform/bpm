@@ -5,8 +5,6 @@
 
 package com.haulmont.bpm.core.jmx;
 
-/**
- */
 public interface MessagesCacheMBean {
     void clearCaches();
 }

@@ -10,8 +10,6 @@ import com.haulmont.chile.core.datatypes.impl.BooleanDatatype;
 import com.haulmont.cuba.gui.components.CheckBox;
 import com.haulmont.cuba.gui.components.Field;
 
-/**
- */
 public class BooleanFieldGenerator extends AbstractFormFieldGenerator {
 
     @Override

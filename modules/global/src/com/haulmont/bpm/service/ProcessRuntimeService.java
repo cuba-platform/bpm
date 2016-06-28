@@ -13,8 +13,6 @@ import com.haulmont.cuba.security.entity.User;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-/**
- */
 public interface ProcessRuntimeService {
     String NAME = "bpm_ProcessRuntimeService";
 

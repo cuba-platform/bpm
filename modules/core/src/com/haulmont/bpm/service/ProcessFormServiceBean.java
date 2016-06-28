@@ -6,18 +6,15 @@
 package com.haulmont.bpm.service;
 
 import com.haulmont.bpm.core.ProcessFormManager;
-import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.entity.ProcDefinition;
+import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.form.ProcFormDefinition;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Map;
 
-/**
- */
 @Service(ProcessFormService.NAME)
 public class ProcessFormServiceBean implements ProcessFormService {
 

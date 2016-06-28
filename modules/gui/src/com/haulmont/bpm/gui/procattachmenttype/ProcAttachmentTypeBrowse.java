@@ -7,7 +7,5 @@ package com.haulmont.bpm.gui.procattachmenttype;
 
 import com.haulmont.cuba.gui.components.AbstractLookup;
 
-/**
- */
 public class ProcAttachmentTypeBrowse extends AbstractLookup {
 }

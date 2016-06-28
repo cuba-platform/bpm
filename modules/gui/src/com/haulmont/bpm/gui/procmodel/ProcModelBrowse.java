@@ -44,8 +44,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-/**
- */
 public class ProcModelBrowse extends AbstractLookup {
 
     @Named("procModelsTable.create")

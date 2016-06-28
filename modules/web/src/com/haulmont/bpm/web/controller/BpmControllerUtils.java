@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- */
 public class BpmControllerUtils {
 
     public static boolean auth(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -26,5 +24,4 @@ public class BpmControllerUtils {
         AppContext.setSecurityContext(new SecurityContext(userSession));
         return true;
     }
-
 }

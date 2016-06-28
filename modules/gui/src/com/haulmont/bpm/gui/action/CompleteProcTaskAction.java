@@ -19,8 +19,6 @@ import com.haulmont.cuba.gui.components.Window;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- */
 public class CompleteProcTaskAction extends ProcAction {
 
     protected final ProcessRuntimeService processRuntimeService;

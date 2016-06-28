@@ -8,7 +8,5 @@ package com.haulmont.bpm.gui.procattachment;
 import com.haulmont.bpm.entity.ProcAttachment;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 
-/**
- */
 public class ProcAttachmentEdit extends AbstractEditor<ProcAttachment> {
 }

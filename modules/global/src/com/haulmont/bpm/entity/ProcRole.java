@@ -15,8 +15,6 @@ import com.haulmont.cuba.core.global.PersistenceHelper;
 
 import javax.persistence.*;
 
-/**
- */
 @NamePattern("#getLocName|procDefinition,code,name")
 @Table(name = "BPM_PROC_ROLE")
 @Entity(name = "bpm$ProcRole")
@@ -78,7 +76,4 @@ public class ProcRole extends StandardEntity {
         }
         return name;
     }
-
-
-
 }

@@ -33,8 +33,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- */
 @Service(ModelService.NAME)
 public class ModelServiceBean implements ModelService {
 

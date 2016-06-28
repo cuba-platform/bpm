@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.Map;
 
-/**
- */
 @Component(ProcessVariablesManager.NAME)
 public class ProcessVariablesManagerBean implements ProcessVariablesManager{
 

@@ -10,8 +10,6 @@ import com.haulmont.chile.core.datatypes.impl.DateTimeDatatype;
 import com.haulmont.cuba.gui.components.DateField;
 import com.haulmont.cuba.gui.components.Field;
 
-/**
- */
 public class DateTimeFieldGenerator extends AbstractFormFieldGenerator {
     @Override
     public Field createField(ProcFormParam formParam, String actExecutionId) {

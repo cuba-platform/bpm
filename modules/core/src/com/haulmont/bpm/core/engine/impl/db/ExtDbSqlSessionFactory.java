@@ -8,8 +8,6 @@ package com.haulmont.bpm.core.engine.impl.db;
 import org.activiti.engine.impl.db.DbSqlSessionFactory;
 import org.activiti.engine.impl.interceptor.Session;
 
-/**
- */
 public class ExtDbSqlSessionFactory extends DbSqlSessionFactory {
     @Override
     public Session openSession() {

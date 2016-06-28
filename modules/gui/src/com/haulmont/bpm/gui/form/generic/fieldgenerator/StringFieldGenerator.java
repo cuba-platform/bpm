@@ -9,8 +9,6 @@ import com.haulmont.bpm.form.ProcFormParam;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.TextField;
 
-/**
- */
 public class StringFieldGenerator extends AbstractFormFieldGenerator {
 
     @Override

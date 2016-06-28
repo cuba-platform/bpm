@@ -10,8 +10,6 @@ import com.haulmont.bali.util.Dom4j;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-/**
- */
 public class ProcDefinitionUtils {
     public static String getProcessKeyFromXml(String xml) {
         Document document = Dom4j.readDocument(xml);
@@ -27,5 +25,4 @@ public class ProcDefinitionUtils {
 
         return id;
     }
-
 }

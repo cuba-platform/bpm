@@ -6,17 +6,15 @@
 package com.haulmont.bpm.service;
 
 import com.haulmont.bpm.core.ProcessRuntimeManager;
-import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcInstance;
+import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.cuba.security.entity.User;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.Map;
 
-/**
- */
 @Service(ProcessRuntimeService.NAME)
 public class ProcessRuntimeServiceBean implements ProcessRuntimeService {
 

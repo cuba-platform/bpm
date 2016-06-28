@@ -12,8 +12,6 @@ import com.haulmont.cuba.core.entity.StandardEntity;
 import javax.persistence.Lob;
 import com.haulmont.chile.core.annotations.NamePattern;
 
-/**
- */
 @NamePattern("%s|name")
 @Table(name = "BPM_PROC_MODEL")
 @Entity(name = "bpm$ProcModel")
@@ -38,7 +36,6 @@ public class ProcModel extends StandardEntity {
         return description;
     }
 
-
     public void setName(String name) {
         this.name = name;
     }
@@ -54,6 +51,4 @@ public class ProcModel extends StandardEntity {
     public String getActModelId() {
         return actModelId;
     }
-
-
 }

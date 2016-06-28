@@ -24,8 +24,6 @@ import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import javax.inject.Inject;
 import java.util.*;
 
-/**
- */
 public class ProcAttachmentsFrame extends AbstractFrame {
 
     @Inject

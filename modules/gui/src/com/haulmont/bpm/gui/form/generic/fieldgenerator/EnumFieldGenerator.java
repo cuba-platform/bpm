@@ -14,8 +14,6 @@ import com.haulmont.cuba.gui.components.LookupField;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- */
 public class EnumFieldGenerator extends AbstractFormFieldGenerator {
 
     @Override

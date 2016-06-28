@@ -14,8 +14,6 @@ import com.haulmont.cuba.gui.components.TabSheet;
 import javax.inject.Inject;
 import java.util.Map;
 
-/**
- */
 public class ProcDefinitionEdit extends AbstractEditor<ProcDefinition> {
 
     @Inject

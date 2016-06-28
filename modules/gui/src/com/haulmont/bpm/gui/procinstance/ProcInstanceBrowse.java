@@ -27,8 +27,6 @@ import javax.inject.Named;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- */
 public class ProcInstanceBrowse extends AbstractLookup {
 
     @Named("procInstancesTable.create")

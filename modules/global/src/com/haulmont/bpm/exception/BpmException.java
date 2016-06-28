@@ -5,8 +5,6 @@
 
 package com.haulmont.bpm.exception;
 
-/**
- */
 public class BpmException extends RuntimeException {
     public BpmException() {
     }

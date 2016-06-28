@@ -7,8 +7,6 @@ package com.haulmont.bpm.exception;
 
 import com.haulmont.cuba.core.global.SupportedByClient;
 
-/**
- */
 @SupportedByClient
 public class EmptyModelException extends RuntimeException {
 }

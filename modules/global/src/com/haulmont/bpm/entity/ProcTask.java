@@ -29,8 +29,6 @@ import java.util.Set;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-/**
- */
 @Table(name = "BPM_PROC_TASK")
 @Entity(name = "bpm$ProcTask")
 public class ProcTask extends StandardEntity {
@@ -148,7 +146,6 @@ public class ProcTask extends StandardEntity {
     public Set<User> getCandidateUsers() {
         return candidateUsers;
     }
-
 
     public void setCancelled(Boolean cancelled) {
         this.cancelled = cancelled;

@@ -11,20 +11,17 @@ import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
 import org.activiti.engine.ManagementService;
-import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.impl.cmd.SetProcessDefinitionVersionCmd;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.stereotype.Component;
+
 import javax.inject.Inject;
 import java.util.List;
 
-/**
- */
 @Component(ProcessMigrator.NAME)
 public class ProcessMigratorBean implements ProcessMigrator {
 

@@ -8,11 +8,9 @@ package com.haulmont.bpm.core.engine.cfg;
 import com.haulmont.bpm.core.engine.impl.db.ExtDbSqlSessionFactory;
 import com.haulmont.bpm.core.engine.spring.ExtSpringTransactionInterceptor;
 import org.activiti.engine.ActivitiException;
-import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.impl.interceptor.CommandInterceptor;
-import org.activiti.engine.impl.interceptor.SessionFactory;
 import org.activiti.spring.SpringProcessEngineConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.Properties;
 
-/**
- */
 public class ExtSpringProcessEngineConfiguration extends SpringProcessEngineConfiguration {
 
     private static Logger log = LoggerFactory.getLogger(ExtSpringProcessEngineConfiguration.class);

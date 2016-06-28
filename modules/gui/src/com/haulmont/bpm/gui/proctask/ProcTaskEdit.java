@@ -8,7 +8,5 @@ package com.haulmont.bpm.gui.proctask;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.bpm.entity.ProcTask;
 
-/**
- */
 public class ProcTaskEdit extends AbstractEditor<ProcTask> {
 }

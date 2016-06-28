@@ -5,24 +5,19 @@
 
 package com.haulmont.bpm.core;
 
-import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.global.MessageTools;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import org.activiti.bpmn.model.ExtensionElement;
-
 import org.springframework.stereotype.Component;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- */
 @Component(ProcessMessagesManager.NAME)
 public class ProcessMessagesManagerBean implements ProcessMessagesManager{
 

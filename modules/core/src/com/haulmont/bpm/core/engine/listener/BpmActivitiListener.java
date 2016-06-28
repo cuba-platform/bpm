@@ -7,11 +7,11 @@ package com.haulmont.bpm.core.engine.listener;
 
 import com.google.common.base.Strings;
 import com.haulmont.bpm.core.ExtensionElementsManager;
-import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.bpm.core.ProcessRepositoryManager;
 import com.haulmont.bpm.core.ProcessRuntimeManager;
-import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.entity.ProcInstance;
+import com.haulmont.bpm.entity.ProcTask;
+import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.global.AppBeans;
@@ -27,10 +27,8 @@ import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.impl.persistence.entity.TimerEntity;
 
-import java.util.*;
+import java.util.UUID;
 
-/**
- */
 public class BpmActivitiListener implements ActivitiEventListener {
 
     protected ProcessRuntimeManager processRuntimeManager;

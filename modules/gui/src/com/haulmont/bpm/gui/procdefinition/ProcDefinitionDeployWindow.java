@@ -18,8 +18,6 @@ import javax.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- */
 public class ProcDefinitionDeployWindow extends AbstractWindow {
 
     @Inject

@@ -14,14 +14,11 @@ import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.PickerField;
 
-/**
- */
 public class EntityFieldGenerator extends AbstractFormFieldGenerator {
 
     protected Metadata metadata;
 
     public EntityFieldGenerator() {
-        super();
         metadata = AppBeans.get(Metadata.class);
     }
 

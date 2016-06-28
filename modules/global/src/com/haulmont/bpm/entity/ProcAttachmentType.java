@@ -11,8 +11,6 @@ import javax.persistence.Column;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
 
-/**
- */
 @NamePattern("%s|name")
 @Table(name = "BPM_PROC_ATTACHMENT_TYPE")
 @Entity(name = "bpm$ProcAttachmentType")
@@ -40,6 +38,4 @@ public class ProcAttachmentType extends StandardEntity {
     public String getCode() {
         return code;
     }
-
-
 }

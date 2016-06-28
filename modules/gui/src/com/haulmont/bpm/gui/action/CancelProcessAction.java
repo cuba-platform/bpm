@@ -18,8 +18,6 @@ import com.haulmont.cuba.gui.components.Window;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- */
 public class CancelProcessAction extends ProcAction {
 
     private ProcInstance procInstance;
