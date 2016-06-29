@@ -37,7 +37,7 @@ public class BpmAppContextListener implements AppContext.Listener {
         try {
             registerCustomStencils();
         } catch (Exception e) {
-            log.error("Exception on initialing BPM app context", e);
+            log.error("Exception on registering custom stencils", e);
         }
     }
 
