@@ -13,6 +13,7 @@ import com.haulmont.bpm.form.ProcFormDefinition;
 import com.haulmont.bpm.gui.action.*;
 import com.haulmont.bpm.service.ProcessFormService;
 import com.haulmont.cuba.core.entity.Entity;
+import com.haulmont.cuba.core.entity.HasUuid;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
@@ -108,16 +109,19 @@ public class ProcActionsFrame extends AbstractFrame {
      * @see Initializer#init(String, Entity)
      */
     protected void init(String procCode, Entity entity) {
+        if (!(entity instanceof HasUuid))
+            throw new UnsupportedOperationException("Entity " + entity + " has no persistent UUID attribute");
+
         ProcDefinition procDefinition = findProcDefinition(procCode);
         if (procDefinition == null) {
-            log.debug("Process definition with code{} not found", procCode);
+            log.debug("Process definition with code '{}' not found", procCode);
             return;
         }
         procInstance = findProcInstance(procDefinition, entity);
         if (procInstance == null) {
             procInstance = metadata.create(ProcInstance.class);
             procInstance.setProcDefinition(procDefinition);
-            procInstance.setEntityId(entity.getUuid());
+            procInstance.setEntityId(((HasUuid) entity).getUuid());
             procInstance.setEntityName(entity.getMetaClass().getName());
             getDsContext().addBeforeCommitListener(context -> context.getCommitInstances().add(procInstance));
         }
