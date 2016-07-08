@@ -22,8 +22,8 @@ import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.impl.util.json.JSONObject;
 import org.activiti.engine.repository.Model;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,13 +36,13 @@ import java.util.List;
 @Service(ModelService.NAME)
 public class ModelServiceBean implements ModelService {
 
+    private final Logger log = LoggerFactory.getLogger(ModelServiceBean.class);
+
     @Inject
     protected RepositoryService repositoryService;
 
     @Inject
     protected Persistence persistence;
-
-    protected static final Log log = LogFactory.getLog(ModelServiceBean.class);
 
     @Override
     public RestModel getModelJson(String actModelId) {

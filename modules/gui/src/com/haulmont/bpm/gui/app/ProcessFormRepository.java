@@ -14,12 +14,12 @@ import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Resources;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.text.StrTokenizer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
 import org.springframework.stereotype.Component;
+
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +30,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Component
 public class ProcessFormRepository {
+
+    private final Logger log = LoggerFactory.getLogger(ProcessFormRepository.class);
 
     @Inject
     protected Resources resources;
@@ -45,8 +47,6 @@ public class ProcessFormRepository {
     protected boolean initialized = false;
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
-
-    protected Log log = LogFactory.getLog(ProcessFormRepository.class);
 
     public List<ProcFormDefinition> getForms() {
         lock.readLock().lock();
@@ -90,7 +90,7 @@ public class ProcessFormRepository {
                     IOUtils.closeQuietly(stream);
                 }
             } else {
-                log.warn("Resource " + location + " not found, ignore it");
+                log.warn("Resource {} not found, ignore it", location);
             }
         }
     }

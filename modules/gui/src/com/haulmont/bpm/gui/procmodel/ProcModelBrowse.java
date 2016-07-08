@@ -16,7 +16,6 @@ import com.haulmont.bpm.gui.procdefinition.ProcDefinitionDeployWindow;
 import com.haulmont.bpm.rest.RestModel;
 import com.haulmont.bpm.service.ModelService;
 import com.haulmont.bpm.service.ProcessRepositoryService;
-import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
@@ -32,8 +31,8 @@ import com.haulmont.cuba.gui.export.ExportDisplay;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import com.haulmont.cuba.security.global.UserSession;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -59,7 +58,7 @@ public class ProcModelBrowse extends AbstractLookup {
     protected CollectionDatasource<ProcModel, UUID> procModelsDs;
 
     @Inject
-    protected Table procModelsTable;
+    protected Table<ProcModel> procModelsTable;
 
     @Inject
     protected ExportDisplay exportDisplay;
@@ -92,18 +91,16 @@ public class ProcModelBrowse extends AbstractLookup {
         void openModeler(String modelerUrl);
     }
 
-    protected static final Log log = LogFactory.getLog(ProcModelBrowse.class);
+    protected static final Logger log = LoggerFactory.getLogger(ProcModelBrowse.class);
 
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
+
         procModelsTableCreate.setOpenType(WindowManager.OpenType.DIALOG);
-        procModelsTableCreate.setAfterCommitHandler(new CreateAction.AfterCommitHandler() {
-            @Override
-            public void handle(Entity entity) {
-                _openModeler((ProcModel) entity);
-            }
-        });
+        procModelsTableCreate.setAfterCommitHandler(entity ->
+                _openModeler((ProcModel) entity)
+        );
         procModelsTable.setItemClickAction(procModelsTableOpenModeler);
         modelUpload.addFileUploadSucceedListener(new ModelUploadListener());
         modelUpload.setCaption(StringUtils.EMPTY);

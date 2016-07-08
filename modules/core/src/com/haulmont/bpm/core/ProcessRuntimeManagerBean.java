@@ -23,10 +23,10 @@ import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.IdentityLink;
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
@@ -55,7 +55,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     @Inject
     protected ExtensionElementsManager extensionElementsManager;
 
-    protected static final Log log = LogFactory.getLog(ProcessRuntimeManagerBean.class);
+    protected static final Logger log = LoggerFactory.getLogger(ProcessRuntimeManagerBean.class);
 
     @Override
     public ProcInstance startProcess(ProcInstance procInstance, String comment, @Nullable Map<String, Object> variables) {

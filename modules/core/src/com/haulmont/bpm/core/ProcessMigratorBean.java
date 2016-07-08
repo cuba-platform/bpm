@@ -15,8 +15,8 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.impl.cmd.SetProcessDefinitionVersionCmd;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -25,7 +25,7 @@ import java.util.List;
 @Component(ProcessMigrator.NAME)
 public class ProcessMigratorBean implements ProcessMigrator {
 
-    protected static final Log log = LogFactory.getLog(ProcessMigratorBean.class);
+    private final Logger log = LoggerFactory.getLogger(ProcessMigratorBean.class);
 
     @Inject
     protected ManagementService managementService;
