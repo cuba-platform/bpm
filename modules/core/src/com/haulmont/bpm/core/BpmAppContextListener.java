@@ -13,6 +13,7 @@ import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.sys.AppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -21,7 +22,7 @@ import javax.inject.Inject;
  * Finds all serviceTask custom stencils in the stencilset JSON and registers them at the CubaBpmnJsonConverter
  */
 @Component("bpm_BpmAppContextListener")
-public class BpmAppContextListener implements AppContext.Listener {
+public class BpmAppContextListener implements AppContext.Listener, Ordered {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -58,5 +59,10 @@ public class BpmAppContextListener implements AppContext.Listener {
                 stencilSetManager.registerServiceTaskStencilBpmnJsonConverter(stencilId);
             }
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return LOWEST_PLATFORM_PRECEDENCE - 200;
     }
 }
