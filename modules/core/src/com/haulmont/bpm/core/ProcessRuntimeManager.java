@@ -28,7 +28,7 @@ public interface ProcessRuntimeManager {
      * <ul>
      *     <li>bpmProcInstanceId - current ProcInstance object id</li>
      *     <li>entityId - linked entity id</li>
-     *     <li>bpmProcInstanceId - linked entity name</li>
+     *     <li>entityName - linked entity name</li>
      * </ul>
      * @param procInstance process instance. Should be persisted.
      * @param comment start process comment. Can be null.
