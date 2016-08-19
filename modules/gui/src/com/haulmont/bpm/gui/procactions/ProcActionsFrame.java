@@ -418,6 +418,10 @@ public class ProcActionsFrame extends AbstractFrame {
         }
     }
 
+    public ProcInstance getProcInstance() {
+        return procInstance;
+    }
+
     /**
      * @deprecated Initialize the frame with the {@link Initializer} that can be obtained by the {@link #initializer()}
      * method.
