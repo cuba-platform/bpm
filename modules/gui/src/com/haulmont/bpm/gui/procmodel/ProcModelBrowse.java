@@ -103,7 +103,6 @@ public class ProcModelBrowse extends AbstractLookup {
         );
         procModelsTable.setItemClickAction(procModelsTableOpenModeler);
         modelUpload.addFileUploadSucceedListener(new ModelUploadListener());
-        modelUpload.setCaption(StringUtils.EMPTY);
     }
 
     public void openModeler() {

@@ -71,7 +71,8 @@
                 <button id="copyBtn"
                         action="procModelsTable.copy"/>
                 <upload id="modelUpload"
-                        icon="icons/upload.png"
+                        uploadButtonCaption=""
+                        uploadButtonIcon="icons/upload.png"
                         description="msg://importModel"/>
                 <button id="exportBtn"
                         action="procModelsTable.export"

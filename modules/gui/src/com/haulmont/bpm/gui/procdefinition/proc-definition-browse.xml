@@ -41,7 +41,7 @@
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <upload id="deployUpload"
-                        caption="msg://deployProcess"/>
+                        uploadButtonCaption="msg://deployProcess"/>
                 <button id="editBtn"
                         action="procDefinitionTable.edit"/>
                 <button id="removeBtn"

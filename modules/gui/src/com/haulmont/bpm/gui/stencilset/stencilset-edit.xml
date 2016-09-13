@@ -75,8 +75,8 @@
                     icon="font-icon:DOWNLOAD"
                     invoke="exportStencilSet"/>
             <upload id="importUpload"
-                    icon="font-icon:UPLOAD"
-                    caption="mainMsg://actions.Import"/>
+                    uploadButtonIcon="font-icon:UPLOAD"
+                    uploadButtonCaption="mainMsg://actions.Import"/>
             <button id="resetBtn"
                     invoke="resetStencilSet"
                     caption="msg://resetStencilSet"
