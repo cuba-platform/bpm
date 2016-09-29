@@ -5,6 +5,7 @@
 
 package com.haulmont.bpm.gui.action;
 
+import com.google.common.base.Strings;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.form.ProcFormDefinition;
 import com.haulmont.bpm.gui.form.ProcForm;
@@ -51,7 +52,7 @@ public class CompleteProcTaskAction extends ProcAction {
     @Override
     public void actionPerform(Component component) {
         if (!evaluateBeforeActionPredicates()) return;
-        if (formDefinition != null) {
+        if (formDefinition != null && !Strings.isNullOrEmpty(formDefinition.getName())) {
             Map<String, Object> formParams = new HashMap<>();
             formParams.put("formDefinition", formDefinition);
             formParams.put("procTask", procTask);
