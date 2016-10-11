@@ -4,6 +4,6 @@
  */
 
 project.ext.activitiVersion = '5.20.0'
-project.ext.modelerVersion = '5.20.0.cuba.17'
+project.ext.modelerVersion = '5.20.0.cuba.18'
 project.ext.activitiJsonConverter = "org.activiti:activiti-json-converter:$modelerVersion";
 project.ext.activitiModeler = "com.haulmont.bpm:cuba-modeler:$modelerVersion:web@zip";
