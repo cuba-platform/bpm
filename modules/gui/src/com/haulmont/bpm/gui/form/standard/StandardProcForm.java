@@ -5,6 +5,7 @@
 
 package com.haulmont.bpm.gui.form.standard;
 
+import com.google.common.base.Strings;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.form.ProcFormDefinition;
@@ -56,6 +57,9 @@ public class StandardProcForm extends AbstractProcForm {
     @WindowParam(name = "formDefinition", required = true)
     protected ProcFormDefinition formDefinition;
 
+    @WindowParam
+    protected String caption;
+
     protected static final String COMMENT_REQUIRED_PARAM = "commentRequired";
     protected static final String PROC_ACTORS_VISIBLE_PARAM = "procActorsVisible";
     protected static final String ATTACHMENTS_VISIBLE_PARAM = "attachmentsVisible";
@@ -97,6 +101,10 @@ public class StandardProcForm extends AbstractProcForm {
         if (procActorsVisible && procInstance != null) {
             procActorsFrame.setProcInstance(procInstance);
             procActorsFrame.refresh();
+        }
+
+        if (!Strings.isNullOrEmpty(caption)) {
+            setCaption(caption);
         }
     }
 

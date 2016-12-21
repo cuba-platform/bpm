@@ -57,8 +57,11 @@ public class CompleteProcTaskAction extends ProcAction {
             formParams.put("formDefinition", formDefinition);
             formParams.put("procTask", procTask);
             formParams.put("procInstance", procTask.getProcInstance());
+            formParams.put("caption", CompleteProcTaskAction.this.getCaption());
+            formParams.put("outcome", outcome);
 
             final Window procForm = target.getFrame().openWindow(formDefinition.getName(), WindowManager.OpenType.DIALOG, formParams);
+            procForm.setCaption(CompleteProcTaskAction.this.getCaption());
             procForm.addCloseListener(actionId -> {
                 if (Window.COMMIT_ACTION_ID.equals(actionId)) {
                     String comment = null;

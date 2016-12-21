@@ -48,6 +48,7 @@ public class StartProcessAction extends ProcAction {
             Map<String, Object> formParams = new HashMap<>();
             formParams.put("procInstance", procInstance);
             formParams.put("formDefinition", startForm);
+            formParams.put("caption", StartProcessAction.this.getCaption());
             final Window window = target.getFrame().openWindow(startForm.getName(), WindowManager.OpenType.DIALOG, formParams);
             window.addCloseListener(actionId -> {
                 if (Window.COMMIT_ACTION_ID.equals(actionId)) {
