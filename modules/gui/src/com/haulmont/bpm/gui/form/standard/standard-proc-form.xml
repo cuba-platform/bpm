@@ -11,13 +11,15 @@
     <dsContext/>
     <actions>
         <action id="windowCommit"
-                caption="msg://actions.Ok"
+                caption="mainMsg://actions.Ok"
                 icon="icons/ok.png"
-                invoke="onWindowCommit"/>
+                invoke="onWindowCommit"
+                shortcut="CTRL-ENTER"/>
         <action id="windowClose"
-                caption="msg://actions.Cancel"
+                caption="mainMsg://actions.Cancel"
                 icon="icons/cancel.png"
-                invoke="onWindowClose"/>
+                invoke="onWindowClose"
+                shortcut="ESCAPE"/>
     </actions>
     <layout expand="comment"
             spacing="true">
@@ -27,11 +29,11 @@
                   requiredMessage="msg://fillComment"/>
 
         <label id="procActorsLabel" value="msg://procActors"/>
-        <iframe id="procActorsFrame" screen="procActorsFrame" height="200px"/>
+        <frame id="procActorsFrame" screen="procActorsFrame" height="200px"/>
 
 
         <label id="procAttachmentsLabel" value="msg://attachments"/>
-        <iframe id="procAttachmentsFrame" screen="procAttachmentsFrame" height="200px"/>
+        <frame id="procAttachmentsFrame" screen="procAttachmentsFrame" height="200px"/>
         <hbox spacing="true">
             <button id="okBtn"
                     action="windowCommit"/>
