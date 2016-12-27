@@ -13,7 +13,7 @@ import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.bpm.exception.BpmException;
-import com.haulmont.bpm.exception.EmptyModelException;
+import com.haulmont.bpm.exception.InvalidModelException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
@@ -21,6 +21,7 @@ import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Resources;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
+import org.activiti.bpmn.exceptions.XMLException;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.ExtensionElement;
 import org.activiti.editor.language.json.converter.BpmnJsonConverter;
@@ -104,7 +105,16 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
 
             tx.commit();
             return procDefinition;
-        } finally {
+        } catch (XMLException e) {
+            String msg = "Error on model deployment";
+            if (e.getMessage().contains("Attribute 'sourceRef' must appear on element")) {
+                msg = "Model elements are not linked properly";
+            }
+            throw new InvalidModelException(msg, e);
+        } catch (Exception e) {
+            throw new InvalidModelException(e.getMessage(), e);
+        }
+        finally {
             tx.end();
         }
     }
@@ -215,7 +225,7 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             BpmnJsonConverter jsonConverter = new CubaBpmnJsonConverter();
             BpmnModel model = jsonConverter.convertToBpmnModel(editorNode);
             if (model.getMainProcess() == null) {
-                throw new EmptyModelException();
+                throw new InvalidModelException("Model is empty");
             }
             byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(model);
             return new String(bpmnBytes, "utf-8");

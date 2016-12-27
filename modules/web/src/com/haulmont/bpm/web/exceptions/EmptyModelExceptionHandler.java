@@ -5,7 +5,7 @@
 
 package com.haulmont.bpm.web.exceptions;
 
-import com.haulmont.bpm.exception.EmptyModelException;
+import com.haulmont.bpm.exception.InvalidModelException;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.Frame;
@@ -21,12 +21,17 @@ public class EmptyModelExceptionHandler extends AbstractGenericExceptionHandler 
     protected Messages messages;
 
     public EmptyModelExceptionHandler() {
-        super(EmptyModelException.class.getName());
+        super(InvalidModelException.class.getName());
     }
 
     @Override
     protected void doHandle(String className, String message, Throwable throwable, WindowManager windowManager) {
-        String msg = messages.getMessage(EmptyModelExceptionHandler.class, "emptyModel.msg");
+        String msg = message;
+        if ("Model is empty".equals(message)) {
+            msg = messages.getMessage(EmptyModelExceptionHandler.class, "emptyModel.msg");
+        } else if ("Model elements are not linked properly".equals(message)) {
+            msg = messages.getMessage(EmptyModelExceptionHandler.class, "missingLinking.msg");
+        }
         windowManager.showNotification(msg, Frame.NotificationType.WARNING);
     }
 }
