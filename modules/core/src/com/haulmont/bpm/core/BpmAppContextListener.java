@@ -9,8 +9,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.sys.AppContext;
+import org.activiti.engine.ProcessEngineConfiguration;
+import org.activiti.engine.impl.asyncexecutor.AsyncExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -29,6 +30,9 @@ public class BpmAppContextListener implements AppContext.Listener, Ordered {
     @Inject
     protected StencilSetManager stencilSetManager;
 
+    @Inject
+    protected ProcessEngineConfiguration processEngineConfiguration;
+
     public BpmAppContextListener() {
         AppContext.addListener(this);
     }
@@ -39,6 +43,11 @@ public class BpmAppContextListener implements AppContext.Listener, Ordered {
             registerCustomStencils();
         } catch (Exception e) {
             log.error("Exception on registering custom stencils", e);
+        }
+
+        AsyncExecutor asyncExecutor = processEngineConfiguration.getAsyncExecutor();
+        if (asyncExecutor != null) {
+            asyncExecutor.start();
         }
     }
 

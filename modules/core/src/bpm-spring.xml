@@ -18,8 +18,8 @@
         <property name="transactionManager" ref="transactionManager"/>
         <property name="scriptingEngines" ref="scriptingEngines"/>
 
-        <property name="asyncExecutorEnabled" value="${bpm.activiti.asyncJobExecutorEnabled?:false}" />
-        <property name="asyncExecutorActivate" value="true" />
+        <property name="asyncExecutorEnabled" value="${bpm.activiti.asyncExecutorEnabled?:false}" />
+        <property name="asyncExecutorActivate" value="false"/>
         <property name="preBpmnParseHandlers">
             <list>
                 <bean class="com.haulmont.bpm.core.engine.parser.BpmUserTaskParseHandler"/>
