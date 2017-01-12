@@ -5,7 +5,10 @@
 
 package com.haulmont.bpm.core.engine.listener;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import com.haulmont.bpm.core.BpmAppContextListener;
 import com.haulmont.bpm.core.ExtensionElementsManager;
 import com.haulmont.bpm.core.ProcessRepositoryManager;
 import com.haulmont.bpm.core.ProcessRuntimeManager;
@@ -26,10 +29,14 @@ import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.impl.persistence.entity.TimerEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class BpmActivitiListener implements ActivitiEventListener {
+
+    protected Logger log = LoggerFactory.getLogger(BpmAppContextListener.class);
 
     protected ProcessRuntimeManager processRuntimeManager;
     protected Persistence persistence;
@@ -86,8 +93,15 @@ public class BpmActivitiListener implements ActivitiEventListener {
                 bpmProcTaskId = (UUID) actTask.getVariableLocal("bpmProcTaskId");
                 if (bpmProcTaskId != null) {
                     TimerEntity timerEntity = (TimerEntity) ((ActivitiEntityEvent) event).getEntity();
-                    String timerOutcome = extensionElementsManager.getTimerOutcome(event.getProcessDefinitionId(), timerEntity.getJobHandlerConfiguration());
-                    actTask.setVariableLocal("timerOutcome", timerOutcome);
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
+                        JsonNode jsonNode = objectMapper.readTree(timerEntity.getJobHandlerConfiguration());
+                        String actBoundaryEventDefinitionKey = jsonNode.get("activityId").textValue();
+                        String timerOutcome = extensionElementsManager.getTimerOutcome(event.getProcessDefinitionId(), actBoundaryEventDefinitionKey);
+                        actTask.setVariableLocal("timerOutcome", timerOutcome);
+                    } catch (Exception e) {
+                        log.error("Error on evaluating the timer outcome", e);
+                    }
                 }
                 break;
             case ACTIVITY_CANCELLED:
