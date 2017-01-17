@@ -4,7 +4,7 @@
  */
 
 buildscript {
-    ext.cubaVersion = '6.4-SNAPSHOT'
+    ext.cubaVersion = '6.5-SNAPSHOT'
     ext.cubaVersion = rootProject.hasProperty('buildVersion') ? rootProject['buildVersion'] : cubaVersion
 
     repositories {
