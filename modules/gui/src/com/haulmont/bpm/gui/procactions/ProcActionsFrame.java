@@ -42,7 +42,7 @@ import java.util.Map;
  *     <li>With the code of {@link ProcDefinition} and entity reference using the {@link Initializer#init(String, Entity)} method</li>
  *     <li>With the {@link ProcInstance} object using the  {@link Initializer#init(ProcInstance)} method</li>
  * </ul>
- * See the {@link Initializer#init(String, Entity)} and {@link Initializer#init(ProcInstance)} methods for details</p>
+ * See the {@link Initializer#init(String, Entity)} and {@link Initializer#init(ProcInstance)} methods for details
  */
 public class ProcActionsFrame extends AbstractFrame {
 
@@ -246,7 +246,7 @@ public class ProcActionsFrame extends AbstractFrame {
     }
 
     protected ProcTask findCurrentUserProcTask() {
-        LoadContext ctx = new LoadContext(ProcTask.class);
+        LoadContext<ProcTask> ctx = new LoadContext<>(ProcTask.class);
         ctx.setQueryString("select pt from bpm$ProcTask pt left join pt.procActor pa left join pa.user pau " +
                 "where pt.procInstance.id = :procInstance and (pau.id = :userId or " +
                 "(pa is null and exists(select pt2 from bpm$ProcTask pt2 join pt2.candidateUsers cu where pt2.id = pt.id and cu.id = :userId))) " +
@@ -254,7 +254,7 @@ public class ProcActionsFrame extends AbstractFrame {
                 .setParameter("procInstance", procInstance)
                 .setParameter("userId", userSession.getCurrentOrSubstitutedUser());
         ctx.setView("procTask-complete");
-        return dataManager.<ProcTask>load(ctx);
+        return dataManager.load(ctx);
     }
 
     @Nullable
