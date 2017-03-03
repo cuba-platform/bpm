@@ -24,10 +24,10 @@
     <!--<task:scheduled-tasks scheduler="backgroundWorkerScheduler">-->
     <!--<task:scheduled ref="cuba_BackgroundWorker_WatchDog" method="cleanupTasks" fixed-delay="2000"/>-->
     <!--</task:scheduled-tasks>-->
+
     <bean id="bpm_proxyCreator"
           class="com.haulmont.cuba.web.sys.remoting.WebRemoteProxyBeanCreator">
-        <property name="clusterInvocationSupport"
-                  ref="cuba_clusterInvocationSupport"/>
+        <property name="serverSelector" ref="cuba_ServerSelector"/>
         <property name="remoteServices">
             <map>
                 <entry key="bpm_ProcessRepositoryService"
