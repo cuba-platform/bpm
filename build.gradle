@@ -203,14 +203,16 @@ configure(webModule) {
         modeler(bom['com.haulmont.bpm:cuba-modeler'] + ':web@zip')
     }
 
-    task repackWebcontent(description: 'Repack webcontent') << {
-        def cubaModelerFile = configurations.modeler.files.find { dep ->
-            dep.name.startsWith("cuba-modeler")
-        }
-        if (cubaModelerFile) {
-            copy {
-                from zipTree(cubaModelerFile.absolutePath)
-                into "$webModule.buildDir/web"
+    task repackWebcontent(description: 'Repack webcontent') {
+        doLast {
+            def cubaModelerFile = configurations.modeler.files.find { dep ->
+                dep.name.startsWith("cuba-modeler")
+            }
+            if (cubaModelerFile) {
+                copy {
+                    from zipTree(cubaModelerFile.absolutePath)
+                    into "$webModule.buildDir/web"
+                }
             }
         }
     }
@@ -235,11 +237,13 @@ configure(webModule) {
     }
     deployConf.dependsOn clearMessagesCache
 
-    task cleanConf(description: 'Cleans up conf directory') << {
-        def dir = new File(cuba.tomcat.dir, '/conf/bpm')
-        if (dir.isDirectory()) {
-            ant.delete(includeemptydirs: true) {
-                fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
+    task cleanConf(description: 'Cleans up conf directory') {
+        doLast {
+            def dir = new File(cuba.tomcat.dir, '/conf/bpm')
+            if (dir.isDirectory()) {
+                ant.delete(includeemptydirs: true) {
+                    fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
+                }
             }
         }
     }
@@ -257,13 +261,16 @@ task undeploy(type: Delete, dependsOn: ':bpm-web:cleanConf') {
     delete("$cuba.tomcat.dir/webapps/app")
 }
 
-task restart(dependsOn: ['stop', ':bpm-core:deploy', ':bpm-web:deploy'], description: 'Redeploys applications and restarts local Tomcat') << {
-    ant.waitfor(maxwait: 6, maxwaitunit: 'second', checkevery: 2, checkeveryunit: 'second') {
-        not {
-            socket(server: 'localhost', port: '8787')
+task restart(dependsOn: ['stop', ':bpm-core:deploy', ':bpm-web:deploy'],
+             description: 'Redeploys applications and restarts local Tomcat') {
+    doLast {
+        ant.waitfor(maxwait: 6, maxwaitunit: 'second', checkevery: 2, checkeveryunit: 'second') {
+            not {
+                socket(server: 'localhost', port: '8787')
+            }
         }
+        start.execute()
     }
-    start.execute()
 }
 
 task wrapper(type: Wrapper) {
