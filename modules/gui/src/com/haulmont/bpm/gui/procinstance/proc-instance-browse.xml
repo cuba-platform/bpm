@@ -19,6 +19,9 @@
             </query>
         </collectionDatasource>
     </dsContext>
+    <dialogMode height="theme://cuba.gui.dialogSize.height.xlarge"
+                width="theme://cuba.gui.dialogSize.width.xlarge"
+                resizable="true"/>
     <layout expand="procInstancesTable"
             spacing="true">
         <filter id="filter"

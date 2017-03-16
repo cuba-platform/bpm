@@ -19,6 +19,9 @@
         </hierarchicalDatasource>
         <collectionDatasource id="groupsDs" class="com.haulmont.bpm.entity.stencil.GroupStencil" refreshMode="NEVER" allowCommit="false"/>
     </dsContext>
+    <dialogMode height="theme://cuba.gui.dialogSize.height.xlarge"
+                width="theme://cuba.gui.dialogSize.width.xlarge"
+                resizable="true"/>
     <layout expand="split" spacing="true">
         <split id="split"
                orientation="horizontal"

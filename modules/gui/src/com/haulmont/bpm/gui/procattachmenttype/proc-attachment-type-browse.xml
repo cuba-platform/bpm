@@ -19,6 +19,9 @@
             </query>
         </collectionDatasource>
     </dsContext>
+    <dialogMode height="theme://cuba.gui.dialogSize.height.small"
+                width="theme://cuba.gui.dialogSize.width.small"
+                resizable="true"/>
     <layout expand="procAttachmentTypeTable"
             spacing="true">
         <filter id="filter"
