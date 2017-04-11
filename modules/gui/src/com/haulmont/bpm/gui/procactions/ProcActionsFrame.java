@@ -254,7 +254,8 @@ public class ProcActionsFrame extends AbstractFrame {
                 .setParameter("procInstance", procInstance)
                 .setParameter("userId", userSession.getCurrentOrSubstitutedUser());
         ctx.setView("procTask-complete");
-        return dataManager.load(ctx);
+        List<ProcTask> result = dataManager.loadList(ctx);
+        return result.isEmpty() ? null : result.get(0);
     }
 
     @Nullable
