@@ -166,7 +166,7 @@ create table BPM_PROC_MODEL (
     DELETE_TS datetime(3),
     DELETED_BY varchar(50),
     --
-    NAME varchar(255) not null,
+    NAME varchar(190) not null,
     ACT_MODEL_ID varchar(255),
     DESCRIPTION text,
     --
@@ -184,7 +184,7 @@ create table BPM_STENCIL_SET (
     DELETE_TS datetime(3),
     DELETED_BY varchar(50),
     --
-    NAME varchar(255) not null,
+    NAME varchar(190) not null,
     JSON_DATA longtext not null,
     --
     primary key (ID)
