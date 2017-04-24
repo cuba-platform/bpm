@@ -46,6 +46,8 @@ import java.util.Map;
  */
 public class ProcActionsFrame extends AbstractFrame {
 
+    private final Logger log = LoggerFactory.getLogger(ProcActionsFrame.class);
+
     @Inject
     protected DataManager dataManager;
 
@@ -75,8 +77,6 @@ public class ProcActionsFrame extends AbstractFrame {
 
     @Inject
     protected Metadata metadata;
-
-    protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected ProcTask procTask;
     protected ProcInstance procInstance;

@@ -25,7 +25,7 @@ import javax.inject.Inject;
 @Component("bpm_BpmAppContextListener")
 public class BpmAppContextListener implements AppContext.Listener, Ordered {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(BpmAppContextListener.class);
 
     @Inject
     protected StencilSetManager stencilSetManager;
