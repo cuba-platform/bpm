@@ -24,13 +24,14 @@ public class ExtSpringProcessEngineConfiguration extends SpringProcessEngineConf
 
     private static Logger log = LoggerFactory.getLogger(ExtSpringProcessEngineConfiguration.class);
 
-    protected static Properties databaseTypeMappings = getDefaultDatabaseTypeMappings();
+    protected static final Properties databaseTypeMappings = getDefaultDatabaseTypeMappings();
 
     @Override
     protected CommandInterceptor createTransactionInterceptor() {
         if (transactionManager == null) {
-            throw new ActivitiException("transactionManager is required property for SpringProcessEngineConfiguration, use "
-                    + StandaloneProcessEngineConfiguration.class.getName() + " otherwise");
+            throw new ActivitiException(String.format(
+                    "transactionManager is required property for SpringProcessEngineConfiguration, use %s otherwise",
+                    StandaloneProcessEngineConfiguration.class.getName()));
         }
 
         return new ExtSpringTransactionInterceptor(transactionManager);

@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.app.FileStorageAPI;
 import com.haulmont.cuba.core.entity.FileDescriptor;
+import com.haulmont.cuba.core.global.FileStorageException;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Resources;
 import com.haulmont.cuba.core.global.TimeSource;
@@ -33,6 +34,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -200,7 +202,7 @@ public class StencilSetManagerBean implements StencilSetManager {
         ZipEntry stencilsetZipEntry = new ZipEntry(STENCILSET_JSON_FILE_NAME);
         try {
             out.putNextEntry(stencilsetZipEntry);
-            out.write(stencilsJson.getBytes());
+            out.write(stencilsJson.getBytes(StandardCharsets.UTF_8));
 
             for (FileDescriptor iconFile : iconFiles) {
                 ZipEntry iconZipEntry = new ZipEntry(iconFile.getId() + "-" + iconFile.getName());
@@ -232,7 +234,7 @@ public class StencilSetManagerBean implements StencilSetManager {
                 bos.close();
                 byte[] bytes = bos.toByteArray();
                 if (STENCILSET_JSON_FILE_NAME.equals(entry.getName())) {
-                    setStencilSet(new String(bytes, "utf-8"));
+                    setStencilSet(new String(bytes, StandardCharsets.UTF_8));
                 } else {
                     FileDescriptor fd;
                     String fileIdStr = entry.getName().substring(0, UUID_LENGTH);
@@ -267,5 +269,4 @@ public class StencilSetManagerBean implements StencilSetManager {
             throw new BpmException("Error on import stencils", e);
         }
     }
-
 }
