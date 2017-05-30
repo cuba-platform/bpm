@@ -6,6 +6,7 @@
 package com.haulmont.bpm.core;
 
 import com.haulmont.bpm.entity.ProcDefinition;
+import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.exception.BpmException;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
@@ -54,12 +55,13 @@ public class ProcessMigratorBean implements ProcessMigrator {
         Transaction tx = persistence.getTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
-            int updatedCount = em.createQuery("update bpm$ProcTask pt set pt.actProcessDefinitionId = :actProcessDefinitionId " +
-                    "where pt.procInstance.procDefinition.id = :procDefinition")
-                    .setParameter("actProcessDefinitionId", actProcessDefinitionId)
+            List<ProcTask> procTasks = em.createQuery("select pt from bpm$ProcTask pt where pt.procInstance.procDefinition.id = :procDefinition", ProcTask.class)
                     .setParameter("procDefinition", procDefinition)
-                    .executeUpdate();
-            log.debug(updatedCount + " procTasks was update during process migration");
+                    .getResultList();
+            for (ProcTask procTask : procTasks) {
+                procTask.setActProcessDefinitionId(actProcessDefinitionId);
+            }
+            log.debug(procTasks.size() + " procTasks was update during process migration");
             tx.commit();
         } finally {
             tx.end();
