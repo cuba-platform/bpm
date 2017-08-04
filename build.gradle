@@ -253,7 +253,6 @@ configure(guiModule) {
         compile("com.haulmont.cuba:cuba-client:$cubaVersion")
 
         compile(bom['com.fasterxml.jackson.core:jackson-databind'])
-        compile(bom['org.codehaus.jackson:jackson-mapper-asl'])
     }
 
     task deployConf(type: Copy) {
