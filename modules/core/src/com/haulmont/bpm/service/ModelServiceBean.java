@@ -192,7 +192,8 @@ public class ModelServiceBean implements ModelService {
                 ActivitiEventType.TASK_ASSIGNED,
                 ActivitiEventType.PROCESS_COMPLETED,
                 ActivitiEventType.TIMER_FIRED,
-                ActivitiEventType.ACTIVITY_CANCELLED);
+                ActivitiEventType.ACTIVITY_CANCELLED,
+                ActivitiEventType.ENTITY_DELETED);
     }
 
     @Override

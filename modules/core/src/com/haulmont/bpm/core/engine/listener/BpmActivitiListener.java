@@ -29,6 +29,7 @@ import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.impl.persistence.entity.TimerEntity;
+import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,6 +115,20 @@ public class BpmActivitiListener implements ActivitiEventListener {
                     processRuntimeManager.completeProcTaskOnTimer(bpmProcTaskId, timerOutcome);
                 }
                 break;
+            case ENTITY_DELETED:
+                //if multi-instance task has some completion condition, then Activiti task entities that are not
+                // completed by user will be removed. We must set endDate to corresponding uncompleted BpmProcTasks
+                if (((ActivitiEntityEvent) event).getEntity() instanceof TaskEntity) {
+                    task = (TaskEntity) ((ActivitiEntityEvent) event).getEntity();
+                    bpmProcTaskId = (UUID) task.getVariableLocal("bpmProcTaskId");
+                    if (bpmProcTaskId != null) {
+                        ProcTask procTask = persistence.getEntityManager().find(ProcTask.class, bpmProcTaskId);
+                        if (procTask != null && procTask.getEndDate() == null) {
+                            procTask.setEndDate(timeSource.currentTimestamp());
+                            procTask.setOutcome("completedAutomatically");
+                        }
+                    }
+                }
         }
     }
 
