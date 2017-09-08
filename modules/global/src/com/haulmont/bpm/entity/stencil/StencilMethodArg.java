@@ -8,12 +8,14 @@ package com.haulmont.bpm.entity.stencil;
 import com.haulmont.bali.util.ReflectionHelper;
 import com.haulmont.chile.core.annotations.MetaClass;
 import com.haulmont.chile.core.annotations.MetaProperty;
-import com.haulmont.cuba.core.entity.AbstractNotPersistentEntity;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 
 import javax.persistence.ManyToOne;
 
 @MetaClass(name = "bpm$StencilMethodArg")
-public class StencilMethodArg extends AbstractNotPersistentEntity {
+public class StencilMethodArg extends BaseUuidEntity {
+
+    private static final long serialVersionUID = 6663839804636823960L;
 
     @MetaProperty
     protected String propertyPackageTitle;
