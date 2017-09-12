@@ -73,7 +73,7 @@ public class StandardProcForm extends AbstractProcForm {
 
         getDialogOptions()
                 .setResizable(true)
-                .setWidth(700);
+                .setWidth("700px");
 
         ProcFormParam commentRequiredParam = formDefinition.getParam(COMMENT_REQUIRED_PARAM);
         if (commentRequiredParam != null && "true".equals(commentRequiredParam.getValue())) {
