@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Resources;
+import com.haulmont.cuba.core.global.TimeSource;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.exceptions.XMLException;
 import org.activiti.bpmn.model.BpmnModel;
@@ -63,6 +64,9 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
     @Inject
     protected ModelTransformer modelTransformer;
 
+    @Inject
+    protected TimeSource timeSource;
+
     @Override
     public ProcDefinition deployProcessFromPath(String path, @Nullable ProcDefinition procDefinition, @Nullable ProcModel procModel) {
         String processXml = resources.getResourceAsString(path);
@@ -98,6 +102,7 @@ public class ProcessRepositoryManagerBean implements ProcessRepositoryManager {
             procDefinition.setActId(activitiProcessDefinition.getId());
             procDefinition.setModel(procModel);
             procDefinition.setActive(true);
+            procDefinition.setDeploymentDate(timeSource.currentTimestamp());
             em.persist(procDefinition);
 
             List<ProcRole> procRoles = syncProcRoles(procDefinition);

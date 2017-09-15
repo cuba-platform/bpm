@@ -11,7 +11,7 @@
     <dialogMode width="AUTO"/>
     <dsContext>
         <collectionDatasource id="procDefinitionsDs" class="com.haulmont.bpm.entity.ProcDefinition" view="_minimal">
-            <query><![CDATA[select pd from bpm$ProcDefinition pd order by pd.name]]></query>
+            <query><![CDATA[select pd from bpm$ProcDefinition pd order by pd.name, pd.deploymentDate desc]]></query>
         </collectionDatasource>
     </dsContext>
     <layout expand="windowActions" spacing="true">

@@ -53,6 +53,7 @@
         <property name="name"/>
         <property name="active"/>
         <property name="code"/>
+        <property name="deploymentDate"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           name="procDefinition-edit">

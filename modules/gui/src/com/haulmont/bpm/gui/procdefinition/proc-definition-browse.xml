@@ -38,6 +38,7 @@
                 <column id="name"/>
                 <column id="active"/>
                 <column id="code"/>
+                <column id="deploymentDate"/>
             </columns>
             <rows datasource="procDefinitionsDs"/>
             <rowsCount/>

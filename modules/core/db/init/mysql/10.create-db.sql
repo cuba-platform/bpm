@@ -14,6 +14,7 @@ create table BPM_PROC_DEFINITION (
     ACT_ID varchar(255),
     ACTIVE boolean,
     MODEL_ID varchar(32),
+    DEPLOYMENT_DATE datetime(3),
     --
     primary key (ID)
 )^-- end BPM_PROC_DEFINITION

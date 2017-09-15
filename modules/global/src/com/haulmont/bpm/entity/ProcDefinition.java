@@ -7,16 +7,22 @@ package com.haulmont.bpm.entity;
 
 import javax.persistence.*;
 
+import com.haulmont.chile.core.annotations.MetaProperty;
+import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DeletePolicy;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.global.MessageTools;
 
-@NamePattern("%s|name")
+@NamePattern("#getCaption|name,code,deploymentDate")
 @Table(name = "BPM_PROC_DEFINITION")
 @Entity(name = "bpm$ProcDefinition")
 public class ProcDefinition extends StandardEntity {
@@ -44,6 +50,10 @@ public class ProcDefinition extends StandardEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MODEL_ID")
     protected ProcModel model;
+
+    @Column(name = "DEPLOYMENT_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    protected Date deploymentDate;
 
     public void setCode(String code) {
         this.code = code;
@@ -91,5 +101,20 @@ public class ProcDefinition extends StandardEntity {
 
     public String getActId() {
         return actId;
+    }
+
+    public Date getDeploymentDate() {
+        return deploymentDate;
+    }
+
+    public void setDeploymentDate(Date deploymentDate) {
+        this.deploymentDate = deploymentDate;
+    }
+
+    @MetaProperty
+    public String getCaption() {
+        Locale defaultLocale = AppBeans.get(MessageTools.class).getDefaultLocale();
+        String formattedDeploymentDate = Datatypes.getNN(Date.class).format(deploymentDate, defaultLocale);
+        return this.name + " (" + this.code + " - " + formattedDeploymentDate + ")";
     }
 }

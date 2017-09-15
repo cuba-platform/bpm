@@ -14,6 +14,7 @@ create table BPM_PROC_DEFINITION (
     ACT_ID varchar(255),
     ACTIVE tinyint,
     MODEL_ID uniqueidentifier,
+    DEPLOYMENT_DATE datetime,
     --
     primary key nonclustered (ID)
 )^
