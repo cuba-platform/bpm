@@ -6,16 +6,18 @@
 package com.haulmont.bpm.gui.form.generic.fieldgenerator;
 
 import com.haulmont.bpm.form.ProcFormParam;
-import com.haulmont.chile.core.datatypes.impl.DateTimeDatatype;
+import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.gui.components.DateField;
 import com.haulmont.cuba.gui.components.Field;
+
+import java.util.Date;
 
 public class DateTimeFieldGenerator extends AbstractFormFieldGenerator {
     @Override
     public Field createField(ProcFormParam formParam, String actExecutionId) {
         DateField dateField = componentsFactory.createComponent(DateField.class);
         standardFieldInit(dateField, formParam);
-        setFieldValue(dateField, formParam, DateTimeDatatype.NAME, actExecutionId);
+        setFieldValue(dateField, formParam, Datatypes.getNN(Date.class), actExecutionId);
         return dateField;
     }
 }

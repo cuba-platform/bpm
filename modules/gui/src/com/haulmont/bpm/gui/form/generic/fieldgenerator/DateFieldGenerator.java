@@ -6,7 +6,7 @@
 package com.haulmont.bpm.gui.form.generic.fieldgenerator;
 
 import com.haulmont.bpm.form.ProcFormParam;
-import com.haulmont.chile.core.datatypes.impl.DateDatatype;
+import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.gui.components.DateField;
 import com.haulmont.cuba.gui.components.Field;
 
@@ -16,7 +16,7 @@ public class DateFieldGenerator extends AbstractFormFieldGenerator {
         DateField dateField = componentsFactory.createComponent(DateField.class);
         dateField.setResolution(DateField.Resolution.DAY);
         standardFieldInit(dateField, formParam);
-        setFieldValue(dateField, formParam, DateDatatype.NAME, actExecutionId);
+        setFieldValue(dateField, formParam, Datatypes.getNN(java.sql.Date.class), actExecutionId);
         return dateField;
     }
 }

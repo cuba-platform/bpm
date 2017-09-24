@@ -42,9 +42,8 @@ public abstract class AbstractFormFieldGenerator implements FormFieldGenerator {
      * Sets the value from the {@code formParam} to the field. Before setting is performed the value is
      * parsed or if an UEL expression is stored in {@code formParam} this expression is evaluated.
      */
-    protected void setFieldValue(Field field, ProcFormParam formParam, String datatypeName, String actExecutionId) {
+    protected void setFieldValue(Field field, ProcFormParam formParam, Datatype datatype, String actExecutionId) {
         if (!Strings.isNullOrEmpty(formParam.getValue())) {
-            Datatype datatype = Datatypes.get(datatypeName);
             try {
                 Object value;
                 if (isExpression(formParam.getValue())) {

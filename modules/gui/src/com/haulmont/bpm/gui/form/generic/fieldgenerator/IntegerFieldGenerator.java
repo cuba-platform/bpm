@@ -6,8 +6,8 @@
 package com.haulmont.bpm.gui.form.generic.fieldgenerator;
 
 import com.haulmont.bpm.form.ProcFormParam;
+import com.haulmont.chile.core.datatypes.Datatype;
 import com.haulmont.chile.core.datatypes.Datatypes;
-import com.haulmont.chile.core.datatypes.impl.IntegerDatatype;
 import com.haulmont.cuba.gui.components.TextField;
 
 public class IntegerFieldGenerator extends AbstractFormFieldGenerator {
@@ -15,9 +15,10 @@ public class IntegerFieldGenerator extends AbstractFormFieldGenerator {
     @Override
     public TextField createField(ProcFormParam formParam, String actExecutionId) {
         TextField textField = componentsFactory.createComponent(TextField.class);
-        textField.setDatatype(Datatypes.get(IntegerDatatype.NAME));
+        Datatype datatype = Datatypes.getNN(Integer.class);
+        textField.setDatatype(datatype);
         standardFieldInit(textField, formParam);
-        setFieldValue(textField, formParam, IntegerDatatype.NAME, actExecutionId);
+        setFieldValue(textField, formParam, datatype, actExecutionId);
         return textField;
     }
 }
