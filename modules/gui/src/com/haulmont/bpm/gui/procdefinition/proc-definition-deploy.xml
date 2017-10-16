@@ -8,20 +8,20 @@
         caption="msg://caption"
         class="com.haulmont.bpm.gui.procdefinition.ProcDefinitionDeployWindow"
         messagesPack="com.haulmont.bpm.gui.procdefinition">
-    <dialogMode width="AUTO"/>
     <dsContext>
         <collectionDatasource id="procDefinitionsDs" class="com.haulmont.bpm.entity.ProcDefinition" view="_minimal">
             <query><![CDATA[select pd from bpm$ProcDefinition pd order by pd.name, pd.deploymentDate desc]]></query>
         </collectionDatasource>
     </dsContext>
+    <dialogMode width="AUTO"/>
     <layout expand="windowActions" spacing="true">
         <optionsGroup id="decisionOptionsGroup" orientation="horizontal"/>
         <hbox spacing="true">
             <label value="msg://procDefinition" align="MIDDLE_LEFT"/>
             <lookupField id="processLookup" optionsDatasource="procDefinitionsDs" width="300px"/>
         </hbox>
-        <iframe id="windowActions"
-                screen="editWindowActions"
-                stylename="window-actions"/>
+        <frame id="windowActions"
+               screen="editWindowActions"
+               stylename="window-actions"/>
     </layout>
 </window>
