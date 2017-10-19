@@ -117,7 +117,7 @@
                       view="_minimal"/>
         </property>
         <property name="procInstance">
-            <property name="procDefinition">
+            <property name="procDefinition" view="_minimal">
                 <property name="name"/>
                 <property name="actId"/>
             </property>
