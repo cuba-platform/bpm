@@ -66,6 +66,7 @@
         <property name="model"
                   view="_minimal"/>
         <property name="code"/>
+        <property name="deploymentDate"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcInstance"
           extends="_local"
