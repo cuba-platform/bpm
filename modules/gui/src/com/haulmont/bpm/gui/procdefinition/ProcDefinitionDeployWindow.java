@@ -6,10 +6,8 @@
 package com.haulmont.bpm.gui.procdefinition;
 
 import com.haulmont.bpm.entity.ProcDefinition;
-import com.haulmont.bpm.entity.ProcModel;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.AbstractWindow;
-import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.OptionsGroup;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
@@ -19,15 +17,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ProcDefinitionDeployWindow extends AbstractWindow {
-
     @Inject
     protected OptionsGroup decisionOptionsGroup;
-
     @Inject
     protected LookupField processLookup;
-
-    @WindowParam(name = "model", required = true)
-    protected ProcModel model;
 
     @WindowParam(name = "selectedProcDefinition")
     protected ProcDefinition selectedProcDefinition;
@@ -62,29 +55,13 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
     }
 
     protected void initWindowActions() {
-        addAction(new BaseAction("windowCommit") {
-            @Override
-            public void actionPerform(Component component) {
-                close(COMMIT_ACTION_ID);
-            }
+        addAction(new BaseAction("windowCommit")
+            .withHandler(event -> close(COMMIT_ACTION_ID))
+            .withCaption(getMessage("actions.Ok")));
 
-            @Override
-            public String getCaption() {
-                return getMessage("actions.Ok");
-            }
-        });
-
-        addAction(new BaseAction("windowClose") {
-            @Override
-            public void actionPerform(Component component) {
-                close(CLOSE_ACTION_ID);
-            }
-
-            @Override
-            public String getCaption() {
-                return getMessage("actions.Cancel");
-            }
-        });
+        addAction(new BaseAction("windowClose")
+                .withHandler(event -> close(CLOSE_ACTION_ID))
+                .withCaption(getMessage("actions.Cancel")));
     }
 
     public Decision getDecision() {

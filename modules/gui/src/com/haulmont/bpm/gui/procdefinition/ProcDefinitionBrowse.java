@@ -7,12 +7,13 @@ package com.haulmont.bpm.gui.procdefinition;
 
 import com.google.common.base.Strings;
 import com.haulmont.bali.util.Dom4j;
+import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.service.ProcessRepositoryService;
 import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -24,7 +25,11 @@ import org.dom4j.Element;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class ProcDefinitionBrowse extends AbstractLookup {
 
@@ -88,34 +93,39 @@ public class ProcDefinitionBrowse extends AbstractLookup {
         @Override
         public void fileUploadSucceed(FileUploadField.FileUploadSucceedEvent e) {
             File file = fileUploadingAPI.getFile(deployUpload.getFileId());
+
+            String processXml;
             try {
-                final String processXml = FileUtils.readFileToString(file);
-                String processId = getProcessName(processXml);
-                List<ProcDefinition> procDefinitionsWithTheSameName = getProcDefinitionsByName(processId);
-                if (procDefinitionsWithTheSameName.isEmpty()) {
-                    ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml, null, null);
-                    procDefinitionsDs.addItem(procDefinition);
-                    showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
-                } else {
-                    Map<String, Object> params = new HashMap<>();
-                    params.put("selectedProcDefinition", procDefinitionsWithTheSameName.get(0));
-                    final ProcDefinitionDeployWindow deployWindow = (ProcDefinitionDeployWindow) openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
-                    deployWindow.addCloseListener(actionId -> {
-                        if (COMMIT_ACTION_ID.equals(actionId)) {
-                            if (ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING == deployWindow.getDecision()) {
-                                ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml, deployWindow.getProcDefinition(), null);
-                                procDefinitionsDs.updateItem(procDefinition);
-                                showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
-                            } else {
-                                ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml, null, null);
-                                procDefinitionsDs.addItem(procDefinition);
-                                showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
-                            }
-                        }
-                    });
-                }
+                processXml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             } catch (IOException ex) {
                 throw new RuntimeException("Process upload error", ex);
+            }
+
+            String processId = getProcessName(processXml);
+            List<ProcDefinition> procDefinitionsWithTheSameName = getProcDefinitionsByName(processId);
+            if (procDefinitionsWithTheSameName.isEmpty()) {
+                ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml, null, null);
+                procDefinitionsDs.addItem(procDefinition);
+                showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
+            } else {
+                ProcDefinitionDeployWindow deployWindow = (ProcDefinitionDeployWindow) openWindow("procDefinitionDeploy",
+                        OpenType.DIALOG,
+                        ParamsMap.of("selectedProcDefinition", procDefinitionsWithTheSameName.get(0)));
+
+                deployWindow.addCloseListener(actionId -> {
+                    if (COMMIT_ACTION_ID.equals(actionId)) {
+                        if (ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING == deployWindow.getDecision()) {
+                            ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml,
+                                    deployWindow.getProcDefinition(), null);
+                            procDefinitionsDs.updateItem(procDefinition);
+                            showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
+                        } else {
+                            ProcDefinition procDefinition = processRepositoryService.deployProcessFromXml(processXml, null, null);
+                            procDefinitionsDs.addItem(procDefinition);
+                            showNotification(getMessage("processUploaded"), NotificationType.HUMANIZED);
+                        }
+                    }
+                });
             }
         }
     }
