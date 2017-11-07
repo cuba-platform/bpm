@@ -45,7 +45,7 @@
                 <column id="startedBy"/>
                 <column id="entityName"/>
                 <column id="cancelled"/>
-                <column id="startComment" maxTextLength="20"/>
+                <column id="startComment" maxTextLength="20" sortable="false"/>
             </columns>
             <rows datasource="procInstancesDs"/>
             <rowsCount/>

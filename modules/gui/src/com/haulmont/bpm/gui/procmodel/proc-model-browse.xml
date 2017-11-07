@@ -59,7 +59,7 @@
             </actions>
             <columns>
                 <column id="name"/>
-                <column id="description" maxTextLength="60"/>
+                <column id="description" maxTextLength="60" sortable="false"/>
             </columns>
             <rows datasource="procModelsDs"/>
             <rowsCount/>
