@@ -32,7 +32,7 @@ public class ExtensionElementsManagerBean implements ExtensionElementsManager {
     @Override
     public Map<String, List<ExtensionElement>> getStartExtensionElements(String actProcessDefinitionId) {
         BpmnModel bpmnModel = repositoryService.getBpmnModel(actProcessDefinitionId);
-        List<StartEvent> startEvents = bpmnModel.getMainProcess().findFlowElementsOfType(StartEvent.class);
+        List<StartEvent> startEvents = bpmnModel.getMainProcess().findFlowElementsOfType(StartEvent.class, false);
         if (startEvents.size() != 1) {
             throw new BpmException("Cannot process process with multiple start events");
         }
