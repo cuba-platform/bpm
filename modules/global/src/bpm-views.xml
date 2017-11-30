@@ -25,10 +25,8 @@
                   view="_minimal"/>
         <property name="procRole"
                   view="_local"/>
-        <!--<property name="procInstance"-->
-                  <!--view="_minimal"/>-->
         <property name="procInstance"
-                  view="procInstance-start"/>
+                  view="_minimal"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcTask"
           extends="_local"
