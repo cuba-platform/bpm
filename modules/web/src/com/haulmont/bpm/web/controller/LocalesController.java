@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * Controller returns a list of available locales. It is used by the modeler localization page.
  */
-@RestController
+@RestController("bpm_LocalesController")
 @RequestMapping("/modeler/locales")
 public class LocalesController {
 

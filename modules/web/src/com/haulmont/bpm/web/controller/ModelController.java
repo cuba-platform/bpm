@@ -28,7 +28,7 @@ import java.util.List;
  * Controller is used by modeler for manipulating with models.
  *
  */
-@Controller
+@Controller("bpm_ModelController")
 @RequestMapping("/modeler/model")
 public class ModelController {
 

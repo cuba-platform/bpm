@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Controller
+@Controller("bpm_StencilSetController")
 @RequestMapping("/modeler/stencilset")
 public class StencilSetController {
 
