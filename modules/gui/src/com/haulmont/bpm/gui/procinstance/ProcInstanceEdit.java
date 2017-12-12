@@ -237,7 +237,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 entityIdPickerField.setEditable(metaClass != null);
 
                 if (entityId != null && metaClass != null) {
-                    Entity entity = dataManager.load(new LoadContext(metaClass).setId(entityId));
+                    Entity entity = findEntity(entityName, entityId);
                     entityIdPickerField.setValue(entity);
                 }
 
@@ -254,7 +254,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     }
 
     protected void initOpenEntityBtn() {
-        final Entity entity = findEntity();
+        final Entity entity = findEntity(getItem().getEntityName(), getItem().getEntityId());
         openEntityBtn.setCaption(entity == null ? getMessage("entityNotDefined") : entity.getInstanceName());
         openEntityBtn.setAction(new BaseAction("openEntity") {
             @Override
@@ -270,14 +270,15 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     }
 
     @Nullable
-    protected Entity findEntity() {
+    protected Entity findEntity(String entityName, UUID entityId) {
         Entity entity = null;
-        UUID entityId = getItem().getEntityId();
-        String entityName = getItem().getEntityName();
         if (entityId != null && !Strings.isNullOrEmpty(entityName)) {
             MetaClass metaClass = metadata.getClass(entityName);
             if (metaClass != null) {
-                entity = dataManager.load(new LoadContext(metaClass).setId(entityId));
+                LoadContext ctx = new LoadContext(metaClass).setQuery(
+                        LoadContext.createQuery("select e from " + entityName + " e where e.uuid = :entityId")
+                                .setParameter("entityId", entityId));
+                entity = dataManager.load(ctx);
             }
         }
         return entity;

@@ -117,7 +117,7 @@ public class ProcActionsFrame extends AbstractFrame {
             log.debug("Process definition with code '{}' not found", procCode);
             return;
         }
-        procInstance = findProcInstance(procDefinition, entity);
+        procInstance = findProcInstance(procDefinition, (HasUuid) entity);
         if (procInstance == null) {
             procInstance = metadata.create(ProcInstance.class);
             procInstance.setProcDefinition(procDefinition);
@@ -267,12 +267,14 @@ public class ProcActionsFrame extends AbstractFrame {
     }
 
     @Nullable
-    protected ProcInstance findProcInstance(ProcDefinition procDefinition, Entity entity) {
-        LoadContext ctx = LoadContext.create(ProcInstance.class).setView("procInstance-start");
-        ctx.setQueryString("select pi from bpm$ProcInstance pi where pi.procDefinition.id = :procDefinition and pi.entityId = :entityId")
+    protected ProcInstance findProcInstance(ProcDefinition procDefinition, HasUuid entity) {
+        LoadContext<ProcInstance> ctx = LoadContext.create(ProcInstance.class).setView("procInstance-start");
+        ctx.setQueryString("select pi from bpm$ProcInstance pi where pi.procDefinition.id = :procDefinition and " +
+                "pi.entityId = :entityId order by pi.createTs desc")
                 .setParameter("procDefinition", procDefinition)
-                .setParameter("entityId", entity);
-        return (ProcInstance) dataManager.load(ctx);
+                .setParameter("entityId", entity.getUuid());
+        List<ProcInstance> list = dataManager.loadList(ctx);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     /**

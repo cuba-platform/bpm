@@ -102,7 +102,10 @@ public class ProcTaskBrowse extends AbstractLookup {
                 editorScreenId = windowConfig.getEditorScreenId(metaClass);
             }
 
-            Entity entity = dataManager.load(new LoadContext<>(metaClass).setId(entityId));
+            LoadContext<Entity> ctx = new LoadContext<>(metaClass).setQuery(
+                    LoadContext.createQuery("select e from " + procInstance.getEntityName() + " e where e.uuid = :entityId")
+                            .setParameter("entityId", entityId));
+            Entity entity = dataManager.load(ctx);
             if (entity == null) {
                 showNotification(formatMessage("entityNotFound", entityId), NotificationType.WARNING);
                 return;
