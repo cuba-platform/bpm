@@ -17,6 +17,8 @@
                   view="_local"/>
         <property name="startedBy"
                   view="_minimal"/>
+        <property name="entity"
+                  view="_local"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcActor"
           extends="_local"
@@ -37,7 +39,7 @@
         </property>
         <property name="procInstance">
             <property name="entityName"/>
-            <property name="entityId"/>
+            <property name="entity"/>
             <property name="actProcessInstanceId"/>
             <property name="procDefinition">
                 <property name="name"/>
@@ -73,6 +75,8 @@
                   view="_minimal"/>
         <property name="startedBy"
                   view="_minimal"/>
+        <property name="entity"
+                  view="_local"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcInstance"
           extends="_local"
@@ -81,6 +85,8 @@
                   view="_local"/>
         <property name="startedBy"
                   view="_minimal"/>
+        <property name="entity"
+                  view="_local"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcTask"
           extends="_local"
@@ -119,7 +125,7 @@
                 <property name="name"/>
                 <property name="actId"/>
             </property>
-            <property name="entityId"/>
+            <property name="entity"/>
             <property name="entityName"/>
             <property name="entityEditorName"/>
         </property>

@@ -51,6 +51,9 @@ create table BPM_PROC_INSTANCE (
     --
     ENTITY_NAME varchar2(255),
     ENTITY_ID varchar2(32),
+    STRING_ENTITY_ID varchar2(255),
+    INT_ENTITY_ID integer,
+    LONG_ENTITY_ID number,
     ACTIVE char(1),
     CANCELLED char(1),
     ACT_PROCESS_INSTANCE_ID varchar2(255),

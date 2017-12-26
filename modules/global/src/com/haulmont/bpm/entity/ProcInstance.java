@@ -7,6 +7,7 @@ package com.haulmont.bpm.entity;
 
 import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.ReferenceToEntity;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
@@ -15,7 +16,6 @@ import com.haulmont.cuba.security.entity.User;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 
 @NamePattern("%s (%s)|procDefinition,id")
 @Table(name = "BPM_PROC_INSTANCE")
@@ -27,8 +27,8 @@ public class ProcInstance extends StandardEntity {
     @Column(name = "ENTITY_NAME")
     protected String entityName;
 
-    @Column(name = "ENTITY_ID")
-    protected UUID entityId;
+    @Embedded
+    protected ReferenceToEntity entity;
 
     @Column(name = "ACTIVE")
     protected Boolean active = false;
@@ -166,12 +166,22 @@ public class ProcInstance extends StandardEntity {
         return entityName;
     }
 
-    public void setEntityId(UUID entityId) {
-        this.entityId = entityId;
+    public ReferenceToEntity getEntity() {
+        return entity;
     }
 
-    public UUID getEntityId() {
-        return entityId;
+    public void setEntity(ReferenceToEntity entity) {
+        this.entity = entity;
+    }
+
+    public Object getObjectEntityId() {
+        return entity != null ? entity.getObjectEntityId() : null;
+    }
+
+    public void setObjectEntityId(Object entityId) {
+        if (entity != null) {
+            entity.setObjectEntityId(entityId);
+        }
     }
 
     public void setActive(Boolean active) {

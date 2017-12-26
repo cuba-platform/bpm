@@ -11,10 +11,7 @@ import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.service.ProcessMessagesService;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
@@ -48,6 +45,9 @@ public class ProcTaskBrowse extends AbstractLookup {
 
     @Inject
     protected Button openEntityEditorBtn;
+
+    @Inject
+    protected ReferenceToEntitySupport referenceToEntitySupport;
 
     protected WindowConfig windowConfig;
 
@@ -89,7 +89,7 @@ public class ProcTaskBrowse extends AbstractLookup {
         public void actionPerform(Component component) {
             ProcTask selectedTask = procTasksTable.getSingleSelected();
             ProcInstance procInstance = selectedTask.getProcInstance();
-            UUID entityId = procInstance.getEntityId();
+            Object entityId = procInstance.getObjectEntityId();
 
             MetaClass metaClass = metadata.getClass(procInstance.getEntityName());
             if (metaClass == null) {
@@ -103,7 +103,9 @@ public class ProcTaskBrowse extends AbstractLookup {
             }
 
             LoadContext<Entity> ctx = new LoadContext<>(metaClass).setQuery(
-                    LoadContext.createQuery("select e from " + procInstance.getEntityName() + " e where e.uuid = :entityId")
+                    LoadContext.createQuery(String.format("select e from %s e where e.%s = :entityId",
+                            metaClass.getName(),
+                            referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass)))
                             .setParameter("entityId", entityId));
             Entity entity = dataManager.load(ctx);
             if (entity == null) {
@@ -124,7 +126,7 @@ public class ProcTaskBrowse extends AbstractLookup {
             ProcTask selectedTask = procTasksTable.getSingleSelected();
             return selectedTask != null &&
                     selectedTask.getProcInstance() != null &&
-                    selectedTask.getProcInstance().getEntityId() != null;
+                    selectedTask.getProcInstance().getObjectEntityId() != null;
         }
 
         @Override

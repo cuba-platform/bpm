@@ -53,7 +53,7 @@
                                custom="true"/>
                         <field id="entityName"
                                custom="true" visible="false"/>
-                        <field id="entityId"
+                        <field id="entity"
                                caption="msg://entityInstance"
                                custom="true" visible="false"/>
                         <field id="entityEditorName" visible="false"/>

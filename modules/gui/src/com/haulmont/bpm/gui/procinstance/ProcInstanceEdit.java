@@ -18,10 +18,7 @@ import com.haulmont.bpm.gui.proctask.ProcTasksFrame;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.entity.HasUuid;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.PersistenceHelper;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
@@ -81,6 +78,9 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
 
     @Inject
     protected UserSession userSession;
+
+    @Inject
+    protected ReferenceToEntitySupport referenceToEntitySupport;
 
     protected boolean entityDetailsVisible = false;
     protected LinkButton openEntityBtn;
@@ -179,7 +179,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                     public void actionPerform(Component component) {
                         entityDetailsVisible = !entityDetailsVisible;
                         fieldGroup.setVisible("entityName", entityDetailsVisible);
-                        fieldGroup.setVisible("entityId", entityDetailsVisible);
+                        fieldGroup.setVisible("entity", entityDetailsVisible);
                         fieldGroup.setVisible("entityEditorName", entityDetailsVisible);
 
                         detailsBtn.setCaption(getMessage(entityDetailsVisible ? "hideDetails" : "showDetails"));
@@ -207,13 +207,13 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                     if (e.getValue() != null) {
                         MetaClass metaClass = (MetaClass) e.getValue();
                         getItem().setEntityName(metaClass.getName());
-                        fieldGroup.setFieldValue("entityId", null);
+                        fieldGroup.setFieldValue("entity", null);
                         entityIdPickerField.setMetaClass(metaClass);
                         entityIdPickerField.setEditable(false);
                     } else {
                         getItem().setEntityName(null);
                     }
-                    fieldGroup.setFieldValue("entityId", null);
+                    fieldGroup.setFieldValue("entity", null);
                     entityIdPickerField.setEditable(e.getValue() != null);
                 });
 
@@ -222,7 +222,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         });
         fieldGroup.setVisible("entityName", false);
 
-        fieldGroup.addCustomField("entityId", new FieldGroup.CustomFieldGenerator() {
+        fieldGroup.addCustomField("entity", new FieldGroup.CustomFieldGenerator() {
             @Override
             public Component generateField(Datasource datasource, String propertyId) {
                 entityIdPickerField = componentsFactory.createComponent(PickerField.class);
@@ -230,7 +230,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 entityIdPickerField.addOpenAction();
                 entityIdPickerField.addClearAction();
 
-                UUID entityId = getItem().getEntityId();
+                Object entityId = getItem().getObjectEntityId();
                 String entityName = getItem().getEntityName();
                 MetaClass metaClass = metadata.getClass(entityName);
                 entityIdPickerField.setMetaClass(metaClass);
@@ -243,18 +243,18 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
 
                 entityIdPickerField.addValueChangeListener(e -> {
                     UUID entityId1 = e.getValue() == null ? null : ((HasUuid) e.getValue()).getUuid();
-                    getItem().setEntityId(entityId1);
+                    getItem().setObjectEntityId(entityId1);
                     initOpenEntityBtn();
                 });
 
                 return entityIdPickerField;
             }
         });
-        fieldGroup.setVisible("entityId", false);
+        fieldGroup.setVisible("entity", false);
     }
 
     protected void initOpenEntityBtn() {
-        final Entity entity = findEntity(getItem().getEntityName(), getItem().getEntityId());
+        final Entity entity = findEntity(getItem().getEntityName(), getItem().getObjectEntityId());
         openEntityBtn.setCaption(entity == null ? getMessage("entityNotDefined") : entity.getInstanceName());
         openEntityBtn.setAction(new BaseAction("openEntity") {
             @Override
@@ -270,13 +270,15 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     }
 
     @Nullable
-    protected Entity findEntity(String entityName, UUID entityId) {
+    protected Entity findEntity(String entityName, Object entityId) {
         Entity entity = null;
         if (entityId != null && !Strings.isNullOrEmpty(entityName)) {
             MetaClass metaClass = metadata.getClass(entityName);
             if (metaClass != null) {
                 LoadContext ctx = new LoadContext(metaClass).setQuery(
-                        LoadContext.createQuery("select e from " + entityName + " e where e.uuid = :entityId")
+                        LoadContext.createQuery(String.format("select e from %s e where e.%s = :entityId",
+                                entityName,
+                                referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass)))
                                 .setParameter("entityId", entityId));
                 entity = dataManager.load(ctx);
             }

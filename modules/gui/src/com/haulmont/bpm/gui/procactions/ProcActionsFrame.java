@@ -17,6 +17,7 @@ import com.haulmont.cuba.core.entity.HasUuid;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.ReferenceToEntitySupport;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.cuba.security.global.UserSession;
@@ -78,6 +79,9 @@ public class ProcActionsFrame extends AbstractFrame {
     @Inject
     protected Metadata metadata;
 
+    @Inject
+    protected ReferenceToEntitySupport referenceToEntitySupport;
+
     protected ProcTask procTask;
     protected ProcInstance procInstance;
     protected String buttonWidth = "150px";
@@ -117,11 +121,11 @@ public class ProcActionsFrame extends AbstractFrame {
             log.debug("Process definition with code '{}' not found", procCode);
             return;
         }
-        procInstance = findProcInstance(procDefinition, (HasUuid) entity);
+        procInstance = findProcInstance(procDefinition, entity);
         if (procInstance == null) {
             procInstance = metadata.create(ProcInstance.class);
             procInstance.setProcDefinition(procDefinition);
-            procInstance.setEntityId(((HasUuid) entity).getUuid());
+            procInstance.setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
             procInstance.setEntityName(entity.getMetaClass().getName());
             getDsContext().addBeforeCommitListener(context -> context.getCommitInstances().add(procInstance));
         }
@@ -267,12 +271,13 @@ public class ProcActionsFrame extends AbstractFrame {
     }
 
     @Nullable
-    protected ProcInstance findProcInstance(ProcDefinition procDefinition, HasUuid entity) {
+    protected ProcInstance findProcInstance(ProcDefinition procDefinition, Entity entity) {
+        String referenceIdPropertyName = referenceToEntitySupport.getReferenceIdPropertyName(entity.getMetaClass());
         LoadContext<ProcInstance> ctx = LoadContext.create(ProcInstance.class).setView("procInstance-start");
         ctx.setQueryString("select pi from bpm$ProcInstance pi where pi.procDefinition.id = :procDefinition and " +
-                "pi.entityId = :entityId order by pi.createTs desc")
+                "pi.entity." + referenceIdPropertyName + " = :entityId order by pi.createTs desc")
                 .setParameter("procDefinition", procDefinition)
-                .setParameter("entityId", entity.getUuid());
+                .setParameter("entityId", referenceToEntitySupport.getReferenceId(entity));
         List<ProcInstance> list = dataManager.loadList(ctx);
         return list.isEmpty() ? null : list.get(0);
     }

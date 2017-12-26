@@ -8,10 +8,7 @@ package com.haulmont.bpm.gui.procinstance;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
@@ -53,6 +50,9 @@ public class ProcInstanceBrowse extends AbstractLookup {
     @Inject
     protected Metadata metadata;
 
+    @Inject
+    protected ReferenceToEntitySupport referenceToEntitySupport;
+
     protected WindowConfig windowConfig;
 
     @Override
@@ -85,7 +85,7 @@ public class ProcInstanceBrowse extends AbstractLookup {
         procInstancesTable.addGeneratedColumn("entityName", new Table.ColumnGenerator<ProcInstance>() {
             @Override
             public Component generateCell(final ProcInstance procInstance) {
-                if (procInstance.getEntityId() == null) return null;
+                if (procInstance.getObjectEntityId() == null) return null;
 
                 final MetaClass metaClass = metadata.getClass(procInstance.getEntityName());
                 if (metaClass == null) {
@@ -99,7 +99,12 @@ public class ProcInstanceBrowse extends AbstractLookup {
                 linkButton.setAction(new AbstractAction("openScreen") {
                     @Override
                     public void actionPerform(Component component) {
-                        Entity entity = dataManager.load(new LoadContext(metaClass).setId(procInstance.getEntityId()));
+                        LoadContext ctx = new LoadContext(metaClass).setQuery(
+                                LoadContext.createQuery(String.format("select e from %s e where e.%s = :entityId",
+                                        metaClass.getName(),
+                                        referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass)))
+                                        .setParameter("entityId", procInstance.getObjectEntityId()));
+                        Entity entity = dataManager.load(ctx);
                         openEditor(windowConfig.getEditorScreenId(metaClass), entity, WindowManager.OpenType.THIS_TAB);
                     }
                 });
