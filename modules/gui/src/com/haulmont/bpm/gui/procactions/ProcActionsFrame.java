@@ -113,9 +113,6 @@ public class ProcActionsFrame extends AbstractFrame {
      * @see Initializer#init(String, Entity)
      */
     protected void init(String procCode, Entity entity) {
-        if (!(entity instanceof HasUuid))
-            throw new UnsupportedOperationException("Entity " + entity + " has no persistent UUID attribute");
-
         ProcDefinition procDefinition = findProcDefinition(procCode);
         if (procDefinition == null) {
             log.debug("Process definition with code '{}' not found", procCode);

@@ -17,7 +17,6 @@ import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
 import com.haulmont.bpm.gui.proctask.ProcTasksFrame;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
-import com.haulmont.cuba.core.entity.HasUuid;
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
@@ -242,7 +241,9 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 }
 
                 entityIdPickerField.addValueChangeListener(e -> {
-                    UUID entityId1 = e.getValue() == null ? null : ((HasUuid) e.getValue()).getUuid();
+                    Object entityId1 = e.getValue() == null ?
+                            null :
+                            referenceToEntitySupport.getReferenceId((Entity) e.getValue());
                     getItem().setObjectEntityId(entityId1);
                     initOpenEntityBtn();
                 });
