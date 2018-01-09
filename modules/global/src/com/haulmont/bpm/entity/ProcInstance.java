@@ -10,9 +10,12 @@ import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.ReferenceToEntity;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DeletePolicy;
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.security.entity.User;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
@@ -85,6 +88,12 @@ public class ProcInstance extends StandardEntity {
     @Lob
     @Column(name = "DESCRIPTION")
     protected String description;
+
+    @PostConstruct
+    public void init() {
+        Metadata metadata = AppBeans.get(Metadata.NAME);
+        entity = metadata.create(ReferenceToEntity.class);
+    }
 
     public void setDescription(String description) {
         this.description = description;
