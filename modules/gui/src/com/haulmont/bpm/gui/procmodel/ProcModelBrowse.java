@@ -16,6 +16,7 @@ import com.haulmont.bpm.gui.procdefinition.ProcDefinitionDeployWindow;
 import com.haulmont.bpm.rest.RestModel;
 import com.haulmont.bpm.service.ModelService;
 import com.haulmont.bpm.service.ProcessRepositoryService;
+import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
@@ -25,7 +26,9 @@ import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.Action.Status;
 import com.haulmont.cuba.gui.components.DialogAction.Type;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
+import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.export.ExportDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
@@ -47,6 +50,9 @@ public class ProcModelBrowse extends AbstractLookup {
 
     @Named("procModelsTable.create")
     protected CreateAction procModelsTableCreate;
+
+    @Inject
+    private Button removeBtn;
 
     @Inject
     protected UserSession userSession;
@@ -103,6 +109,26 @@ public class ProcModelBrowse extends AbstractLookup {
         );
         procModelsTable.setItemClickAction(procModelsTableOpenModeler);
         modelUpload.addFileUploadSucceedListener(new ModelUploadListener());
+
+        //the remove action should reload model entities, because they may be modified when the model is saved from the
+        //model editor
+        RemoveAction removeAction = new RemoveAction(procModelsTable) {
+            @Override
+            protected void doRemove(Set<Entity> selected, boolean autocommit) {
+                CollectionDatasource<ProcModel, UUID> datasource = target.getDatasource();
+                datasource.refresh();
+                for (Entity entity : selected) {
+                    Entity reloadedEntity = datasource.getItem((UUID) entity.getId());
+                    if (reloadedEntity != null) {
+                        datasource.removeItem((ProcModel) reloadedEntity);
+                    }
+                }
+                datasource.commit();
+            }
+        };
+
+        procModelsTable.addAction(removeAction);
+        removeBtn.setAction(removeAction);
     }
 
     public void openModeler() {
