@@ -45,14 +45,16 @@ public class ModelTransformer {
             ArrayNode srcChildShapes = (ArrayNode) objectNode.get("childShapes");
             ArrayNode resultChildShapes = objectMapper.createArrayNode();
             Map<JsonNode, ExpandedModelInfo> subModulesMap = new HashMap<>();
-            for (JsonNode childShape : srcChildShapes) {
-                if ("SubModel".equals(getStencilId(childShape))) {
-                    String subModelName = childShape.get("properties").get("submodel").get("actModelId").asText();
-                    ExpandedModelInfo modelInfo = getExpandedSubModelInfo(subModelName);
-                    resultChildShapes.addAll(modelInfo.getShapes());
-                    subModulesMap.put(childShape, modelInfo);
-                } else {
-                    resultChildShapes.add(childShape);
+            if (srcChildShapes != null) {
+                for (JsonNode childShape : srcChildShapes) {
+                    if ("SubModel".equals(getStencilId(childShape))) {
+                        String subModelName = childShape.get("properties").get("submodel").get("actModelId").asText();
+                        ExpandedModelInfo modelInfo = getExpandedSubModelInfo(subModelName);
+                        resultChildShapes.addAll(modelInfo.getShapes());
+                        subModulesMap.put(childShape, modelInfo);
+                    } else {
+                        resultChildShapes.add(childShape);
+                    }
                 }
             }
 
