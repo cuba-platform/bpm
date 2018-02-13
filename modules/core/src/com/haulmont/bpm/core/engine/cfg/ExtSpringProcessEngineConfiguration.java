@@ -22,7 +22,7 @@ import java.util.Properties;
 
 public class ExtSpringProcessEngineConfiguration extends SpringProcessEngineConfiguration {
 
-    private static Logger log = LoggerFactory.getLogger(ExtSpringProcessEngineConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(ExtSpringProcessEngineConfiguration.class);
 
     protected static final Properties databaseTypeMappings = getDefaultDatabaseTypeMappings();
 

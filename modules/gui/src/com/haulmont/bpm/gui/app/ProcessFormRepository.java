@@ -31,7 +31,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Component
 public class ProcessFormRepository {
 
-    private final Logger log = LoggerFactory.getLogger(ProcessFormRepository.class);
+    private static final Logger log = LoggerFactory.getLogger(ProcessFormRepository.class);
 
     @Inject
     protected Resources resources;

@@ -37,7 +37,7 @@ import java.util.UUID;
 
 public class BpmActivitiListener implements ActivitiEventListener {
 
-    protected Logger log = LoggerFactory.getLogger(BpmAppContextListener.class);
+    private static final Logger log = LoggerFactory.getLogger(BpmAppContextListener.class);
 
     protected ProcessRuntimeManager processRuntimeManager;
     protected Persistence persistence;
