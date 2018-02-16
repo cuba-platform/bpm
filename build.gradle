@@ -35,7 +35,6 @@ def guiModule = project(':bpm-gui')
 def webModule = project(':bpm-web')
 
 def postgres = 'org.postgresql:postgresql:9.4-1201-jdbc41'
-def servletApi = 'org.apache.tomcat:tomcat-servlet-api:8.0.26'
 
 apply(plugin: 'idea')
 apply(plugin: 'cuba')
@@ -178,7 +177,7 @@ configure(coreModule) {
 
     dependencies {
         compile(globalModule)
-        provided(servletApi)
+        provided(bom['javax.servlet:javax.servlet-api'])
         jdbc(postgres)
         testRuntime(postgres)
 
@@ -269,7 +268,7 @@ configure(webModule) {
     }
 
     dependencies {
-        provided(servletApi)
+        provided(bom['javax.servlet:javax.servlet-api'])
         compile(globalModule)
         compile(guiModule)
         compile("com.haulmont.cuba:cuba-web:$cubaVersion")
