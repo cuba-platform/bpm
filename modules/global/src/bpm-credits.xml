@@ -8,9 +8,9 @@
 
     <items>
 
-        <item name="Activiti" web="http://http://activiti.org/" license="apache-2.0" fork="true"/>
+        <item name="Activiti" web="http://activiti.org/" license="apache-2.0" fork="true"/>
 
-        <item name="Activiti Modeler" web="http://http://activiti.org/" license="lgpl-2.1" fork="true"/>
+        <item name="Activiti Modeler" web="http://activiti.org/" license="lgpl-2.1" fork="true"/>
 
         <item name="Jackson" web="https://github.com/FasterXML/jackson" license="apache-2.0"/>
 
