@@ -351,3 +351,24 @@ task restart(dependsOn: ['stop', ':bpm-core:deploy', ':bpm-web:deploy'],
 task wrapper(type: Wrapper) {
     gradleVersion = '1.12'
 }
+
+task aggregateJavadoc(type: Javadoc,
+        description: 'Generate javadocs from all child projects as if it was a single project',
+        group: 'Documentation') {
+
+    destinationDir = file("$buildDir/docs/javadoc")
+    title = "${project.name.toUpperCase()} $cubaVersion API"
+
+    options.encoding = 'UTF-8'
+    options.addStringOption("sourcepath", "")
+    options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PUBLIC
+
+    exclude 'com/haulmont/bpm/web/toolkit/**'
+
+    subprojects.each { proj ->
+        def javadocTask = proj.tasks.getByPath('javadoc')
+
+        source += javadocTask.source
+        classpath += javadocTask.classpath
+    }
+}
