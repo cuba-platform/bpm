@@ -37,16 +37,19 @@ public class BpmTestContainer extends TestContainer {
 
     public BpmTestContainer() {
         super();
+        appComponents = Arrays.asList(
+                "com.haulmont.cuba"
+        );
         appPropertiesFiles = Arrays.asList(
                 "cuba-app.properties",
                 "bpm-app.properties",
-                "test-app.properties");
+                "test-app.properties",
+                "test-bpm-app.properties");
 
         dbDriver = "org.postgresql.Driver";
         dbUrl = "jdbc:postgresql://localhost/bpm_test";
         dbUser = "root";
         dbPassword = "root";
-        springConfig = "test-bpm-spring.xml";
     }
 
     @Override

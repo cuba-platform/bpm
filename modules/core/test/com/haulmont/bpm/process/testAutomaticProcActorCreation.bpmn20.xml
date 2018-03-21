@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  ~ Copyright (c) 2008-2018 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
+  -->
+
+<definitions id="definitions"
+             targetNamespace="http://activiti.org/bpmn20"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:cuba="http://schemas.haulmont.com/bpm/5.5/bpm.xsd">
+
+    <process id="basicTest" name="Basic test">
+
+        <extensionElements>
+            <activiti:eventListener class="com.haulmont.bpm.core.engine.listener.BpmActivitiListener"/>
+            <cuba:procRoles>
+                <cuba:procRole name="Manager" code="manager"/>
+            </cuba:procRoles>
+        </extensionElements>
+
+        <startEvent id="start"/>
+
+        <sequenceFlow id="flow1" sourceRef="start" targetRef="managerApproval" />
+
+        <userTask id="managerApproval" name="Manager approval" activiti:assignee="60885987-1b61-4247-94c7-dff348347f93">
+            <extensionElements>
+                <cuba:procRole>manager</cuba:procRole>
+            </extensionElements>
+        </userTask>
+
+        <sequenceFlow id="flow2" sourceRef="managerApproval" targetRef="theEnd" />
+
+        <endEvent id="theEnd" />
+
+    </process>
+
+</definitions>

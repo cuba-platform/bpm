@@ -293,9 +293,20 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         String roleCode = extensionElementsManager.getTaskProcRole(actTask.getProcessDefinitionId(), actTask.getTaskDefinitionKey());
         if (Strings.isNullOrEmpty(roleCode))
             throw new BpmException("ProcRole code for task " + actTask.getTaskDefinitionKey() + " not defined");
-        ProcActor procActor = findProcActor(bpmProcInstanceId, roleCode, UUID.fromString(assignee));
-        if (procActor == null)
-            throw new BpmException("ProcActor " + roleCode + " not defined");
+        UUID userId = UUID.fromString(assignee);
+        ProcActor procActor = findProcActor(bpmProcInstanceId, roleCode, userId);
+        if (procActor == null) {
+            log.debug("ProcActor " + roleCode + " not defined. Starting creating a new ProcRole");
+            procActor = metadata.create(ProcActor.class);
+            User user = em.find(User.class, userId);
+            if (user == null) throw new BpmException("User with id " + userId + " not found");
+            procActor.setUser(user);
+            ProcRole procRole = findProcRole(procInstance.getProcDefinition(), roleCode);
+            if (procRole == null) throw new BpmException("ProcRole with code " + roleCode + " not found");
+            procActor.setProcRole(procRole);
+            procActor.setProcInstance(procInstance);
+            em.persist(procActor);
+        }
 
         Metadata metadata = AppBeans.get(Metadata.class);
         ProcTask procTask = metadata.create(ProcTask.class);
@@ -344,7 +355,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             User assigneeUser = em.find(User.class, UUID.fromString(actTask.getAssignee()));
             procActor = metadata.create(ProcActor.class);
             procActor.setProcInstance(procInstance);
-            procActor.setProcRole(findProcRole(roleCode));
+            procActor.setProcRole(findProcRole(procInstance.getProcDefinition(), roleCode));
             procActor.setUser(assigneeUser);
             em.persist(procActor);
         }
@@ -409,10 +420,12 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     }
 
     @Nullable
-    protected ProcRole findProcRole(String roleCode) {
+    protected ProcRole findProcRole(ProcDefinition procDefinition, String roleCode) {
         EntityManager em = persistence.getEntityManager();
-        return (ProcRole) em.createQuery("select pr from bpm$ProcRole pr where pr.code = :code")
-                .setParameter("code", roleCode)
+        return em.createQuery("select pr from bpm$ProcRole pr where pr.procDefinition.id = :procDefinition " +
+                "and pr.code = :roleCode", ProcRole.class)
+                .setParameter("procDefinition", procDefinition)
+                .setParameter("roleCode", roleCode)
                 .getFirstResult();
     }
 

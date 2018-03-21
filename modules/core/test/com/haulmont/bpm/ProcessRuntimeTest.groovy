@@ -7,6 +7,7 @@ package com.haulmont.bpm
 
 import com.haulmont.bpm.core.ProcessMessagesManager
 import com.haulmont.bpm.core.ProcessVariablesManager
+import com.haulmont.bpm.entity.ProcActor
 import com.haulmont.bpm.entity.ProcDefinition
 import com.haulmont.bpm.entity.ProcInstance
 import com.haulmont.bpm.entity.ProcRole
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertFalse
 class ProcessRuntimeTest {
 
     static final String BASIC_PROCESS_PATH = "com/haulmont/bpm/process/testBasic.bpmn20.xml";
+    static final String AUTOMATIC_PROC_ACTOR_CREATION_PROCESS_PATH = "com/haulmont/bpm/process/testAutomaticProcActorCreation.bpmn20.xml";
     static final String MULTI_INSTANCE_PARALLEL_PROCESS_PATH = "com/haulmont/bpm/process/testMultiInstanceParallel.bpmn20.xml";
     static final String MULTI_INSTANCE_SEQUENTIAL_PROCESS_PATH = "com/haulmont/bpm/process/testMultiInstanceSequential.bpmn20.xml";
     static final String CLAIM_TASK_PROCESS_PATH = "com/haulmont/bpm/process/testClaimTask.bpmn20.xml";
@@ -171,6 +173,46 @@ class ProcessRuntimeTest {
         cont.persistence().createTransaction().execute( { em ->
             newProcessInstance = em.reload(newProcessInstance)
             assertFalse(newProcessInstance.active)
+        } as Transaction.Runnable)
+    }
+
+    @Test
+    void testAutomaticProcActorCreation() {
+        ProcDefinition procDefinition = cont.processRepositoryManager.deployProcessFromPath(AUTOMATIC_PROC_ACTOR_CREATION_PROCESS_PATH, null, null)
+        UUID adminUserId = UUID.fromString('60885987-1b61-4247-94c7-dff348347f93')
+        def managerProcRole = procDefinition.procRoles.find {it.code == 'manager'}
+
+        ProcInstance newProcessInstance
+        //create procInstance
+        cont.persistence().createTransaction().execute( { em ->
+            def builder = ObjectGraphBuilderProvider.createBuilder(em)
+            newProcessInstance = builder.procInstance(testId: 'procInstance1', procDefinition: procDefinition) {
+            }
+        } as Transaction.Runnable)
+
+        newProcessInstance = cont.processRuntimeManager.startProcess(newProcessInstance, '', [:])
+
+        //check that prccActor was created for user with manager role
+        cont.persistence().createTransaction().execute( { em ->
+            def query = em.createQuery('select a from bpm$ProcActor a where a.procInstance.id = :procInstance and a.procRole.id = :procRole ', ProcActor.class)
+            query.setParameter('procInstance', newProcessInstance)
+            query.setParameter('procRole', managerProcRole)
+            def procActors = query.getResultList()
+            assertEquals(1, procActors.size())
+            ProcActor procActor = procActors[0]
+            assertNotNull(procActor)
+            assertEquals(adminUserId, procActor.user.id)
+        } as Transaction.Runnable)
+
+        //check that proctask was created for user with manager role
+        cont.persistence().createTransaction().execute( { em ->
+            def query = em.createQuery('select a from bpm$ProcTask a where a.procInstance.id = :procInstance', ProcTask.class)
+            query.setParameter('procInstance', newProcessInstance)
+            def procTasks = query.getResultList()
+            assertEquals(1, procTasks.size())
+            ProcTask procTask = procTasks[0]
+            assertNotNull(procTask)
+            assertEquals(adminUserId, procTask.procActor.user.id)
         } as Transaction.Runnable)
     }
 
