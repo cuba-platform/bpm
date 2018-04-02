@@ -28,12 +28,10 @@ import com.haulmont.cuba.gui.components.DialogAction.Type;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.export.ExportDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import com.haulmont.cuba.security.global.UserSession;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,8 +91,13 @@ public class ProcModelBrowse extends AbstractLookup {
     @Inject
     protected Companion companion;
 
+    @Inject
+    protected Button openModelerBtn;
+
     public interface Companion {
         void openModeler(String modelerUrl);
+
+        void setupModelerPopupOpener(Button button, String modelerUrl);
     }
 
     protected static final Logger log = LoggerFactory.getLogger(ProcModelBrowse.class);
@@ -129,15 +132,21 @@ public class ProcModelBrowse extends AbstractLookup {
 
         procModelsTable.addAction(removeAction);
         removeBtn.setAction(removeAction);
+
+        procModelsDs.addItemChangeListener(e -> {
+            if (e.getItem() != null) {
+                String modelerUrl = generateModelerUrl(e.getItem());
+                companion.setupModelerPopupOpener(openModelerBtn, modelerUrl);
+            }
+        });
     }
 
-    public void openModeler() {
-        _openModeler(procModelsDs.getItem());
+    protected String generateModelerUrl(ProcModel procModel) {
+        return "dispatch" + bpmConfig.getModelerUrl() + "?modelId=" + procModel.getActModelId() + "&s=" + userSession.getId();
     }
 
     protected void _openModeler(ProcModel procModel) {
-        String modelerUrl = "dispatch" + bpmConfig.getModelerUrl() + "?modelId=" + procModel.getActModelId() + "&s=" + userSession.getId();
-        companion.openModeler(modelerUrl);
+        companion.openModeler(generateModelerUrl(procModel));
     }
 
     public void deploy() {

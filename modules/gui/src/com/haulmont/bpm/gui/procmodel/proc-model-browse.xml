@@ -37,9 +37,8 @@
             <actions>
                 <action id="create"/>
                 <action id="openModeler"
-                        caption="msg://actions.Edit"
+                        caption="mainMsg://actions.Edit"
                         icon="icons/edit.png"
-                        invoke="openModeler"
                         trackSelection="true"/>
                 <!--<action id="remove"/>-->
                 <action id="copy"
