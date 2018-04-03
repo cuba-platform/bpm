@@ -177,6 +177,10 @@ configure(coreModule) {
 
     dependencies {
         compile(globalModule)
+
+        compile(bom['com.fasterxml.jackson.core:jackson-databind']) // use the same version as rest-api
+        compile(bom['com.fasterxml.jackson.core:jackson-annotations']) // use the same version as BPM
+
         provided(bom['javax.servlet:javax.servlet-api'])
         jdbc(postgres)
         testRuntime(postgres)
