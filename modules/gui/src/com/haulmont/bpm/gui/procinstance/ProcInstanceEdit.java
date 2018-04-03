@@ -280,7 +280,8 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                         LoadContext.createQuery(String.format("select e from %s e where e.%s = :entityId",
                                 entityName,
                                 referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass)))
-                                .setParameter("entityId", entityId));
+                                .setParameter("entityId", entityId))
+                        .setView(View.MINIMAL);
                 entity = dataManager.load(ctx);
             }
         }
