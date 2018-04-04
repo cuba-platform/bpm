@@ -145,6 +145,10 @@ public class ProcModelBrowse extends AbstractLookup {
         return "dispatch" + bpmConfig.getModelerUrl() + "?modelId=" + procModel.getActModelId() + "&s=" + userSession.getId();
     }
 
+    public void openModeler() {
+        _openModeler(procModelsDs.getItem());
+    }
+
     protected void _openModeler(ProcModel procModel) {
         companion.openModeler(generateModelerUrl(procModel));
     }

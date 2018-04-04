@@ -39,6 +39,7 @@
                 <action id="openModeler"
                         caption="mainMsg://actions.Edit"
                         icon="icons/edit.png"
+                        invoke="openModeler"
                         trackSelection="true"/>
                 <!--<action id="remove"/>-->
                 <action id="copy"
@@ -67,7 +68,8 @@
                 <button id="createBtn"
                         action="procModelsTable.create"/>
                 <button id="openModelerBtn"
-                        action="procModelsTable.openModeler"/>
+                        icon="icons/edit.png"
+                        caption="mainMsg://actions.Edit"/>
                 <button id="removeBtn"/>
                 <button id="copyBtn"
                         action="procModelsTable.copy"/>
