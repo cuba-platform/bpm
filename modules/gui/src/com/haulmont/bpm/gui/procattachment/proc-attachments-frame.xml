@@ -8,24 +8,11 @@
         class="com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame"
         messagesPack="com.haulmont.bpm.gui.procattachment">
     <dsContext>
-        <collectionDatasource id="procAttachmentsDs"
-                              class="com.haulmont.bpm.entity.ProcAttachment"
-                              view="procAttachment-browse">
-            <query>
-                <![CDATA[select e from bpm$ProcAttachment e]]>
-                <filter>
-                    <and>
-                        <c>e.procInstance.id = :custom$procInstance</c>
-                        <c>e.procTask.id = :custom$procTask</c>
-                    </and>
-                </filter>
-            </query>
-        </collectionDatasource>
         <collectionDatasource id="procAttachmentTypesDs"
                               class="com.haulmont.bpm.entity.ProcAttachmentType"
                               view="_minimal">
             <query>
-                <![CDATA[select e from bpm$ProcAttachmentType e]]>
+                <![CDATA[select e from bpm$ProcAttachmentType e order by e.name]]>
             </query>
         </collectionDatasource>
     </dsContext>
@@ -41,9 +28,7 @@
             <columns>
                 <column id="file.name"/>
                 <column id="author"/>
-                <column id="type"
-                        editable="true"
-                        optionsDatasource="procAttachmentTypesDs"/>
+                <column id="type"/>
                 <column id="comment"
                         maxTextLength="30"/>
             </columns>

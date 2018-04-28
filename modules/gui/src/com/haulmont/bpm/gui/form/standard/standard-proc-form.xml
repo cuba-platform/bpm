@@ -8,7 +8,12 @@
         caption="msg://caption"
         class="com.haulmont.bpm.gui.form.standard.StandardProcForm"
         messagesPack="com.haulmont.bpm.gui.form.standard">
-    <dsContext/>
+    <dsContext>
+        <datasource id="procInstanceDs" view="procInstance-edit" class="com.haulmont.bpm.entity.ProcInstance">
+            <collectionDatasource id="procActorsDs" property="procActors"/>
+            <collectionDatasource id="procAttachmentsDs" property="procAttachments"/>
+        </datasource>
+    </dsContext>
     <actions>
         <action id="windowCommit"
                 caption="mainMsg://actions.Ok"

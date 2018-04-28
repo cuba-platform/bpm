@@ -5,8 +5,14 @@
 
 package com.haulmont.bpm;
 
-public class BpmConstants {
-    public static final String DEFAULT_TASK_OUTCOME = "defaultComplete";
-    public static final String STANDARD_PROC_FORM = "standardProcForm";
-    public static final String CUSTOM_STENCIL_SERVICE_TASK = "serviceTask";
+public interface BpmConstants {
+    String DEFAULT_TASK_OUTCOME = "defaultComplete";
+    String STANDARD_PROC_FORM = "standardProcForm";
+    String CUSTOM_STENCIL_SERVICE_TASK = "serviceTask";
+
+    interface Views {
+        String PROC_INSTANCE_FULL = "procInstance-full";
+        String PROC_TASK_COMPLETE = "procTask-complete";
+        String PROC_DEFINITION_WITH_ROLES = "procDefinition-withRoles";
+    }
 }

@@ -17,13 +17,11 @@ import com.haulmont.cuba.gui.components.Frame;
 public class ClaimProcTaskAction extends ProcAction {
 
     protected ProcTask procTask;
-    protected Component.BelongToFrame target;
     protected final ProcessRuntimeService processRuntimeService;
 
-    public ClaimProcTaskAction(ProcTask procTask, Component.BelongToFrame target) {
+    public ClaimProcTaskAction(ProcTask procTask) {
         super("claimProcTask");
         this.procTask = procTask;
-        this.target = target;
         processRuntimeService = AppBeans.get(ProcessRuntimeService.class);
     }
 
@@ -32,16 +30,19 @@ public class ClaimProcTaskAction extends ProcAction {
         if (!evaluateBeforeActionPredicates()) return;
         String claimTaskDialogTitle = messages.getMessage(ClaimProcTaskAction.class, "claimTaskDialogTitle");
         String claimTaskDialogMsg = messages.getMessage(ClaimProcTaskAction.class, "claimTaskDialogMsg");
-        target.getFrame().showOptionDialog(claimTaskDialogTitle, claimTaskDialogMsg, Frame.MessageType.CONFIRMATION, new Action[] {
-                new DialogAction(Type.YES) {
-                    @Override
-                    public void actionPerform(Component component) {
-                        processRuntimeService.claimProcTask(procTask, userSession.getCurrentOrSubstitutedUser());
-                        fireAfterActionListeners();
-                    }
-                },
-                new DialogAction(Type.NO, Status.PRIMARY)
-        });
+        Component.ActionOwner owner = getOwner();
+        if (owner instanceof Component.BelongToFrame) {
+            ((Component.BelongToFrame) owner).getFrame().showOptionDialog(claimTaskDialogTitle, claimTaskDialogMsg, Frame.MessageType.CONFIRMATION, new Action[]{
+                    new DialogAction(Type.YES) {
+                        @Override
+                        public void actionPerform(Component component) {
+                            processRuntimeService.claimProcTask(procTask, userSession.getCurrentOrSubstitutedUser());
+                            fireAfterActionListeners();
+                        }
+                    },
+                    new DialogAction(Type.NO, Status.PRIMARY)
+            });
+        }
     }
 
     @Override

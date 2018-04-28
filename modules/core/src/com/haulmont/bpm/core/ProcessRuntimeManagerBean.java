@@ -6,8 +6,10 @@
 package com.haulmont.bpm.core;
 
 import com.google.common.base.Strings;
+import com.haulmont.bpm.BpmConstants;
 import com.haulmont.bpm.entity.*;
 import com.haulmont.bpm.exception.BpmException;
+import com.haulmont.bpm.service.BpmEntitiesService;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
@@ -55,21 +57,20 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
     @Inject
     protected ExtensionElementsManager extensionElementsManager;
 
-    protected static final Logger log = LoggerFactory.getLogger(ProcessRuntimeManagerBean.class);
+    @Inject
+    protected EntityStates entityStates;
+
+    @Inject
+    protected BpmEntitiesService bpmEntitiesService;
+
+    private static final Logger log = LoggerFactory.getLogger(ProcessRuntimeManagerBean.class);
 
     @Override
     public ProcInstance startProcess(ProcInstance procInstance, String comment, @Nullable Map<String, Object> variables) {
-        if (PersistenceHelper.isNew(procInstance)) {
-            throw new IllegalArgumentException("procInstance entity should be persisted");
-        }
-
-        Transaction tx = persistence.createTransaction();
+        Transaction tx = persistence.getTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
-            procInstance = em.reload(procInstance, "procInstance-start");
-            if (procInstance == null) {
-                throw new BpmException("Cannot start process. ProcInstance not found in database.");
-            }
+            procInstance = reloadOrPersistProcInstance(procInstance);
             if (procInstance.getProcDefinition() == null) {
                 throw new BpmException("Cannot start process. ProcDefinition property is null.");
             }
@@ -80,16 +81,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
                 throw new BpmException("Cannot start process. Process definition is not active.");
             }
 
-            if (variables == null)
-                variables = new HashMap<>();
-            variables.put("bpmProcInstanceId", procInstance.getId());
-            if (!Strings.isNullOrEmpty(procInstance.getEntityName())) {
-                variables.put("entityName", procInstance.getEntityName());
-            }
-            if (procInstance.getObjectEntityId() != null) {
-                variables.put("entityId", procInstance.getObjectEntityId());
-            }
-
+            variables = fillProcessVariablesForStart(procInstance, variables);
             ProcessInstance activitiProcessInstance = runtimeService.startProcessInstanceById(procInstance.getProcDefinition().getActId(), variables);
 
             procInstance.setActProcessInstanceId(activitiProcessInstance.getProcessInstanceId());
@@ -104,6 +96,19 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         } finally {
             tx.end();
         }
+    }
+
+    protected Map<String, Object> fillProcessVariablesForStart(ProcInstance procInstance, @Nullable Map<String, Object> variables) {
+        if (variables == null)
+            variables = new HashMap<>();
+        variables.put("bpmProcInstanceId", procInstance.getId());
+        if (!Strings.isNullOrEmpty(procInstance.getEntityName())) {
+            variables.put("entityName", procInstance.getEntityName());
+        }
+        if (procInstance.getObjectEntityId() != null) {
+            variables.put("entityId", procInstance.getObjectEntityId());
+        }
+        return variables;
     }
 
     @Override
@@ -174,7 +179,9 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         Transaction tx = persistence.getTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
-            procTask = em.reload(procTask, "procTask-complete");
+            procTask = entityStates.isLoadedWithView(procTask, BpmConstants.Views.PROC_TASK_COMPLETE) ?
+                    procTask :
+                    em.reloadNN(procTask, BpmConstants.Views.PROC_TASK_COMPLETE);
             if (procTask.getEndDate() != null) {
                 throw new BpmException("procTask " + procTask.getId() + " already completed");
             }
@@ -200,7 +207,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             taskResult.addOutcome(outcome, procTask.getProcActor().getUser().getId());
             runtimeService.setVariable(procTask.getActExecutionId(), variableName, taskResult);
             taskService.complete(procTask.getActTaskId());
-
+            em.merge(procTask);
             tx.commit();
         } finally {
             tx.end();
@@ -216,7 +223,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         Transaction tx = persistence.getTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
-            ProcTask procTask = em.find(ProcTask.class, procTaskId, "procTask-complete");
+            ProcTask procTask = em.find(ProcTask.class, procTaskId, BpmConstants.Views.PROC_TASK_COMPLETE);
 
             if (procTask == null) {
                 throw new BpmException("Cannot complete procTask. ProcTask with id " + procTaskId + " not found");
@@ -301,7 +308,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             User user = em.find(User.class, userId);
             if (user == null) throw new BpmException("User with id " + userId + " not found");
             procActor.setUser(user);
-            ProcRole procRole = findProcRole(procInstance.getProcDefinition(), roleCode);
+            ProcRole procRole = bpmEntitiesService.findProcRole(procInstance.getProcDefinition().getCode(), roleCode, View.MINIMAL);
             if (procRole == null) throw new BpmException("ProcRole with code " + roleCode + " not found");
             procActor.setProcRole(procRole);
             procActor.setProcInstance(procInstance);
@@ -355,7 +362,8 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             User assigneeUser = em.find(User.class, UUID.fromString(actTask.getAssignee()));
             procActor = metadata.create(ProcActor.class);
             procActor.setProcInstance(procInstance);
-            procActor.setProcRole(findProcRole(procInstance.getProcDefinition(), roleCode));
+            ProcRole procRole = bpmEntitiesService.findProcRole(procInstance.getProcDefinition().getCode(), roleCode, View.MINIMAL);
+            procActor.setProcRole(procRole);
             procActor.setUser(assigneeUser);
             em.persist(procActor);
         }
@@ -419,16 +427,6 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         return procActor;
     }
 
-    @Nullable
-    protected ProcRole findProcRole(ProcDefinition procDefinition, String roleCode) {
-        EntityManager em = persistence.getEntityManager();
-        return em.createQuery("select pr from bpm$ProcRole pr where pr.procDefinition.id = :procDefinition " +
-                "and pr.code = :roleCode", ProcRole.class)
-                .setParameter("procDefinition", procDefinition)
-                .setParameter("roleCode", roleCode)
-                .getFirstResult();
-    }
-
     protected Set<User> getCandidateUsers(TaskEntity task) {
         Set<User> candidateUsers = new HashSet<>();
         EntityManager em = persistence.getEntityManager();
@@ -442,5 +440,34 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             }
         }
         return candidateUsers;
+    }
+
+    protected ProcInstance reloadOrPersistProcInstance(ProcInstance procInstance) {
+        EntityManager em = persistence.getEntityManager();
+        ProcInstance resultProcInstance = null;
+        if (!PersistenceHelper.isNew(procInstance)) {
+            resultProcInstance = entityStates.isLoadedWithView(procInstance, "procInstance-start") ?
+                    procInstance :
+                    em.reload(procInstance, "procInstance-start");
+        } else {
+            resultProcInstance = em.reload(procInstance, "procInstance-start");
+            if (resultProcInstance == null) {
+                persistProcInstance(procInstance);
+                resultProcInstance = procInstance;
+            }
+        }
+        return resultProcInstance;
+    }
+
+    protected void persistProcInstance(ProcInstance procInstance) {
+        EntityManager em = persistence.getEntityManager();
+        em.persist(procInstance);
+        if (procInstance.getProcActors() != null) {
+            procInstance.getProcActors().forEach(em::persist);
+        }
+        if (procInstance.getProcAttachments() != null && !procInstance.getProcAttachments().isEmpty()) {
+            throw new BpmException("Cannot persist ProcInstance with filled procAttachments collection.");
+        }
+        em.flush();
     }
 }

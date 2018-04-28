@@ -37,5 +37,6 @@
         <property name="cuba.windowConfig" value="+bpm-web-screens.xml"/>
         <property name="cuba.menuConfig" value="+bpm-web-menu.xml"/>
         <property name="cuba.permissionConfig" value="+bpm-web-permissions.xml"/>
+        <property name="bpm.formsConfig" value="bpm-forms.xml"/>
     </module>
 </app-component>

@@ -5,16 +5,21 @@
 
 package com.haulmont.bpm.gui.action;
 
-import com.haulmont.cuba.gui.components.actions.BaseAction;
+import com.haulmont.cuba.gui.components.AbstractAction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Class provides an API for injecting some logic before and after
  * an action is performed
  */
-public abstract class ProcAction extends BaseAction {
+public abstract class ProcAction extends AbstractAction {
+
+    protected Supplier<Map<String, Object>> processVariablesSupplier;
+    protected Supplier<Map<String, Object>> screenParametersSupplier;
 
     public interface BeforeActionPredicate {
         boolean evaluate();
@@ -52,5 +57,21 @@ public abstract class ProcAction extends BaseAction {
         for (AfterActionListener listener : afterListeners) {
             listener.actionCompleted();
         }
+    }
+
+    public Supplier<Map<String, Object>> getProcessVariablesSupplier() {
+        return processVariablesSupplier;
+    }
+
+    public void setProcessVariablesSupplier(Supplier<Map<String, Object>> processVariablesSupplier) {
+        this.processVariablesSupplier = processVariablesSupplier;
+    }
+
+    public Supplier<Map<String, Object>> getScreenParametersSupplier() {
+        return screenParametersSupplier;
+    }
+
+    public void setScreenParametersSupplier(Supplier<Map<String, Object>> screenParametersSupplier) {
+        this.screenParametersSupplier = screenParametersSupplier;
     }
 }

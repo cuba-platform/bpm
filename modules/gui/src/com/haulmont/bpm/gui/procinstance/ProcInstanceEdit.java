@@ -96,7 +96,6 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
             switch (e.getProperty()) {
                 case "procDefinition":
                     procActorsFrame.setProcInstance(getItem());
-                    procActorsFrame.refresh();
                     initProcActors((ProcDefinition) e.getValue());
                     break;
                 case "entityEditorName":
@@ -109,15 +108,10 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         });
 
         procActorsFrame.setProcInstance(getItem());
-        procActorsFrame.refresh();
-
         procAttachmentsFrame.setProcInstance(getItem());
-        procAttachmentsFrame.refresh();
-
         procTasksFrame.setProcInstance(getItem());
         procTasksFrame.refresh();
     }
-
 
     @Override
     protected void postInit() {

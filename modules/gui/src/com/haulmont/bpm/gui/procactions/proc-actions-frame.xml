@@ -22,6 +22,6 @@
                 </row>
             </rows>
         </grid>
-        <vbox id="actionsBox" spacing="true"/>
+        <vbox id="actionsBox" spacing="true" width="100%"/>
     </layout>
 </window>
