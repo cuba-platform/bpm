@@ -14,7 +14,9 @@
           extends="_local"
           name="procInstance-start">
         <property name="procDefinition"
-                  view="_local"/>
+                  view="_local">
+            <property name="procRoles" view="_local"/>
+        </property>
         <property name="startedBy"
                   view="_minimal"/>
         <property name="entity"
@@ -37,15 +39,7 @@
             <property name="user"
                       view="_minimal"/>
         </property>
-        <property name="procInstance">
-            <property name="entityName"/>
-            <property name="entity"/>
-            <property name="actProcessInstanceId"/>
-            <property name="procDefinition">
-                <property name="name"/>
-                <property name="actId"/>
-            </property>
-        </property>
+        <property name="procInstance" view="procInstance-edit"/>
     </view>
     <view class="com.haulmont.bpm.entity.ProcDefinition"
           name="procDefinition-browse">
@@ -87,6 +81,36 @@
                   view="_minimal"/>
         <property name="entity"
                   view="_local"/>
+        <property name="procActors" view="_local">
+            <property name="procRole" view="_local"/>
+            <property name="user" view="_local"/>
+        </property>
+        <property name="procAttachments" view="_local">
+            <property name="type" view="_minimal"/>
+            <property name="file" view="_local"/>
+            <property name="author" view="_minimal"/>
+        </property>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcInstance"
+          extends="_local"
+          name="procInstance-full">
+        <property name="procDefinition"
+                  view="_local">
+            <property name="procRoles" view="_local"/>
+        </property>
+        <property name="startedBy"
+                  view="_minimal"/>
+        <property name="entity"
+                  view="_local"/>
+        <property name="procActors" view="_local">
+            <property name="procRole" view="_local"/>
+            <property name="user" view="_local"/>
+        </property>
+        <property name="procAttachments" view="_local">
+            <property name="type" view="_minimal"/>
+            <property name="file" view="_local"/>
+            <property name="author" view="_minimal"/>
+        </property>
     </view>
     <view class="com.haulmont.bpm.entity.ProcTask"
           extends="_local"
@@ -112,6 +136,13 @@
         </property>
         <property name="actId"/>
         <property name="active"/>
+    </view>
+    <view class="com.haulmont.bpm.entity.ProcDefinition"
+          extends="_local"
+          name="procDefinition-withRoles">
+        <property name="procRoles"
+                  view="_local">
+        </property>
     </view>
     <view entity="bpm$ProcTask"
           extends="_local"

@@ -42,6 +42,8 @@
                        value="com.haulmont.bpm.service.ModelService"/>
                 <entry key="bpm_StencilSetService"
                        value="com.haulmont.bpm.service.StencilSetService"/>
+                <entry key="bpm_BpmEntitiesService"
+                       value="com.haulmont.bpm.service.BpmEntitiesService"/>
             </map>
         </property>
     </bean>

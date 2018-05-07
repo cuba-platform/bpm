@@ -11,7 +11,11 @@ import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.components.LookupField;
+import com.haulmont.cuba.gui.components.Table;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
+import com.haulmont.cuba.security.entity.User;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -19,6 +23,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ProcActorsFrame extends AbstractFrame {
+
+    @Inject
+    protected Datasource<ProcInstance> procInstanceDs;
 
     @Inject
     protected CollectionDatasource.Ordered<ProcActor, UUID> procActorsDs;
@@ -34,10 +41,33 @@ public class ProcActorsFrame extends AbstractFrame {
 
     protected ProcInstance procInstance;
 
+    @Inject
+    protected Table<ProcActor> procActorsTable;
+
+    @Inject
+    protected ComponentsFactory componentsFactory;
+
+    @Inject
+    protected CollectionDatasource<User, UUID> usersDs;
+
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
         initProcRolesLookup();
+        initProcActorsTable();
+    }
+
+    protected void initProcActorsTable() {
+        procActorsTable.addGeneratedColumn("user", entity -> {
+            LookupField lookupField = componentsFactory.createComponent(LookupField.class);
+            lookupField.setWidth("100%");
+            lookupField.setOptionsDatasource(usersDs);
+            lookupField.setValue(entity.getUser());
+            lookupField.addValueChangeListener(e -> {
+                entity.setUser((User) e.getValue());
+            });
+            return lookupField;
+        });
     }
 
     protected void initProcRolesLookup() {
@@ -74,13 +104,13 @@ public class ProcActorsFrame extends AbstractFrame {
 
     public void setProcInstance(ProcInstance procInstance) {
         this.procInstance = procInstance;
+        procInstanceDs.setItem(procInstance);
+        refreshProcRolesDs();
     }
 
-    public void refresh() {
+    public void refreshProcRolesDs() {
         Map<String, Object> params = new HashMap<>();
-        params.put("procInstance", procInstance);
         params.put("procDefinition", procInstance.getProcDefinition());
-        procActorsDs.refresh(params);
         procRolesDs.refresh(params);
     }
 
@@ -125,8 +155,6 @@ public class ProcActorsFrame extends AbstractFrame {
         procActorOrderSortInfo.setOrder(CollectionDatasource.Sortable.Order.ASC);
         procActorOrderSortInfo.setPropertyPath(procActorsDs.getMetaClass().getPropertyPath("order"));
 
-
         ((CollectionDatasource.Sortable) procActorsDs).sort(new CollectionDatasource.Sortable.SortInfo[]{procRoleOrderSortInfo, procActorOrderSortInfo});
-//        procActorsDs.refresh();
     }
 }

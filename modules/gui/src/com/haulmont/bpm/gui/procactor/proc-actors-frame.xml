@@ -8,16 +8,6 @@
         class="com.haulmont.bpm.gui.procactor.ProcActorsFrame"
         messagesPack="com.haulmont.bpm.gui.procinstance">
     <dsContext>
-        <collectionDatasource id="procActorsDs"
-                              class="com.haulmont.bpm.entity.ProcActor"
-                              view="procActor-browse">
-            <query>
-                <![CDATA[
-                select pa from bpm$ProcActor pa where pa.procInstance.id = :custom$procInstance
-                order by pa.procRole.order, pa.order
-                ]]>
-            </query>
-        </collectionDatasource>
         <collectionDatasource id="procRolesDs"
                               class="com.haulmont.bpm.entity.ProcRole"
                               view="procRole-with-definition">
@@ -48,9 +38,7 @@
             </actions>
             <columns>
                 <column id="procRole"/>
-                <column id="user"
-                        editable="true"
-                        optionsDatasource="usersDs"/>
+                <column id="user"/>
                 <!--<column id="order" editable="true"/>-->
             </columns>
             <buttonsPanel>

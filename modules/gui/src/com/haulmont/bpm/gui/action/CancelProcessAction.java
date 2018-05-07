@@ -14,21 +14,22 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Window;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class CancelProcessAction extends ProcAction {
 
-    private ProcInstance procInstance;
-    private Component.BelongToFrame target;
+    protected ProcInstance procInstance;
     protected final ProcessRuntimeService processRuntimeService;
     protected final ProcessFormService processFormService;
+    private static final Logger log = LoggerFactory.getLogger(CancelProcessAction.class);
 
-    public CancelProcessAction(ProcInstance procInstance, Component.BelongToFrame target) {
+    public CancelProcessAction(ProcInstance procInstance) {
         super("cancelProcess");
         this.procInstance = procInstance;
-        this.target = target;
         processRuntimeService = AppBeans.get(ProcessRuntimeService.class);
         processFormService = AppBeans.get(ProcessFormService.class);
     }
@@ -39,17 +40,22 @@ public class CancelProcessAction extends ProcAction {
         ProcFormDefinition cancelForm = processFormService.getCancelForm(procInstance.getProcDefinition());
         Map<String, Object> params = new HashMap<>();
         params.put("formDefinition", cancelForm);
-        final Window window = target.getFrame().openWindow(cancelForm.getName(), WindowManager.OpenType.DIALOG, params);
-        window.addCloseListener(actionId -> {
-            if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                String comment = null;
-                if (window instanceof ProcForm) {
-                    comment = ((ProcForm) window).getComment();
+        Component.ActionOwner owner = getOwner();
+        if (owner instanceof Component.BelongToFrame) {
+            final Window window = ((Component.BelongToFrame) owner).getFrame().openWindow(cancelForm.getName(), WindowManager.OpenType.DIALOG, params);
+            window.addCloseListener(actionId -> {
+                if (Window.COMMIT_ACTION_ID.equals(actionId)) {
+                    String comment = null;
+                    if (window instanceof ProcForm) {
+                        comment = ((ProcForm) window).getComment();
+                    }
+                    processRuntimeService.cancelProcess(procInstance, comment);
+                    fireAfterActionListeners();
                 }
-                processRuntimeService.cancelProcess(procInstance, comment);
-                fireAfterActionListeners();
-            }
-        });
+            });
+        } else {
+            log.error("Action owner must implement Component.BelongToFrame");
+        }
     }
 
     @Override

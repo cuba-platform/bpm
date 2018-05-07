@@ -6,6 +6,7 @@
 package com.haulmont.bpm.gui.procattachment;
 
 import com.haulmont.bpm.entity.ProcAttachment;
+import com.haulmont.bpm.entity.ProcAttachmentType;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.cuba.core.entity.Entity;
@@ -20,6 +21,7 @@ import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -39,7 +41,7 @@ public class ProcAttachmentsFrame extends AbstractFrame {
     protected CollectionDatasource<ProcAttachment, UUID> procAttachmentsDs;
 
     @Inject
-    protected Table procAttachmentsTable;
+    protected Table<ProcAttachment> procAttachmentsTable;
 
     @Inject
     protected UserSessionSource userSessionSource;
@@ -50,12 +52,32 @@ public class ProcAttachmentsFrame extends AbstractFrame {
 
     protected Map<FileDescriptor, UUID> temporaryFileIds = new HashMap<>();
 
+    @Inject
+    protected ComponentsFactory componentsFactory;
+
+    @Inject
+    protected CollectionDatasource<ProcAttachmentType, UUID> procAttachmentTypesDs;
+
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
+        initProcAttachmentsTable();
+        initUploadField();
+        initParentDsContextCommitListener();
+    }
+
+    protected void initProcAttachmentsTable() {
+        procAttachmentsTable.addGeneratedColumn("type", entity -> {
+            LookupField lookupField = componentsFactory.createComponent(LookupField.class);
+            lookupField.setOptionsDatasource(procAttachmentTypesDs);
+            lookupField.setValue(entity.getType());
+            lookupField.addValueChangeListener(e -> {
+                entity.setType((ProcAttachmentType) e.getValue());
+            });
+            return lookupField;
+        });
 
         FileDownloadHelper.initGeneratedColumn(procAttachmentsTable, "file");
-        initUploadField();
 
         //replace standard edit action because we want to pass parent datasource to attachment editor
         procAttachmentsTable.addAction(new EditAction(procAttachmentsTable) {
@@ -67,8 +89,6 @@ public class ProcAttachmentsFrame extends AbstractFrame {
                 });
             }
         });
-
-        initParentDsContextCommitListener();
     }
 
     protected void initUploadField() {
@@ -127,18 +147,5 @@ public class ProcAttachmentsFrame extends AbstractFrame {
 
     public void setProcTask(ProcTask procTask) {
         this.procTask = procTask;
-    }
-
-    public void refresh() {
-        Map<String, Object> params = new HashMap<>();
-        if (procInstance != null)
-            params.put("procInstance", procInstance);
-        if (procTask != null)
-            params.put("procTask", procTask);
-        procAttachmentsDs.refresh(params);
-    }
-
-    public void commit() {
-        getDsContext().commit();
     }
 }

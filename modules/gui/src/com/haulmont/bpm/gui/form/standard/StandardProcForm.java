@@ -6,6 +6,8 @@
 package com.haulmont.bpm.gui.form.standard;
 
 import com.google.common.base.Strings;
+import com.haulmont.bpm.entity.ProcActor;
+import com.haulmont.bpm.entity.ProcAttachment;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.form.ProcFormDefinition;
@@ -16,10 +18,12 @@ import com.haulmont.bpm.gui.procattachment.ProcAttachmentsFrame;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.Label;
 import com.haulmont.cuba.gui.components.TextArea;
+import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.Datasource;
 
 import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Standard process form that is used for:
@@ -43,7 +47,7 @@ public class StandardProcForm extends AbstractProcForm {
     protected ProcAttachmentsFrame procAttachmentsFrame;
 
     @Inject
-    protected  Label procActorsLabel;
+    protected Label procActorsLabel;
 
     @Inject
     protected ProcActorsFrame procActorsFrame;
@@ -51,7 +55,7 @@ public class StandardProcForm extends AbstractProcForm {
     @WindowParam(name = "procTask")
     protected ProcTask procTask;
 
-    @WindowParam(name = "procInstance")
+    @WindowParam(name = "procInstance", required = true)
     protected ProcInstance procInstance;
 
     @WindowParam(name = "formDefinition", required = true)
@@ -59,6 +63,18 @@ public class StandardProcForm extends AbstractProcForm {
 
     @WindowParam
     protected String caption;
+
+    @WindowParam(name = "isStartForm")
+    protected Boolean isStartForm;
+
+    @Inject
+    protected Datasource<ProcInstance> procInstanceDs;
+
+    @Inject
+    protected CollectionDatasource<ProcActor, UUID> procActorsDs;
+
+    @Inject
+    protected CollectionDatasource<ProcAttachment, UUID> procAttachmentsDs;
 
     protected static final String COMMENT_REQUIRED_PARAM = "commentRequired";
     protected static final String PROC_ACTORS_VISIBLE_PARAM = "procActorsVisible";
@@ -95,17 +111,30 @@ public class StandardProcForm extends AbstractProcForm {
         if (procAttachmentsVisible && (procTask != null || procInstance != null)) {
             procAttachmentsFrame.setProcTask(procTask);
             procAttachmentsFrame.setProcInstance(procInstance != null ? procInstance : procTask.getProcInstance());
-            procAttachmentsFrame.refresh();
         }
 
-        if (procActorsVisible && procInstance != null) {
+        if (procActorsVisible) {
             procActorsFrame.setProcInstance(procInstance);
-            procActorsFrame.refresh();
         }
 
         if (!Strings.isNullOrEmpty(caption)) {
             setCaption(caption);
         }
+
+        procInstanceDs.setItem(procInstance);
+
+        //if the current form is used as a start process form, we shouldn't persist entities. They will be persisted
+        //by the ProcessRuntimeManager.startProcess() method
+        if (Boolean.TRUE.equals(isStartForm)) {
+            procInstanceDs.setAllowCommit(false);
+            procActorsDs.setAllowCommit(false);
+            procAttachmentsDs.setAllowCommit(false);
+        }
+    }
+
+    @Override
+    public void ready() {
+        super.ready();
     }
 
     @Override
@@ -113,22 +142,11 @@ public class StandardProcForm extends AbstractProcForm {
         return comment.getValue();
     }
 
-    @Override
-    public Map<String, Object> getFormResult() {
-        return new HashMap<>();
-    }
-
     public void onWindowCommit() {
         if (!validateAll()) {
             return;
         }
-
-        if (procActorsVisible) {
-            procActorsFrame.commit();
-        }
-        if (procAttachmentsVisible) {
-            procAttachmentsFrame.commit();
-        }
+        getDsContext().commit();
         close(COMMIT_ACTION_ID);
     }
 

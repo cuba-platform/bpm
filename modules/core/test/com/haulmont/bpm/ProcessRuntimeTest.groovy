@@ -217,6 +217,85 @@ class ProcessRuntimeTest {
     }
 
     @Test
+    void testStartProcessWithNotPersistedProcInstance() {
+        ProcDefinition procDefinition = cont.processRepositoryManager.deployProcessFromPath(BASIC_PROCESS_PATH, null, null)
+
+        def managerProcRole = procDefinition.procRoles.find {it.code == 'manager'}
+        def operatorProcRole = procDefinition.procRoles.find {it.code == 'operator'}
+
+        User johnDoeUser
+        User marySmithUser
+
+        //create test users and proc actors
+        cont.persistence().createTransaction().execute( { em ->
+            Group group = em.createQuery('select g from sec$Group g', Group.class).getFirstResult();
+
+            johnDoeUser = cont.metadata().create(User.class)
+            johnDoeUser.login = 'johndoe'
+            johnDoeUser.loginLowerCase = 'johndoe'
+            johnDoeUser.group = group;
+            em.persist(johnDoeUser)
+
+            marySmithUser = cont.metadata().create(User.class)
+            marySmithUser.login = 'marysmith'
+            marySmithUser.loginLowerCase = 'marysmith'
+            marySmithUser.group = group;
+            em.persist(marySmithUser)
+        } as Transaction.Runnable)
+
+        ProcInstance newProcessInstance = cont.metadata().create(ProcInstance.class)
+        newProcessInstance.procDefinition = procDefinition
+
+        def managerProcActor = cont.metadata().create(ProcActor.class)
+        managerProcActor.user = johnDoeUser
+        managerProcActor.procRole = managerProcRole
+        managerProcActor.procInstance = newProcessInstance
+
+        def operatorProcActor = cont.metadata().create(ProcActor.class)
+        operatorProcActor.user = marySmithUser
+        operatorProcActor.procRole = operatorProcRole
+        operatorProcActor.procInstance = newProcessInstance
+
+        newProcessInstance.procActors = [managerProcActor, operatorProcActor]
+
+        newProcessInstance = cont.processRuntimeManager.startProcess(newProcessInstance, '', [:])
+
+        //check that pracActor was created for user with manager role
+        cont.persistence().createTransaction().execute( { em ->
+            def query = em.createQuery('select a from bpm$ProcActor a where a.procInstance.id = :procInstance and a.procRole.id = :procRole ', ProcActor.class)
+            query.setParameter('procInstance', newProcessInstance)
+            query.setParameter('procRole', managerProcRole)
+            def procActors = query.getResultList()
+            assertEquals(1, procActors.size())
+            ProcActor procActor = procActors[0]
+            assertNotNull(procActor)
+            assertEquals(johnDoeUser, procActor.user)
+        } as Transaction.Runnable)
+
+        cont.persistence().createTransaction().execute( { em ->
+            def query = em.createQuery('select a from bpm$ProcActor a where a.procInstance.id = :procInstance and a.procRole.id = :procRole ', ProcActor.class)
+            query.setParameter('procInstance', newProcessInstance)
+            query.setParameter('procRole', operatorProcRole)
+            def procActors = query.getResultList()
+            assertEquals(1, procActors.size())
+            ProcActor procActor = procActors[0]
+            assertNotNull(procActor)
+            assertEquals(marySmithUser, procActor.user)
+        } as Transaction.Runnable)
+
+        //check that proctask was created for user with manager role
+        cont.persistence().createTransaction().execute( { em ->
+            def query = em.createQuery('select a from bpm$ProcTask a where a.procInstance.id = :procInstance', ProcTask.class)
+            query.setParameter('procInstance', newProcessInstance)
+            def procTasks = query.getResultList()
+            assertEquals(1, procTasks.size())
+            ProcTask procTask = procTasks[0]
+            assertNotNull(procTask)
+            assertEquals(johnDoeUser, procTask.procActor.user)
+        } as Transaction.Runnable)
+    }
+
+    @Test
     void testMultiInstanceParallel() {
         ProcDefinition procDefinition = cont.processRepositoryManager.deployProcessFromPath(MULTI_INSTANCE_PARALLEL_PROCESS_PATH, null, null)
         ProcInstance newProcessInstance
