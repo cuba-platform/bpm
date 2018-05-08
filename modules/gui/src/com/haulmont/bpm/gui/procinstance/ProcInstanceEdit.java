@@ -155,6 +155,7 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
                 .setBeforeCompleteTaskPredicate(new CommitEditorBeforeActionPredicate())
                 .setBeforeClaimTaskPredicate(new CommitEditorBeforeActionPredicate())
                 .setBeforeCancelProcessPredicate(new CommitEditorBeforeActionPredicate())
+                .setCancelProcessEnabled(true)
                 .init(getItem());
     }
 

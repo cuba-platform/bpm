@@ -22,6 +22,7 @@ import org.apache.commons.lang.BooleanUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class ProcInstanceBrowse extends AbstractLookup {
@@ -110,6 +111,17 @@ public class ProcInstanceBrowse extends AbstractLookup {
                 });
                 return linkButton;
             }
+        });
+
+        removeAction.setBeforeActionPerformedHandler(() -> {
+            Set<ProcInstance> selected = procInstancesTable.getSelected();
+            for (ProcInstance procInstance : selected) {
+                if (Boolean.TRUE.equals(procInstance.getActive())) {
+                    showNotification(getMessage("cannotRemoveActiveProcInstance"), NotificationType.ERROR);
+                    return false;
+                }
+            }
+            return true;
         });
     }
 }
