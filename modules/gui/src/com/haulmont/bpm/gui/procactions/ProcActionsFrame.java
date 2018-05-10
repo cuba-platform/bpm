@@ -443,19 +443,23 @@ public class ProcActionsFrame extends AbstractFrame {
             this.beforeCancelProcessPredicate = editor::commit;
             this.afterStartProcessListener = () -> {
                 editor.showNotification(getMessage("processStarted"));
-                ProcActionsFrame.this.init(ProcActionsFrame.this.procInstance);
+                ProcInstance reloadedProcInstance = dataManager.reload(ProcActionsFrame.this.procInstance, BpmConstants.Views.PROC_INSTANCE_FULL);
+                ProcActionsFrame.this.init(reloadedProcInstance);
             };
             this.afterCompleteTaskListener = () -> {
                 editor.showNotification(getMessage("taskCompleted"));
-                ProcActionsFrame.this.init(ProcActionsFrame.this.procInstance);
+                ProcInstance reloadedProcInstance = dataManager.reload(ProcActionsFrame.this.procInstance, BpmConstants.Views.PROC_INSTANCE_FULL);
+                ProcActionsFrame.this.init(reloadedProcInstance);
             };
             this.afterClaimTaskListener = () -> {
                 editor.showNotification(getMessage("taskClaimed"));
-                ProcActionsFrame.this.init(ProcActionsFrame.this.procInstance);
+                ProcInstance reloadedProcInstance = dataManager.reload(ProcActionsFrame.this.procInstance, BpmConstants.Views.PROC_INSTANCE_FULL);
+                ProcActionsFrame.this.init(reloadedProcInstance);
             };
             this.afterCancelProcessListener = () -> {
                 editor.showNotification(getMessage("processCancelled"));
-                ProcActionsFrame.this.init(ProcActionsFrame.this.procInstance);
+                ProcInstance reloadedProcInstance = dataManager.reload(ProcActionsFrame.this.procInstance, BpmConstants.Views.PROC_INSTANCE_FULL);
+                ProcActionsFrame.this.init(reloadedProcInstance);
             };
             return this;
         }

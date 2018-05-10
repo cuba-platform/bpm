@@ -189,6 +189,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             procTask.setEndDate(timeSource.currentTimestamp());
             procTask.setOutcome(outcome);
             procTask.setComment(comment);
+            em.merge(procTask);
 
             if (processVariables != null) {
                 for (Map.Entry<String, Object> entry : processVariables.entrySet()) {
@@ -207,7 +208,6 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             taskResult.addOutcome(outcome, procTask.getProcActor().getUser().getId());
             runtimeService.setVariable(procTask.getActExecutionId(), variableName, taskResult);
             taskService.complete(procTask.getActTaskId());
-            em.merge(procTask);
             tx.commit();
         } finally {
             tx.end();
