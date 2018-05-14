@@ -16,15 +16,6 @@
 
     <mvc:annotation-driven/>
 
-    <!-- Background Tasks -->
-    <!--<bean id="backgroundWorkerScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">-->
-    <!--<property name="daemon" value="true"/>-->
-    <!--<property name="poolSize" value="1"/>-->
-    <!--</bean>-->
-    <!--<task:scheduled-tasks scheduler="backgroundWorkerScheduler">-->
-    <!--<task:scheduled ref="cuba_BackgroundWorker_WatchDog" method="cleanupTasks" fixed-delay="2000"/>-->
-    <!--</task:scheduled-tasks>-->
-
     <bean id="bpm_proxyCreator"
           class="com.haulmont.cuba.web.sys.remoting.WebRemoteProxyBeanCreator">
         <property name="serverSelector" ref="cuba_ServerSelector"/>
