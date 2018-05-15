@@ -114,14 +114,6 @@ public class ProcAttachmentsFrame extends AbstractFrame {
                 if (commitInstance instanceof ProcAttachment && PersistenceHelper.isNew(commitInstance)) {
                     ProcAttachment procAttachment = (ProcAttachment) commitInstance;
                     fileDescriptorsToCommit.add(procAttachment.getFile());
-                    UUID fileId = temporaryFileIds.get(procAttachment.getFile());
-                    if (fileId != null) {
-                        try {
-                            fileUploadingAPI.putFileIntoStorage(fileId, procAttachment.getFile());
-                        } catch (FileStorageException e) {
-                            new RuntimeException("Error while uploading file", e);
-                        }
-                    }
                 }
             }
 
@@ -130,6 +122,19 @@ public class ProcAttachmentsFrame extends AbstractFrame {
                 context.setCommitInstances(commitInstances);
             }
         });
+    }
+
+    public void putFilesIntoStorage() {
+        for (ProcAttachment procAttachment : procAttachmentsDs.getItems()) {
+            UUID fileId = temporaryFileIds.get(procAttachment.getFile());
+            if (fileId != null) {
+                try {
+                    fileUploadingAPI.putFileIntoStorage(fileId, procAttachment.getFile());
+                } catch (FileStorageException e) {
+                    new RuntimeException("Error while uploading file", e);
+                }
+            }
+        }
     }
 
     protected void addProcAttachment(FileDescriptor file) {

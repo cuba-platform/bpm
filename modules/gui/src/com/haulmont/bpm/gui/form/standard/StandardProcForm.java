@@ -147,6 +147,7 @@ public class StandardProcForm extends AbstractProcForm {
             return;
         }
         getDsContext().commit();
+        procAttachmentsFrame.putFilesIntoStorage();
         close(COMMIT_ACTION_ID);
     }
 

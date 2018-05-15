@@ -466,7 +466,10 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             procInstance.getProcActors().forEach(em::persist);
         }
         if (procInstance.getProcAttachments() != null && !procInstance.getProcAttachments().isEmpty()) {
-            throw new BpmException("Cannot persist ProcInstance with filled procAttachments collection.");
+            for (ProcAttachment procAttachment : procInstance.getProcAttachments()) {
+                em.persist(procAttachment);
+                em.persist(procAttachment.getFile());
+            }
         }
         em.flush();
     }

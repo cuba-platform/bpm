@@ -119,6 +119,13 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
         initProcTaskActionsFrame();
     }
 
+    @Override
+    protected boolean postCommit(boolean committed, boolean close) {
+        boolean result = super.postCommit(committed, close);
+        procAttachmentsFrame.putFilesIntoStorage();
+        return result;
+    }
+
     protected void setComponentsEditable() {
         if (getItem().getStartDate() != null) {
             procDefinitionLookup.setEditable(false);

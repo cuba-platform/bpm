@@ -69,9 +69,10 @@
                 </fieldGroup>
                 <groupBox id="procTaskActionsGroupBox"
                           caption="msg://processActions"
-                          width="100%">
+                          width="300px">
                     <frame id="procActionsFrame"
-                            screen="procActionsFrame"/>
+                            screen="procActionsFrame"
+                            width="100%"/>
                 </groupBox>
             </hbox>
             <hbox height="250px"
