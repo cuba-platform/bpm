@@ -131,7 +131,7 @@ public class ProcAttachmentsFrame extends AbstractFrame {
                 try {
                     fileUploadingAPI.putFileIntoStorage(fileId, procAttachment.getFile());
                 } catch (FileStorageException e) {
-                    new RuntimeException("Error while uploading file", e);
+                    throw new RuntimeException("Error while uploading file", e);
                 }
             }
         }
