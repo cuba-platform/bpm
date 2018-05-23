@@ -310,9 +310,6 @@ public class ProcActionsFrame extends AbstractFrame {
 
         protected String buttonWidth = "100%";
 
-        private Initializer() {
-        }
-
         public Initializer setBeforeStartProcessPredicate(ProcAction.BeforeActionPredicate predicate) {
             this.beforeStartProcessPredicate = predicate;
             return this;
