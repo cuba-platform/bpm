@@ -65,7 +65,7 @@ public class StartProcessAction extends ProcAction {
                         Map<String, Object> formProcessVariables = null;
                         if (window instanceof ProcForm) {
                             comment = ((ProcForm) window).getComment();
-                            formProcessVariables = ((ProcForm) window).getFormProcessVariables();
+                            formProcessVariables = ((ProcForm) window).getFormResult();
                         }
                         _startProcess(comment, formProcessVariables);
                     }

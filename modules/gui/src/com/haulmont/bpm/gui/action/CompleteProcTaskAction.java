@@ -78,7 +78,7 @@ public class CompleteProcTaskAction extends ProcAction {
                         Map<String, Object> formProcessVariables = new HashMap<>();
                         if (procForm instanceof ProcForm) {
                             comment = ((ProcForm) procForm).getComment();
-                            formProcessVariables = ((ProcForm) procForm).getFormProcessVariables();
+                            formProcessVariables = ((ProcForm) procForm).getFormResult();
                         }
                         formProcessVariables.putAll(variablesFromSupplier);
                         processRuntimeService.completeProcTask(procTask, outcome, comment, formProcessVariables);

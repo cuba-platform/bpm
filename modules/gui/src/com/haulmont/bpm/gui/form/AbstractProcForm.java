@@ -24,9 +24,4 @@ public abstract class AbstractProcForm extends AbstractWindow implements ProcFor
     public Map<String, Object> getFormResult() {
         return new HashMap<>();
     }
-
-    @Override
-    public Map<String, Object> getFormProcessVariables() {
-        return getFormResult();
-    }
 }

@@ -19,12 +19,7 @@ public interface ProcForm {
 
     /**
      * @return a map that will be added to activiti process variables
-     * @deprecated use {@link #getFormProcessVariables()} instead
      */
     Map<String, Object> getFormResult();
 
-    /**
-     * @return a map that will be added to Activiti process variables
-     */
-    Map<String, Object> getFormProcessVariables();
 }
