@@ -65,10 +65,10 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
     }
 
     public Decision getDecision() {
-        return decisionOptionsGroup.getValue();
+        return (Decision) decisionOptionsGroup.getValue();
     }
 
     public ProcDefinition getProcDefinition() {
-        return processLookup.getValue();
+        return (ProcDefinition) processLookup.getValue();
     }
 }

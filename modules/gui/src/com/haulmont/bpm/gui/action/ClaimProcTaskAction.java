@@ -8,11 +8,8 @@ package com.haulmont.bpm.gui.action;
 import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.gui.components.Action;
-import com.haulmont.cuba.gui.components.Component;
-import com.haulmont.cuba.gui.components.DialogAction;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.DialogAction.Type;
-import com.haulmont.cuba.gui.components.Frame;
 
 public class ClaimProcTaskAction extends ProcAction {
 
@@ -30,7 +27,7 @@ public class ClaimProcTaskAction extends ProcAction {
         if (!evaluateBeforeActionPredicates()) return;
         String claimTaskDialogTitle = messages.getMessage(ClaimProcTaskAction.class, "claimTaskDialogTitle");
         String claimTaskDialogMsg = messages.getMessage(ClaimProcTaskAction.class, "claimTaskDialogMsg");
-        Component.ActionOwner owner = getOwner();
+        ActionOwner owner = getOwner();
         if (owner instanceof Component.BelongToFrame) {
             ((Component.BelongToFrame) owner).getFrame().showOptionDialog(claimTaskDialogTitle, claimTaskDialogMsg, Frame.MessageType.CONFIRMATION, new Action[]{
                     new DialogAction(Type.YES) {

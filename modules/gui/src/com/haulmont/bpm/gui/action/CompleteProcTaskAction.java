@@ -16,6 +16,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.components.ActionOwner;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Window;
 import org.slf4j.Logger;
@@ -23,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class CompleteProcTaskAction extends ProcAction {
 
@@ -69,7 +69,7 @@ public class CompleteProcTaskAction extends ProcAction {
                 }
             }
 
-            Component.ActionOwner owner = getOwner();
+            ActionOwner owner = getOwner();
             if (owner instanceof Component.BelongToFrame) {
                 final Window procForm = ((Component.BelongToFrame) owner).getFrame().openWindow(formDefinition.getName(), WindowManager.OpenType.DIALOG, formParams);
                 procForm.addCloseListener(actionId -> {

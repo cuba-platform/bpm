@@ -11,9 +11,10 @@ import com.haulmont.bpm.form.ProcFormDefinition;
 import com.haulmont.bpm.gui.form.ProcForm;
 import com.haulmont.bpm.service.ProcessFormService;
 import com.haulmont.bpm.service.ProcessRuntimeService;
-import com.haulmont.cuba.core.entity.Entity;
-import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.components.ActionOwner;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Window;
 import org.slf4j.Logger;
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class StartProcessAction extends ProcAction {
 
@@ -56,7 +56,7 @@ public class StartProcessAction extends ProcAction {
                     formParams.putAll(screenParameters);
                 }
             }
-            Component.ActionOwner owner = getOwner();
+            ActionOwner owner = getOwner();
             if (owner instanceof Component.BelongToFrame) {
                 final Window window = ((Component.BelongToFrame) owner).getFrame().openWindow(startForm.getName(), WindowManager.OpenType.DIALOG, formParams);
                 window.addCloseListener(actionId -> {

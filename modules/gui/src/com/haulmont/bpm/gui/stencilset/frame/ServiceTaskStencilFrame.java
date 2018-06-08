@@ -7,13 +7,12 @@ package com.haulmont.bpm.gui.stencilset.frame;
 
 import com.google.common.base.Strings;
 import com.haulmont.bpm.entity.stencil.ServiceTaskStencil;
-import com.haulmont.bpm.entity.stencil.StencilMethodArg;
 import com.haulmont.bpm.entity.stencil.Stencil;
+import com.haulmont.bpm.entity.stencil.StencilMethodArg;
 import com.haulmont.bpm.service.StencilSetService;
 import com.haulmont.cuba.core.app.scheduled.MethodInfo;
 import com.haulmont.cuba.core.app.scheduled.MethodParameterInfo;
 import com.haulmont.cuba.core.entity.FileDescriptor;
-import com.haulmont.cuba.core.entity.ScheduledTask;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.FileStorageException;
 import com.haulmont.cuba.core.global.LoadContext;
@@ -24,7 +23,7 @@ import com.haulmont.cuba.gui.export.ExportDisplay;
 import com.haulmont.cuba.gui.export.ExportFormat;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import java.util.*;

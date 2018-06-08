@@ -12,6 +12,7 @@ import com.haulmont.bpm.service.ProcessFormService;
 import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.components.ActionOwner;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Window;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class CancelProcessAction extends ProcAction {
         ProcFormDefinition cancelForm = processFormService.getCancelForm(procInstance.getProcDefinition());
         Map<String, Object> params = new HashMap<>();
         params.put("formDefinition", cancelForm);
-        Component.ActionOwner owner = getOwner();
+        ActionOwner owner = getOwner();
         if (owner instanceof Component.BelongToFrame) {
             final Window window = ((Component.BelongToFrame) owner).getFrame().openWindow(cancelForm.getName(), WindowManager.OpenType.DIALOG, params);
             window.addCloseListener(actionId -> {

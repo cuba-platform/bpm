@@ -14,7 +14,7 @@ import com.haulmont.cuba.gui.components.Frame;
 import com.haulmont.cuba.web.App;
 import com.haulmont.cuba.web.WebWindowManager;
 import com.haulmont.cuba.web.controllers.ControllerUtils;
-import com.haulmont.cuba.web.toolkit.ui.CubaButton;
+import com.haulmont.cuba.web.widgets.CubaButton;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.Extension;
 

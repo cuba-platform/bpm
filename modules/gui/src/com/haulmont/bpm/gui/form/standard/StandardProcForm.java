@@ -38,7 +38,7 @@ import java.util.UUID;
 public class StandardProcForm extends AbstractProcForm {
 
     @Inject
-    protected TextArea comment;
+    protected TextArea<String> comment;
 
     @Inject
     protected Label procAttachmentsLabel;
