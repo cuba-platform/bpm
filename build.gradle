@@ -159,7 +159,11 @@ configure(globalModule) {
         compile("com.haulmont.cuba:cuba-global:$cubaVersion")
     }
 
-    task enhance(type: CubaEnhancing)
+    entitiesEnhancing {
+        main {
+            enabled = true
+        }
+    }
 
     jar {
         manifest {
