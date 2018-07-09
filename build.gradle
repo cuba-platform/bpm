@@ -185,7 +185,7 @@ configure(coreModule) {
         compile(bom['com.fasterxml.jackson.core:jackson-databind']) // use the same version as rest-api
         compile(bom['com.fasterxml.jackson.core:jackson-annotations']) // use the same version as BPM
 
-        provided(bom['javax.servlet:javax.servlet-api'])
+        compileOnly(bom['javax.servlet:javax.servlet-api'])
         jdbc(postgres)
         testRuntime(postgres)
 
@@ -276,7 +276,7 @@ configure(webModule) {
     }
 
     dependencies {
-        provided(bom['javax.servlet:javax.servlet-api'])
+        compileOnly(bom['javax.servlet:javax.servlet-api'])
         compile(globalModule)
         compile(guiModule)
         compile("com.haulmont.cuba:cuba-web:$cubaVersion")
