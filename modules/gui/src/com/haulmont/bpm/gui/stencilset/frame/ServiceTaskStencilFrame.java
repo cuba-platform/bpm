@@ -60,7 +60,7 @@ public class ServiceTaskStencilFrame extends AbstractStencilFrame<ServiceTaskSte
 
     @Inject
     protected StencilSetService stencilSetService;
-    private LookupField methodNameField;
+    private LookupField<MethodInfo> methodNameField;
     private List<MethodInfo> availableMethods;
 
     @Override
@@ -104,7 +104,7 @@ public class ServiceTaskStencilFrame extends AbstractStencilFrame<ServiceTaskSte
         Map<String, List<MethodInfo>> availableBeans = stencilSetService.getAvailableBeans();
 
         fieldGroup.addCustomField("beanName", (datasource, propertyId) -> {
-            LookupField beanNameField = componentsFactory.createComponent(LookupField.class);
+            LookupField<String> beanNameField = componentsFactory.createComponent(LookupField.class);
             beanNameField.setOptionsList(new ArrayList<>(availableBeans.keySet()));
             beanNameField.setDatasource(stencilDs, "beanName");
 
@@ -116,7 +116,7 @@ public class ServiceTaskStencilFrame extends AbstractStencilFrame<ServiceTaskSte
                     availableMethods = availableBeans.get(e.getValue());
 
                     if (availableMethods != null) {
-                        HashMap<String, Object> optionsMap = new HashMap<>();
+                        HashMap<String, MethodInfo> optionsMap = new HashMap<>();
                         for (MethodInfo availableMethod : availableMethods) {
                             optionsMap.put(availableMethod.getMethodSignature(), availableMethod);
                         }

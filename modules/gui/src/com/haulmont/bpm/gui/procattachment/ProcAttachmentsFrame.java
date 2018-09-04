@@ -68,7 +68,7 @@ public class ProcAttachmentsFrame extends AbstractFrame {
 
     protected void initProcAttachmentsTable() {
         procAttachmentsTable.addGeneratedColumn("type", entity -> {
-            LookupField lookupField = componentsFactory.createComponent(LookupField.class);
+            LookupField<ProcAttachmentType> lookupField = componentsFactory.createComponent(LookupField.class);
             lookupField.setOptionsDatasource(procAttachmentTypesDs);
             lookupField.setValue(entity.getType());
             lookupField.addValueChangeListener(e -> {

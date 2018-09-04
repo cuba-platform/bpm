@@ -62,9 +62,9 @@ public class ProcInstanceEdit extends AbstractEditor<ProcInstance> {
     @Named("fieldGroup.procDefinition")
     protected LookupField procDefinitionLookup;
 
-    protected LookupField entityNameLookup;
+    protected LookupField<MetaClass> entityNameLookup;
 
-    protected PickerField entityIdPickerField;
+    protected PickerField<Entity> entityIdPickerField;
 
     @Named("fieldGroup.entityEditorName")
     protected TextField entityEditorNameField;

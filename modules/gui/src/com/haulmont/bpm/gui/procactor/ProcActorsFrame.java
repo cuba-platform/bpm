@@ -34,7 +34,7 @@ public class ProcActorsFrame extends AbstractFrame {
     protected CollectionDatasource<ProcRole, UUID> procRolesDs;
 
     @Inject
-    protected LookupField procRolesLookup;
+    protected LookupField<ProcRole> procRolesLookup;
 
     @Inject
     protected Metadata metadata;
@@ -59,7 +59,7 @@ public class ProcActorsFrame extends AbstractFrame {
 
     protected void initProcActorsTable() {
         procActorsTable.addGeneratedColumn("user", entity -> {
-            LookupField lookupField = componentsFactory.createComponent(LookupField.class);
+            LookupField<User> lookupField = componentsFactory.createComponent(LookupField.class);
             lookupField.setWidth("100%");
             lookupField.setOptionsDatasource(usersDs);
             lookupField.setValue(entity.getUser());

@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ProcModelBrowse extends AbstractLookup {
 
@@ -229,13 +230,13 @@ public class ProcModelBrowse extends AbstractLookup {
         }
     }
 
-    protected class ModelUploadListener implements FileUploadField.FileUploadSucceedListener {
+    protected class ModelUploadListener implements Consumer<FileUploadField.FileUploadSucceedEvent> {
 
         public ModelUploadListener() {
         }
 
         @Override
-        public void fileUploadSucceed(FileUploadField.FileUploadSucceedEvent e) {
+        public void accept(FileUploadField.FileUploadSucceedEvent e) {
             File file = fileUploadingAPI.getFile(modelUpload.getFileId());
             try {
                 ObjectMapper objectMapper = new ObjectMapper();

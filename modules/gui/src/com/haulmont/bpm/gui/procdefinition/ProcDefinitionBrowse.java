@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ProcDefinitionBrowse extends AbstractLookup {
 
@@ -85,13 +86,13 @@ public class ProcDefinitionBrowse extends AbstractLookup {
         return name;
     }
 
-    protected class UploadSucceedListener implements FileUploadField.FileUploadSucceedListener {
+    protected class UploadSucceedListener implements Consumer<FileUploadField.FileUploadSucceedEvent> {
 
         public UploadSucceedListener() {
         }
 
         @Override
-        public void fileUploadSucceed(FileUploadField.FileUploadSucceedEvent e) {
+        public void accept(FileUploadField.FileUploadSucceedEvent e) {
             File file = fileUploadingAPI.getFile(deployUpload.getFileId());
 
             String processXml;
@@ -130,10 +131,10 @@ public class ProcDefinitionBrowse extends AbstractLookup {
         }
     }
 
-    protected class UploadErrorListener implements FileUploadField.FileUploadErrorListener {
+    protected class UploadErrorListener implements Consumer<FileUploadField.FileUploadErrorEvent> {
 
         @Override
-        public void fileUploadError(UploadField.FileUploadErrorEvent e) {
+        public void accept(UploadField.FileUploadErrorEvent e) {
             showNotification(getMessage("processUploadFailed"), NotificationType.ERROR);
         }
     }

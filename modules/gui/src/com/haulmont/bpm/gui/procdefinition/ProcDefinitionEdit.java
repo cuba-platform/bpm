@@ -34,14 +34,11 @@ public class ProcDefinitionEdit extends AbstractEditor<ProcDefinition> {
     }
 
     protected void initTabSheet() {
-        tabSheet.addListener(new TabSheet.TabChangeListener() {
-            @Override
-            public void tabChanged(TabSheet.Tab newTab) {
-                if ("xmlTab".equals(newTab.getName()) && !xmlTabInitialized) {
-                    String processXml = processRepositoryService.getProcessDefinitionXml(getItem().getActId());
-                    xmlField.setValue(processXml);
-                    xmlTabInitialized = true;
-                }
+        tabSheet.addSelectedTabChangeListener(event -> {
+            if ("xmlTab".equals(event.getSelectedTab().getName()) && !xmlTabInitialized) {
+                String processXml = processRepositoryService.getProcessDefinitionXml(getItem().getActId());
+                xmlField.setValue(processXml);
+                xmlTabInitialized = true;
             }
         });
     }

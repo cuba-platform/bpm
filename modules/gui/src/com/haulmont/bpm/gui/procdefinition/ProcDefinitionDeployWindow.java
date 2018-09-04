@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class ProcDefinitionDeployWindow extends AbstractWindow {
     @Inject
-    protected OptionsGroup decisionOptionsGroup;
+    protected OptionsGroup<Decision, Decision> decisionOptionsGroup;
     @Inject
     protected LookupField processLookup;
 
@@ -36,7 +36,7 @@ public class ProcDefinitionDeployWindow extends AbstractWindow {
 
         initWindowActions();
 
-        Map<String, Object> optionsMap = new LinkedHashMap<>();
+        Map<String, Decision> optionsMap = new LinkedHashMap<>();
         for (Decision decision : Decision.values()) {
             optionsMap.put(getMessage(decision.name()), decision);
         }
