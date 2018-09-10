@@ -9,10 +9,10 @@ import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.bpm.gui.procmodel.ProcModelBrowse;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.Button;
 import com.haulmont.cuba.gui.components.Frame;
 import com.haulmont.cuba.web.App;
-import com.haulmont.cuba.web.WebWindowManager;
 import com.haulmont.cuba.web.controllers.ControllerUtils;
 import com.haulmont.cuba.web.widgets.CubaButton;
 import com.vaadin.server.BrowserWindowOpener;
@@ -32,7 +32,7 @@ public class WebProcModelBrowseCompanion implements ProcModelBrowse.Companion {
 
         notificationBody = String.format(notificationBody, url);
 
-        WebWindowManager windowManager = App.getInstance().getWindowManager();
+        WindowManager windowManager = App.getInstance().getWindowManager();
 
         // try to open a window with modeler
         windowManager.showWebPage(url, ParamsMap.of("tryToOpenAsPopup", Boolean.TRUE));

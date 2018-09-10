@@ -13,10 +13,13 @@ import com.haulmont.bpm.service.ProcessFormService;
 import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.ActionOwner;
 import com.haulmont.cuba.gui.components.Component;
+import com.haulmont.cuba.gui.components.Frame;
 import com.haulmont.cuba.gui.components.Window;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +61,9 @@ public class StartProcessAction extends ProcAction {
             }
             ActionOwner owner = getOwner();
             if (owner instanceof Component.BelongToFrame) {
-                final Window window = ((Component.BelongToFrame) owner).getFrame().openWindow(startForm.getName(), WindowManager.OpenType.DIALOG, formParams);
+                Frame frame = ((Component.BelongToFrame) owner).getFrame();
+
+                Window window = LegacyFrame.of(frame).openWindow(startForm.getName(), OpenType.DIALOG, formParams);
                 window.addCloseListener(actionId -> {
                     if (Window.COMMIT_ACTION_ID.equals(actionId)) {
                         String comment = null;
@@ -91,7 +96,10 @@ public class StartProcessAction extends ProcAction {
 
     @Override
     public String getCaption() {
-        if (!Strings.isNullOrEmpty(this.caption)) return this.caption;
+        if (!Strings.isNullOrEmpty(this.caption)) {
+            return this.caption;
+        }
+        Messages messages = AppBeans.get(Messages.NAME);
         return messages.getMessage(StartProcessAction.class, "startProcess");
     }
 }

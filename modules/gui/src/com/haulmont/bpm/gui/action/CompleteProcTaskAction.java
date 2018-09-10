@@ -15,10 +15,12 @@ import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.PersistenceHelper;
-import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.ActionOwner;
 import com.haulmont.cuba.gui.components.Component;
+import com.haulmont.cuba.gui.components.Frame;
 import com.haulmont.cuba.gui.components.Window;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +29,13 @@ import java.util.Map;
 
 public class CompleteProcTaskAction extends ProcAction {
 
+    private static final Logger log = LoggerFactory.getLogger(CompleteProcTaskAction.class);
+
     protected final ProcessRuntimeService processRuntimeService;
     protected ProcTask procTask;
     protected String outcome;
     protected ProcFormDefinition formDefinition;
     protected final ProcessMessagesService processMessagesService;
-    private static final Logger log = LoggerFactory.getLogger(CompleteProcTaskAction.class);
 
     public CompleteProcTaskAction(ProcTask procTask, String outcome, ProcFormDefinition formDefinition) {
         super("completeTask_" + outcome);
@@ -71,7 +74,8 @@ public class CompleteProcTaskAction extends ProcAction {
 
             ActionOwner owner = getOwner();
             if (owner instanceof Component.BelongToFrame) {
-                final Window procForm = ((Component.BelongToFrame) owner).getFrame().openWindow(formDefinition.getName(), WindowManager.OpenType.DIALOG, formParams);
+                Frame frame = ((Component.BelongToFrame) owner).getFrame();
+                Window procForm = LegacyFrame.of(frame).openWindow(formDefinition.getName(), OpenType.DIALOG, formParams);
                 procForm.addCloseListener(actionId -> {
                     if (Window.COMMIT_ACTION_ID.equals(actionId)) {
                         String comment = null;
