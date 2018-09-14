@@ -36,7 +36,6 @@ def webModule = project(':bpm-web')
 
 def postgres = 'org.postgresql:postgresql:9.4-1201-jdbc41'
 
-apply(plugin: 'idea')
 apply(plugin: 'cuba')
 
 bom.load file('modules/global/src/com/haulmont/bpm/bom.properties')
@@ -61,7 +60,6 @@ def baseCubaVersion = rootProject.hasProperty('cuba.version') ? rootProject['cub
 configure([globalModule, coreModule, guiModule, webModule]) {
     apply(plugin: 'java')
     apply(plugin: 'maven')
-    apply(plugin: 'idea')
     apply(plugin: 'findbugs')
     apply(plugin: 'pmd')
     apply(plugin: 'cuba')
@@ -146,9 +144,9 @@ configure([globalModule, coreModule, guiModule, webModule]) {
             'Generates a HTML report after executing PMD checks.') {
         doLast {
             ant.xslt(
-                    in: "${project.buildDir}/reports/pmd/main.xml",
-                    style: "${rootDir}/findbugs/pmd-nicerhtml.xsl",
-                    out: "${project.buildDir}/reports/pmd/main.html")
+                    'in': "${project.buildDir}/reports/pmd/main.xml",
+                    'style': "${rootDir}/findbugs/pmd-nicerhtml.xsl",
+                    'out': "${project.buildDir}/reports/pmd/main.html")
         }
     }
 
@@ -260,7 +258,6 @@ configure(guiModule) {
     dependencies {
         compile(globalModule)
         compile("com.haulmont.cuba:cuba-gui:$baseCubaVersion")
-        compile("com.haulmont.cuba:cuba-client:$baseCubaVersion")
 
         compile(bom['com.fasterxml.jackson.core:jackson-databind'])
     }
