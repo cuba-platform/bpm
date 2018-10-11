@@ -10,10 +10,14 @@ import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.UserSessionSource;
-import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.Dialogs;
+import com.haulmont.cuba.gui.components.ActionOwner;
+import com.haulmont.cuba.gui.components.Component;
+import com.haulmont.cuba.gui.components.DialogAction;
 import com.haulmont.cuba.gui.components.DialogAction.Type;
-import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.security.global.UserSession;
+
+import static com.haulmont.cuba.gui.ComponentsHelper.getScreenContext;
 
 public class ClaimProcTaskAction extends ProcAction {
 
@@ -41,21 +45,23 @@ public class ClaimProcTaskAction extends ProcAction {
         String claimTaskDialogMsg = messages.getMessage(ClaimProcTaskAction.class, "claimTaskDialogMsg");
         ActionOwner owner = getOwner();
         if (owner instanceof Component.BelongToFrame) {
-            Frame frame = ((Component.BelongToFrame) owner).getFrame();
-            LegacyFrame.of(frame)
-                    .showOptionDialog(claimTaskDialogTitle, claimTaskDialogMsg, Frame.MessageType.CONFIRMATION, new Action[]{
-                            new DialogAction(Type.YES) {
-                                @Override
-                                public void actionPerform(Component component) {
-                                    UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
+            Dialogs dialogs = getScreenContext((Component.BelongToFrame) owner).getDialogs();
 
-                                    UserSession userSession = userSessionSource.getUserSession();
-                                    processRuntimeService.claimProcTask(procTask, userSession.getCurrentOrSubstitutedUser());
-                                    fireAfterActionListeners();
-                                }
-                            },
+            dialogs.createOptionDialog()
+                    .setCaption(claimTaskDialogTitle)
+                    .setMessage(claimTaskDialogMsg)
+                    .setActions(
+                            new DialogAction(Type.YES)
+                                    .withHandler(event -> {
+                                        UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
+
+                                        UserSession userSession = userSessionSource.getUserSession();
+                                        processRuntimeService.claimProcTask(procTask, userSession.getCurrentOrSubstitutedUser());
+                                        fireAfterActionListeners();
+                                    }),
                             new DialogAction(Type.NO, Status.PRIMARY)
-                    });
+                    )
+                    .show();
         }
     }
 }

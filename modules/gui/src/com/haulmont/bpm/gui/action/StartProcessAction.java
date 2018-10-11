@@ -14,17 +14,20 @@ import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.ActionOwner;
 import com.haulmont.cuba.gui.components.Component;
-import com.haulmont.cuba.gui.components.Frame;
 import com.haulmont.cuba.gui.components.Window;
-import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
+import com.haulmont.cuba.gui.config.WindowConfig;
+import com.haulmont.cuba.gui.config.WindowInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.haulmont.cuba.gui.ComponentsHelper.getScreenContext;
 
 public class StartProcessAction extends ProcAction {
 
@@ -61,9 +64,10 @@ public class StartProcessAction extends ProcAction {
             }
             ActionOwner owner = getOwner();
             if (owner instanceof Component.BelongToFrame) {
-                Frame frame = ((Component.BelongToFrame) owner).getFrame();
+                WindowManager wm = (WindowManager) getScreenContext((Component.BelongToFrame) owner).getScreens();
+                WindowInfo windowInfo = AppBeans.get(WindowConfig.class).getWindowInfo(startForm.getName());
 
-                Window window = LegacyFrame.of(frame).openWindow(startForm.getName(), OpenType.DIALOG, formParams);
+                Window window = wm.openWindow(windowInfo, OpenType.DIALOG, formParams);
                 window.addCloseListener(actionId -> {
                     if (Window.COMMIT_ACTION_ID.equals(actionId)) {
                         String comment = null;
