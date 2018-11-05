@@ -18,6 +18,6 @@ public interface BpmConfig extends Config {
     String getModelerUrl();
 
     @Property("bpm.formsConfig")
-    @Default("bpm-forms.xml")
+    @Default("com/haulmont/bpm/forms.xml")
     String getFormsConfig();
 }

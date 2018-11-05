@@ -20,7 +20,6 @@ import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.app.FileStorageAPI;
 import com.haulmont.cuba.core.entity.FileDescriptor;
-import com.haulmont.cuba.core.global.FileStorageException;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Resources;
 import com.haulmont.cuba.core.global.TimeSource;
@@ -46,7 +45,7 @@ public class StencilSetManagerBean implements StencilSetManager {
 
     protected static final Logger log = LoggerFactory.getLogger(StencilSetManagerBean.class);
 
-    protected static final String STENCILSET_JSON_FILE_NAME = "stencilset.json";
+    protected static final String STENCILSET_JSON_FILE_NAME = "com/haulmont/bpm/stencilset.json";
 
     protected static final String DEFAULT_STENCIL_SET_NAME = "default";
 
