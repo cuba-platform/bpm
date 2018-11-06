@@ -45,7 +45,7 @@ public class BpmEntitiesServiceBean implements BpmEntitiesService {
     @Override
     @Nullable
     public ProcDefinition findProcDefinitionByCode(String procDefinitionCode, String viewName) {
-        ProcDefinition procDefinition = null;
+        ProcDefinition procDefinition;
         try (Transaction tx = persistence.getTransaction()) {
             EntityManager em = persistence.getEntityManager();
             procDefinition = em.createQuery("select pd from bpm$ProcDefinition pd where pd.code = :code", ProcDefinition.class)
@@ -59,7 +59,7 @@ public class BpmEntitiesServiceBean implements BpmEntitiesService {
 
     @Override
     public List<ProcInstance> findActiveProcInstancesForEntity(String procDefinitionCode, Entity entity, String viewName) {
-        List<ProcInstance> procInstances = new ArrayList<>();
+        List<ProcInstance> procInstances;
         String referenceIdPropertyName = referenceToEntitySupport.getReferenceIdPropertyName(entity.getMetaClass());
         try (Transaction tx = persistence.getTransaction()) {
             EntityManager em = persistence.getEntityManager();
@@ -78,15 +78,15 @@ public class BpmEntitiesServiceBean implements BpmEntitiesService {
 
     @Override
     public List<ProcTask> findActiveProcTasks(ProcInstance procInstance, User user, String viewName) {
-        List<ProcTask> procTasks = new ArrayList<>();
+        List<ProcTask> procTasks;
         try (Transaction tx = persistence.getTransaction()) {
             EntityManager em = persistence.getEntityManager();
             procTasks = em.createQuery("select pt from bpm$ProcTask pt left join pt.procActor pa left join pa.user pau " +
-                    "where pt.procInstance.id = :procInstance and (pau.id = :userId or " +
+                    "where pt.procInstance.id = :procInstanceId and (pau.id = :userId or " +
                     "(pa is null and exists(select pt2 from bpm$ProcTask pt2 join pt2.candidateUsers cu where pt2.id = pt.id and cu.id = :userId))) " +
                     "and pt.endDate is null", ProcTask.class)
-                    .setParameter("procInstance", procInstance)
-                    .setParameter("userId", user)
+                    .setParameter("procInstanceId", procInstance.getId())
+                    .setParameter("userId", user.getId())
                     .setViewName(viewName)
                     .getResultList();
             tx.commit();
@@ -97,7 +97,7 @@ public class BpmEntitiesServiceBean implements BpmEntitiesService {
     @Override
     @Nullable
     public ProcRole findProcRole(String procDefinitionCode, String procRoleCode, String viewName) {
-        ProcRole procRole = null;
+        ProcRole procRole;
         try (Transaction tx = persistence.getTransaction()) {
             EntityManager em = persistence.getEntityManager();
             procRole = em.createQuery("select pr from bpm$ProcRole pr where " +
@@ -152,7 +152,7 @@ public class BpmEntitiesServiceBean implements BpmEntitiesService {
                             .findAny()
                             .orElse(null);
                     if (pr == null) {
-                        throw new BpmException("ProcRole " + procActorDetails.getProcRoleCode() + " not found");
+                        throw new BpmException(String.format("ProcRole %s not found", procActorDetails.getProcRoleCode()));
                     }
                     procActor.setProcRole(pr);
                 }

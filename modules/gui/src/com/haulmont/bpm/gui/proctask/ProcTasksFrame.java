@@ -28,8 +28,9 @@ public class ProcTasksFrame extends AbstractFrame {
 
     public void refresh() {
         Map<String, Object> params = new HashMap<>();
-        if (procInstance != null)
-            params.put("procInstance", procInstance);
+        if (procInstance != null) {
+            params.put("procInstance", procInstance.getId());
+        }
         procTasksDs.refresh(params);
     }
 }
