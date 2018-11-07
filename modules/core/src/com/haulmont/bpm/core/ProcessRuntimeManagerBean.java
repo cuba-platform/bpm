@@ -122,9 +122,10 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             procInstance.setEndDate(timeSource.currentTimestamp());
             procInstance.setCancelComment(comment);
 
-            TypedQuery<ProcTask> query = em.createQuery("select a from bpm$ProcTask a where a.procInstance.id = :procInstance " +
+            TypedQuery<ProcTask> query = em.createQuery(
+                    "select a from bpm$ProcTask a where a.procInstance.id = :procInstanceId " +
                     "and a.endDate is null", ProcTask.class);
-            query.setParameter("procInstance", procInstance);
+            query.setParameter("procInstanceId", procInstance.getId());
             List<ProcTask> procTasks = query.getResultList();
 
             for (ProcTask procTask : procTasks) {
@@ -226,11 +227,11 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             ProcTask procTask = em.find(ProcTask.class, procTaskId, BpmConstants.Views.PROC_TASK_COMPLETE);
 
             if (procTask == null) {
-                throw new BpmException("Cannot complete procTask. ProcTask with id " + procTaskId + " not found");
+                throw new BpmException(String.format("Cannot complete procTask. ProcTask with id %s not found", procTaskId));
             }
 
             if (procTask.getEndDate() != null) {
-                throw new BpmException("procTask " + procTask.getId() + " already completed");
+                throw new BpmException(String.format("procTask %s already completed", procTask.getId()));
             }
 
             procTask.setEndDate(timeSource.currentTimestamp());
