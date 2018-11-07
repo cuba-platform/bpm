@@ -55,13 +55,17 @@ public class ProcessMigratorBean implements ProcessMigrator {
         Transaction tx = persistence.getTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
-            List<ProcTask> procTasks = em.createQuery("select pt from bpm$ProcTask pt where pt.procInstance.procDefinition.id = :procDefinition", ProcTask.class)
-                    .setParameter("procDefinition", procDefinition)
+            List<ProcTask> procTasks = em.createQuery(
+                    "select pt from bpm$ProcTask pt " +
+                    "where pt.procInstance.procDefinition.id = :procDefinitionId",
+                    ProcTask.class)
+                    .setParameter("procDefinitionId", procDefinition.getId())
                     .getResultList();
             for (ProcTask procTask : procTasks) {
                 procTask.setActProcessDefinitionId(actProcessDefinitionId);
             }
-            log.debug(procTasks.size() + " procTasks was update during process migration");
+
+            log.debug("{} procTasks was update during process migration", procTasks.size());
             tx.commit();
         } finally {
             tx.end();

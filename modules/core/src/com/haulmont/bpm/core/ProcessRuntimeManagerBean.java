@@ -258,8 +258,10 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
         Transaction tx = persistence.createTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
-            Long count = (Long) em.createQuery("select count(pi) from bpm$ProcInstance pi where pi.procDefinition.id = :procDefinition and pi.active = true")
-                    .setParameter("procDefinition", procDefinition)
+            Long count = (Long) em.createQuery(
+                    "select count(pi) from bpm$ProcInstance pi " +
+                    "where pi.procDefinition.id = :procDefinitionId and pi.active = true")
+                    .setParameter("procDefinitionId", procDefinition.getId())
                     .getSingleResult();
             tx.commit();
             return count;
@@ -444,7 +446,7 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
 
     protected ProcInstance reloadOrPersistProcInstance(ProcInstance procInstance) {
         EntityManager em = persistence.getEntityManager();
-        ProcInstance resultProcInstance = null;
+        ProcInstance resultProcInstance;
         if (!PersistenceHelper.isNew(procInstance)) {
             resultProcInstance = entityStates.isLoadedWithView(procInstance, "procInstance-start") ?
                     procInstance :

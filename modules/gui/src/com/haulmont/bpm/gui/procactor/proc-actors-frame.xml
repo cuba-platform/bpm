@@ -13,7 +13,7 @@
                               view="procRole-with-definition">
             <query>
                 <![CDATA[
-                select pr from bpm$ProcRole pr where pr.procDefinition.id = :custom$procDefinition order by pr.name
+                select pr from bpm$ProcRole pr where pr.procDefinition.id = :custom$procDefinitionId order by pr.name
                 ]]>
             </query>
         </collectionDatasource>
@@ -39,18 +39,12 @@
             <columns>
                 <column id="procRole"/>
                 <column id="user"/>
-                <!--<column id="order" editable="true"/>-->
             </columns>
             <buttonsPanel>
-                <lookupField id="procRolesLookup" nullName="msg://addProcActor" optionsDatasource="procRolesDs" width="200px"/>
+                <lookupField id="procRolesLookup" nullName="msg://addProcActor"
+                             optionsDatasource="procRolesDs" width="200px"/>
                 <button id="procActorRemoveBtn"
                         action="procActorsTable.remove"/>
-                <!--<button caption=""-->
-                        <!--icon="icons/up.png"-->
-                        <!--invoke="moveUp"/>-->
-                <!--<button caption=""-->
-                        <!--icon="icons/down.png"-->
-                        <!--invoke="moveDown"/>-->
             </buttonsPanel>
             <rows datasource="procActorsDs"/>
         </table>

@@ -45,7 +45,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static java.util.Collections.singletonMap;
+
 public class ProcModelBrowse extends AbstractLookup {
+
+    protected static final Logger log = LoggerFactory.getLogger(ProcModelBrowse.class);
 
     @Named("procModelsTable.create")
     protected CreateAction procModelsTableCreate;
@@ -100,8 +104,6 @@ public class ProcModelBrowse extends AbstractLookup {
 
         void setupModelerPopupOpener(Button button, String modelerUrl);
     }
-
-    protected static final Logger log = LoggerFactory.getLogger(ProcModelBrowse.class);
 
     @Override
     public void init(Map<String, Object> params) {
@@ -160,7 +162,8 @@ public class ProcModelBrowse extends AbstractLookup {
         if (!procDefinitionsByModel.isEmpty()) {
             params.put("selectedProcDefinition", procDefinitionsByModel.get(0));
         }
-        final ProcDefinitionDeployWindow deployWindow = (ProcDefinitionDeployWindow) openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
+        ProcDefinitionDeployWindow deployWindow =
+                (ProcDefinitionDeployWindow) openWindow("procDefinitionDeploy", WindowManager.OpenType.DIALOG, params);
         deployWindow.addCloseListener(actionId -> {
             if (COMMIT_ACTION_ID.equals(actionId)) {
                 ProcDefinition procDefinition = deployWindow.getDecision() == ProcDefinitionDeployWindow.Decision.UPDATE_EXISTING
@@ -183,8 +186,8 @@ public class ProcModelBrowse extends AbstractLookup {
         modelCopy.setName(formatMessage("copyOf", srcModel.getName()));
         modelCopy.setDescription(modelCopy.getDescription());
 
-        final Editor editor = openEditor("bpm$ProcModel.edit", modelCopy, WindowManager.OpenType.THIS_TAB,
-                Collections.<String, Object>singletonMap("srcModel", srcModel));
+        Editor editor = openEditor("bpm$ProcModel.edit", modelCopy, WindowManager.OpenType.THIS_TAB,
+                singletonMap("srcModel", srcModel));
         editor.addCloseListener(actionId -> {
             if (COMMIT_ACTION_ID.equals(actionId)) {
                 procModelsDs.refresh();
@@ -198,16 +201,18 @@ public class ProcModelBrowse extends AbstractLookup {
         View view = new View(ProcModel.class)
                 .addProperty("name")
                 .addProperty("actModelId");
-        LoadContext ctx = new LoadContext(ProcModel.class).setView(view);
+        LoadContext<ProcModel> ctx = LoadContext.create(ProcModel.class).setView(view);
         ctx.setQueryString("select m from bpm$ProcModel m where m.name = :name")
                 .setParameter("name", modelName);
-        return dataManager.<ProcModel>load(ctx);
+        return dataManager.load(ctx);
     }
 
     protected List<ProcDefinition> findProcDefinitionsByModel(ProcModel model) {
-        LoadContext ctx = new LoadContext(ProcDefinition.class);
-        ctx.setQueryString("select pd from bpm$ProcDefinition pd where pd.model.id = :model order by pd.name, pd.deploymentDate desc")
-                .setParameter("model", model);
+        LoadContext<ProcDefinition> ctx = LoadContext.create(ProcDefinition.class);
+        ctx.setQueryString(
+                "select pd from bpm$ProcDefinition pd " +
+                "where pd.model.id = :modelId order by pd.name, pd.deploymentDate desc")
+                .setParameter("modelId", model.getId());
         return dataManager.loadList(ctx);
     }
 
@@ -224,9 +229,8 @@ public class ProcModelBrowse extends AbstractLookup {
         @Override
         public InputStream provide() {
             RestModel restModel = modelService.getModelJson(procModel.getActModelId());
-            InputStream inputStream = new ByteArrayInputStream(restModel.getModelJson().getBytes(StandardCharsets.UTF_8));
-
-            return inputStream;
+            byte[] bytes = restModel.getModelJson().getBytes(StandardCharsets.UTF_8);
+            return new ByteArrayInputStream(bytes);
         }
     }
 
@@ -240,7 +244,7 @@ public class ProcModelBrowse extends AbstractLookup {
             File file = fileUploadingAPI.getFile(modelUpload.getFileId());
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                final JsonNode modelJsonNode = objectMapper.readTree(file);
+                JsonNode modelJsonNode = objectMapper.readTree(file);
                 JsonNode propertiesNode = modelJsonNode.get("properties");
                 if (propertiesNode == null) {
                     showNotification(getMessage("invalidJsonDocument"), NotificationType.WARNING);
@@ -251,8 +255,9 @@ public class ProcModelBrowse extends AbstractLookup {
                     showNotification(getMessage("invalidJsonDocument"), NotificationType.WARNING);
                     return;
                 }
-                final String modelName = nameNode.asText();
-                final ProcModel existingModel = findModelByName(modelName);
+
+                String modelName = nameNode.asText();
+                ProcModel existingModel = findModelByName(modelName);
                 if (existingModel != null) {
                     showOptionDialog(getMessage("importModel.existsDialog.title"),
                             formatMessage("importModel.existsDialog.message", modelName),

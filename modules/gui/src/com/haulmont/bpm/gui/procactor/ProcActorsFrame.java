@@ -9,12 +9,12 @@ import com.haulmont.bpm.entity.ProcActor;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.Table;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.cuba.security.entity.User;
 
 import javax.inject.Inject;
@@ -45,7 +45,7 @@ public class ProcActorsFrame extends AbstractFrame {
     protected Table<ProcActor> procActorsTable;
 
     @Inject
-    protected ComponentsFactory componentsFactory;
+    protected UiComponents uiComponents;
 
     @Inject
     protected CollectionDatasource<User, UUID> usersDs;
@@ -59,12 +59,12 @@ public class ProcActorsFrame extends AbstractFrame {
 
     protected void initProcActorsTable() {
         procActorsTable.addGeneratedColumn("user", entity -> {
-            LookupField<User> lookupField = componentsFactory.createComponent(LookupField.class);
+            LookupField<User> lookupField = uiComponents.create(LookupField.NAME);
             lookupField.setWidth("100%");
             lookupField.setOptionsDatasource(usersDs);
             lookupField.setValue(entity.getUser());
             lookupField.addValueChangeListener(e -> {
-                entity.setUser((User) e.getValue());
+                entity.setUser(e.getValue());
             });
             return lookupField;
         });
@@ -110,7 +110,11 @@ public class ProcActorsFrame extends AbstractFrame {
 
     public void refreshProcRolesDs() {
         Map<String, Object> params = new HashMap<>();
-        params.put("procDefinition", procInstance.getProcDefinition());
+
+        UUID procDefinitionId = procInstance.getProcDefinition() != null ?
+                procInstance.getProcDefinition().getId() : null;
+
+        params.put("procDefinitionId", procDefinitionId);
         procRolesDs.refresh(params);
     }
 
