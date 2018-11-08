@@ -82,13 +82,14 @@ public class ProcessRuntimeManagerBean implements ProcessRuntimeManager {
             }
 
             variables = fillProcessVariablesForStart(procInstance, variables);
-            ProcessInstance activitiProcessInstance = runtimeService.startProcessInstanceById(procInstance.getProcDefinition().getActId(), variables);
-
-            procInstance.setActProcessInstanceId(activitiProcessInstance.getProcessInstanceId());
             procInstance.setStartComment(comment);
             procInstance.setActive(true);
             procInstance.setStartDate(timeSource.currentTimestamp());
             procInstance.setStartedBy(userSessionSource.getUserSession().getCurrentOrSubstitutedUser());
+            procInstance = em.merge(procInstance);
+
+            ProcessInstance activitiProcessInstance = runtimeService.startProcessInstanceById(procInstance.getProcDefinition().getActId(), variables);
+            procInstance.setActProcessInstanceId(activitiProcessInstance.getProcessInstanceId());
             procInstance = em.merge(procInstance);
 
             tx.commit();
