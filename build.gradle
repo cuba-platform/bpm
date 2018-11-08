@@ -185,6 +185,7 @@ configure(coreModule) {
 
         compile(bom['com.fasterxml.jackson.core:jackson-databind']) // use the same version as rest-api
         compile(bom['com.fasterxml.jackson.core:jackson-annotations']) // use the same version as BPM
+        compile(bom['org.codehaus.groovy:groovy-jsr223'])
 
         compileOnly(bom['javax.servlet:javax.servlet-api'])
         jdbc(postgres)
