@@ -48,9 +48,9 @@ public class ClaimProcTaskAction extends ProcAction {
             Dialogs dialogs = getScreenContext((Component.BelongToFrame) owner).getDialogs();
 
             dialogs.createOptionDialog()
-                    .setCaption(claimTaskDialogTitle)
-                    .setMessage(claimTaskDialogMsg)
-                    .setActions(
+                    .withCaption(claimTaskDialogTitle)
+                    .withMessage(claimTaskDialogMsg)
+                    .withActions(
                             new DialogAction(Type.YES)
                                     .withHandler(event -> {
                                         UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
