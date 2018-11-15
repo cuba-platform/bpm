@@ -19,6 +19,7 @@ import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -94,6 +95,12 @@ public class ProcDefinitionBrowse extends AbstractLookup {
         @Override
         public void accept(FileUploadField.FileUploadSucceedEvent e) {
             File file = fileUploadingAPI.getFile(deployUpload.getFileId());
+
+            String extension = FilenameUtils.getExtension(deployUpload.getFileName());
+            if (!"xml".equalsIgnoreCase(extension)) {
+                showNotification(getMessage("fileNotXml"), NotificationType.ERROR);
+                return;
+            }
 
             String processXml;
             try {
