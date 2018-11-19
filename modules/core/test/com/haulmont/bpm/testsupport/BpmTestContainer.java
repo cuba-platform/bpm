@@ -41,7 +41,7 @@ public class BpmTestContainer extends TestContainer {
                 "com.haulmont.cuba"
         );
         appPropertiesFiles = Arrays.asList(
-                "com/haulmont/cuba/cuba-app.properties",
+                "com/haulmont/cuba/app.properties",
                 "com/haulmont/bpm/app.properties",
                 "com/haulmont/cuba/testsupport/test-app.properties",
                 "com/haulmont/bpm/test-app.properties");
