@@ -21,12 +21,19 @@ buildscript {
 
     repositories {
         mavenLocal()
-        maven {
-            url 'http://repository.haulmont.com:8587/nexus/content/groups/work'
-            credentials {
-                username System.getenv('HAULMONT_REPOSITORY_USER')
-                password System.getenv('HAULMONT_REPOSITORY_PASSWORD')
+
+        if (System.getenv('HAULMONT_REPOSITORY_URL')) {
+            maven {
+                credentials {
+                    username System.getenv('HAULMONT_REPOSITORY_USER')
+                    password System.getenv('HAULMONT_REPOSITORY_PASSWORD')
+                }
+                url System.getenv('HAULMONT_REPOSITORY_URL')
             }
+        } else {
+            jcenter()
+            maven { url "https://plugins.gradle.org/m2/" }
+            maven { url "https://dl.bintray.com/cuba-platform/main" }
         }
     }
     dependencies {
