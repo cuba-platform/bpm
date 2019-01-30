@@ -1,7 +1,7 @@
 # CUBA BPM Add-on
 
 [![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Build Status](https://travis-ci.org/cuba-platform/bpm.svg?branch=master)](https://travis-ci.org/cuba-platform/npm)
+[![Build Status](https://travis-ci.org/cuba-platform/bpm.svg?branch=master)](https://travis-ci.org/cuba-platform/bpm)
 [![Documentation](https://img.shields.io/badge/documentation-online-03a9f4.svg)](https://doc.cuba-platform.com/bpm-latest)
 
 CUBA business process management subsystem.
