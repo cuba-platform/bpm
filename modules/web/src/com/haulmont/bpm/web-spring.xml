@@ -17,7 +17,8 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc">
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:gui="http://schemas.haulmont.com/cuba/spring/cuba-gui.xsd">
     <!-- Annotation-based beans -->
     <context:component-scan base-package="com.haulmont.bpm"/>
 
@@ -45,4 +46,6 @@
             </map>
         </property>
     </bean>
+
+    <gui:screens base-packages="com.haulmont.bpm.gui"/>
 </beans>
