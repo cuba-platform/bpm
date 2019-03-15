@@ -23,20 +23,16 @@ import com.haulmont.bpm.service.ProcessFormService;
 import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
-import com.haulmont.cuba.gui.WindowManager;
-import com.haulmont.cuba.gui.WindowManager.OpenType;
+import com.haulmont.cuba.gui.ScreenBuilders;
 import com.haulmont.cuba.gui.components.ActionOwner;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Window;
-import com.haulmont.cuba.gui.config.WindowConfig;
-import com.haulmont.cuba.gui.config.WindowInfo;
+import com.haulmont.cuba.gui.screen.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.haulmont.cuba.gui.ComponentsHelper.getScreenContext;
 
 public class CancelProcessAction extends ProcAction {
 
@@ -45,12 +41,14 @@ public class CancelProcessAction extends ProcAction {
     protected ProcInstance procInstance;
     protected final ProcessRuntimeService processRuntimeService;
     protected final ProcessFormService processFormService;
+    protected final ScreenBuilders screenBuilders;
 
     public CancelProcessAction(ProcInstance procInstance) {
         super("cancelProcess");
         this.procInstance = procInstance;
         processRuntimeService = AppBeans.get(ProcessRuntimeService.class);
         processFormService = AppBeans.get(ProcessFormService.class);
+        screenBuilders = AppBeans.get(ScreenBuilders.class);
 
         Messages messages = AppBeans.get(Messages.NAME);
         this.caption = messages.getMessage(CancelProcessAction.class, "cancelProcess");
@@ -65,23 +63,24 @@ public class CancelProcessAction extends ProcAction {
         ProcFormDefinition cancelForm = processFormService.getCancelForm(procInstance.getProcDefinition());
         ActionOwner owner = getOwner();
         if (owner instanceof Component.BelongToFrame) {
-            WindowManager wm = (WindowManager) getScreenContext((Component.BelongToFrame) owner).getScreens();
-            WindowInfo windowInfo = AppBeans.get(WindowConfig.class).getWindowInfo(cancelForm.getName());
-
             Map<String, Object> params = new HashMap<>();
             params.put("formDefinition", cancelForm);
-            Window window = wm.openWindow(windowInfo, OpenType.DIALOG, params);
-
-            window.addCloseListener(actionId -> {
-                if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                    String comment = null;
-                    if (window instanceof ProcForm) {
-                        comment = ((ProcForm) window).getComment();
-                    }
-                    processRuntimeService.cancelProcess(procInstance, comment);
-                    fireAfterActionListeners();
+            Screen screen = screenBuilders.screen(((Component.BelongToFrame) owner).getFrame().getFrameOwner())
+                    .withScreenId(cancelForm.getName())
+                    .withOpenMode(OpenMode.DIALOG)
+                    .withOptions(new MapScreenOptions(params))
+                    .build();
+            screen.addAfterCloseListener(afterCloseEvent -> {
+                String comment = null;
+                CloseAction closeAction = afterCloseEvent.getCloseAction();
+                if (closeAction instanceof StandardCloseAction &&
+                        Window.COMMIT_ACTION_ID.equals(((StandardCloseAction) closeAction).getActionId())) {
+                    comment = ((ProcForm) screen).getComment();
                 }
+                processRuntimeService.cancelProcess(procInstance, comment);
+                fireAfterActionListeners();
             });
+            screen.show();
         } else {
             log.error("Action owner must implement Component.BelongToFrame");
         }
