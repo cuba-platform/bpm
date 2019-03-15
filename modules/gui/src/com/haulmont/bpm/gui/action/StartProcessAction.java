@@ -25,20 +25,16 @@ import com.haulmont.bpm.service.ProcessRuntimeService;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Messages;
-import com.haulmont.cuba.gui.WindowManager;
-import com.haulmont.cuba.gui.WindowManager.OpenType;
+import com.haulmont.cuba.gui.ScreenBuilders;
 import com.haulmont.cuba.gui.components.ActionOwner;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Window;
-import com.haulmont.cuba.gui.config.WindowConfig;
-import com.haulmont.cuba.gui.config.WindowInfo;
+import com.haulmont.cuba.gui.screen.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.haulmont.cuba.gui.ComponentsHelper.getScreenContext;
 
 public class StartProcessAction extends ProcAction {
 
@@ -47,6 +43,7 @@ public class StartProcessAction extends ProcAction {
     protected final ProcessFormService processFormService;
     protected DataManager dataManager;
     private static final Logger log = LoggerFactory.getLogger(StartProcessAction.class);
+    protected final ScreenBuilders screenBuilders;
 
     public StartProcessAction(ProcInstance procInstance) {
         super("startProcess");
@@ -54,6 +51,7 @@ public class StartProcessAction extends ProcAction {
         processRuntimeService = AppBeans.get(ProcessRuntimeService.class);
         processFormService = AppBeans.get(ProcessFormService.class);
         dataManager = AppBeans.get(DataManager.class);
+        screenBuilders = AppBeans.get(ScreenBuilders.class);
     }
 
     @Override
@@ -75,21 +73,25 @@ public class StartProcessAction extends ProcAction {
             }
             ActionOwner owner = getOwner();
             if (owner instanceof Component.BelongToFrame) {
-                WindowManager wm = (WindowManager) getScreenContext((Component.BelongToFrame) owner).getScreens();
-                WindowInfo windowInfo = AppBeans.get(WindowConfig.class).getWindowInfo(startForm.getName());
-
-                Window window = wm.openWindow(windowInfo, OpenType.DIALOG, formParams);
-                window.addCloseListener(actionId -> {
-                    if (Window.COMMIT_ACTION_ID.equals(actionId)) {
+                Screen screen = screenBuilders.screen(((Component.BelongToFrame) owner).getFrame().getFrameOwner())
+                        .withScreenId(startForm.getName())
+                        .withOpenMode(OpenMode.DIALOG)
+                        .withOptions(new MapScreenOptions(formParams))
+                        .build();
+                screen.addAfterCloseListener(afterCloseEvent -> {
+                    CloseAction closeAction = afterCloseEvent.getCloseAction();
+                    if (closeAction instanceof StandardCloseAction &&
+                            Window.COMMIT_ACTION_ID.equals(((StandardCloseAction) closeAction).getActionId())) {
                         String comment = null;
                         Map<String, Object> formProcessVariables = null;
-                        if (window instanceof ProcForm) {
-                            comment = ((ProcForm) window).getComment();
-                            formProcessVariables = ((ProcForm) window).getFormResult();
+                        if (screen instanceof ProcForm) {
+                            comment = ((ProcForm) screen).getComment();
+                            formProcessVariables = ((ProcForm) screen).getFormResult();
                         }
                         _startProcess(comment, formProcessVariables);
                     }
                 });
+                screen.show();
             } else {
                 log.error("Action owner must implement Component.BelongToFrame");
             }
