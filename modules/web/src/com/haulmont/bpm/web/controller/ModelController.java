@@ -73,7 +73,7 @@ public class ModelController {
 
     @RequestMapping(value = "/{actModelId}", method = RequestMethod.PUT)
     public void updateModel(@PathVariable String actModelId,
-                            @RequestBody MultiValueMap<String, String> values,
+                            @RequestParam MultiValueMap<String, String> values,
                             HttpServletRequest request,
                             HttpServletResponse response) throws IOException {
         if (BpmControllerUtils.auth(request, response)) {
