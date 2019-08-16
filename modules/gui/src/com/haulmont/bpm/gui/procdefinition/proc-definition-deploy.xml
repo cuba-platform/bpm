@@ -31,8 +31,9 @@
             <label value="msg://procDefinition" align="MIDDLE_LEFT"/>
             <lookupField id="processLookup" optionsDatasource="procDefinitionsDs" width="300px"/>
         </hbox>
-        <frame id="windowActions"
-               screen="editWindowActions"
-               stylename="window-actions"/>
+        <hbox id="windowActions" spacing="true" stylename="c-edit-window-actions">
+            <button id="windowCommit" action="windowCommit" icon="EDITOR_OK"/>
+            <button id="windowClose" action="windowClose" icon="EDITOR_CANCEL"/>
+        </hbox>
     </layout>
 </window>
