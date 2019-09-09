@@ -33,6 +33,8 @@
                        value="com.haulmont.bpm.service.ProcessRepositoryService"/>
                 <entry key="bpm_ProcessRuntimeService"
                        value="com.haulmont.bpm.service.ProcessRuntimeService"/>
+                <entry key="bpm_ProcessVariablesService"
+                       value="com.haulmont.bpm.service.ProcessVariablesService"/>
                 <entry key="bpm_ProcessFormService"
                        value="com.haulmont.bpm.service.ProcessFormService"/>
                 <entry key="bpm_ProcessMessagesService"
