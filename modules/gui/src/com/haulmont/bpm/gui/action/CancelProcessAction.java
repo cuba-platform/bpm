@@ -76,9 +76,9 @@ public class CancelProcessAction extends ProcAction {
                 if (closeAction instanceof StandardCloseAction &&
                         Window.COMMIT_ACTION_ID.equals(((StandardCloseAction) closeAction).getActionId())) {
                     comment = ((ProcForm) screen).getComment();
+                    processRuntimeService.cancelProcess(procInstance, comment);
+                    fireAfterActionListeners();
                 }
-                processRuntimeService.cancelProcess(procInstance, comment);
-                fireAfterActionListeners();
             });
             screen.show();
         } else {
