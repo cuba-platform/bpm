@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +56,7 @@ public class BpmEntitiesServiceBean implements BpmEntitiesService {
     @Nullable
     public ProcDefinition findProcDefinitionByCode(String procDefinitionCode, String viewName) {
         ProcDefinition procDefinition;
-        try (Transaction tx = persistence.getTransaction()) {
+        try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             procDefinition = em.createQuery("select pd from bpm$ProcDefinition pd where pd.code = :code", ProcDefinition.class)
                     .setParameter("code", procDefinitionCode)
@@ -72,7 +71,7 @@ public class BpmEntitiesServiceBean implements BpmEntitiesService {
     public List<ProcInstance> findActiveProcInstancesForEntity(String procDefinitionCode, Entity entity, String viewName) {
         List<ProcInstance> procInstances;
         String referenceIdPropertyName = referenceToEntitySupport.getReferenceIdPropertyName(entity.getMetaClass());
-        try (Transaction tx = persistence.getTransaction()) {
+        try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             procInstances = em.createQuery("select pi from bpm$ProcInstance pi where " +
                     "pi.procDefinition.code = :procDefinitionCode and " +
@@ -90,7 +89,7 @@ public class BpmEntitiesServiceBean implements BpmEntitiesService {
     @Override
     public List<ProcTask> findActiveProcTasks(ProcInstance procInstance, User user, String viewName) {
         List<ProcTask> procTasks;
-        try (Transaction tx = persistence.getTransaction()) {
+        try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             procTasks = em.createQuery("select pt from bpm$ProcTask pt left join pt.procActor pa left join pa.user pau " +
                     "where pt.procInstance.id = :procInstanceId and (pau.id = :userId or " +
@@ -109,7 +108,7 @@ public class BpmEntitiesServiceBean implements BpmEntitiesService {
     @Nullable
     public ProcRole findProcRole(String procDefinitionCode, String procRoleCode, String viewName) {
         ProcRole procRole;
-        try (Transaction tx = persistence.getTransaction()) {
+        try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             procRole = em.createQuery("select pr from bpm$ProcRole pr where " +
                     "pr.procDefinition.code = :procDefinitionCode and " +
