@@ -44,7 +44,7 @@ public class BpmTestUserSessionSource extends AbstractUserSessionSource {
     public synchronized UserSession getUserSession() {
         if (session == null) {
             User user = getUser();
-            session = new UserSession(UUID.randomUUID(), user, Collections.<Role>emptyList(), Locale.forLanguageTag("en"), false);
+            session = new UserSession(UUID.randomUUID(), user, Collections.emptyList(), Locale.forLanguageTag("en"), false);
         }
         return session;
     }
