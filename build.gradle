@@ -38,6 +38,7 @@ buildscript {
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
+        classpath group: 'gradle.plugin.com.github.spotbugs.snom', name: 'spotbugs-gradle-plugin', version: '4.5.1'
     }
 }
 
@@ -90,9 +91,11 @@ def baseCubaVersion = rootProject.hasProperty('cuba.version') ? rootProject['cub
 configure([globalModule, coreModule, guiModule, webModule]) {
     apply(plugin: 'java')
     apply(plugin: 'maven')
-    apply(plugin: 'findbugs')
     apply(plugin: 'pmd')
     apply(plugin: 'cuba')
+
+    // code quality
+    apply(plugin: 'com.github.spotbugs')
 
     dependencies {
         testCompile(bom['junit:junit'])
@@ -118,33 +121,37 @@ configure([globalModule, coreModule, guiModule, webModule]) {
         options.addStringOption("sourcepath", "")
     }
 
-    findbugs {
-        toolVersion = "3.0.1"
+    spotbugs {
+        toolVersion = "4.1.4"
         ignoreFailures = false
         omitVisitors = ['FindDoubleCheck']
-        excludeFilter = rootProject.file("findbugs/exclude-filter.xml")
+        excludeFilter = rootProject.file("codestyle/exclude-filter.xml")
         effort = "max"
-        reportLevel = "high"
+        reportLevel = "medium"
     }
 
-    findbugsMain {
+    spotbugsMain {
+        maxHeapSize = '2048m'
+
         reports {
             xml.enabled = false
             html {
                 enabled = true
-                stylesheet = rootProject.resources.text.fromFile("findbugs/fancy-hist.xsl")
-                destination file("${project.buildDir}/reports/findbugs/${project.name}.html")
+                stylesheet = rootProject.resources.text.fromFile("codestyle/fancy-hist.xsl")
+                destination file("${project.buildDir}/reports/spotbugs/${project.name}.html")
             }
         }
     }
 
-    findbugsTest {
+    spotbugsTest {
+        maxHeapSize = '2048m'
+
         reports {
             xml.enabled = false
             html {
                 enabled = true
-                stylesheet = rootProject.resources.text.fromFile("findbugs/fancy-hist.xsl")
-                destination file("${project.buildDir}/reports/findbugs/test-${project.name}.html")
+                stylesheet = rootProject.resources.text.fromFile("codestyle/fancy-hist.xsl")
+                destination file("${project.buildDir}/reports/spotbugs/test-${project.name}.html")
             }
         }
     }
