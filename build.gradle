@@ -54,7 +54,7 @@ def coreModule = project(':bpm-core')
 def guiModule = project(':bpm-gui')
 def webModule = project(':bpm-web')
 
-def postgres = 'org.postgresql:postgresql:9.4-1201-jdbc41'
+def postgres = 'org.postgresql:postgresql:42.7.4'
 
 apply(plugin: 'cuba')
 
@@ -122,7 +122,7 @@ configure([globalModule, coreModule, guiModule, webModule]) {
     }
 
     spotbugs {
-        toolVersion = "4.1.4"
+        toolVersion = "4.8.6"
         ignoreFailures = false
         omitVisitors = ['FindDoubleCheck']
         excludeFilter = rootProject.file("codestyle/exclude-filter.xml")
@@ -248,6 +248,8 @@ configure(coreModule) {
         }
 
         compile(bom['org.activiti:activiti-json-converter'])
+        compile(bom['org.apache.commons:commons-email'])
+        compile(bom['org.mybatis:mybatis'])
 
         testCompile("com.haulmont.cuba:cuba-core-tests:$baseCubaVersion")
         dbscripts("com.haulmont.cuba:cuba-core:$baseCubaVersion:db@zip")
